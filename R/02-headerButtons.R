@@ -2,10 +2,11 @@
 #'
 #' @param id module id
 #' @param help_link link that is opened when help button is clicked
+#' @param further_help_link link that is opened when further help button is clicked; if set to NULL, no button is displayed
 #'
 #' @return tagList with divs
 #' @export
-headerButtonsUI <- function(id, help_link) {
+headerButtonsUI <- function(id, help_link, further_help_link = NULL) {
   ns <- NS(id)
   tagList(
     div(
@@ -26,18 +27,21 @@ headerButtonsUI <- function(id, help_link) {
           target = "_blank"
         )
       ),
-      div(
-        id = "further-help",
-        tags$button(
-          onclick = "window.open('https://isomemo.com','_blank');",
-          class = "btn btn-default",
-          "Further Help"
+      # further help nur wenn nicht NULL argument
+      if (!is.null(further_help_link)) {
+        div(
+          id = "further-help",
+          tags$button(
+            onclick = paste0("window.open('", further_help_link, "','_blank');"),
+            class = "btn btn-default",
+            "Further Help"
+          )
         )
-      ),
+      },
       div(
         id = "help",
         tags$button(
-          onclick = paste0("window.open('",help_link,"','_blank');"),
+          onclick = paste0("window.open('", help_link, "','_blank');"),
           class = "btn btn-default",
           "?"
         )
@@ -59,8 +63,9 @@ headerButtonsUI <- function(id, help_link) {
 #       theme = shinythemes::shinytheme("flatly"),
 #       position = "fixed-top",
 #       collapsible = TRUE,
-#       id = "test"),
-#     headerButtonsUI(id = "header_id", help_link = "https://www.inwt-statistics.de/")
+#       id = "test"
+#     ),
+#     headerButtonsUI(id = "header_id", help_link = "https://isomemo.com/", further_help_link = NULL)
 #   )
 # )
 #

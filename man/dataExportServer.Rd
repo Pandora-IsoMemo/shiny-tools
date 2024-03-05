@@ -4,12 +4,12 @@
 \alias{dataExportServer}
 \title{Server function for data export}
 \usage{
-dataExportServer(id, dfExport, filename = "data")
+dataExportServer(id, dataFun, filename = "data")
 }
 \arguments{
 \item{id}{namespace id}
 
-\item{dfExport}{(reactive) a reactive function containing the data for export}
+\item{dataFun}{(reactive) a reactive function returning a data.frame for export}
 
 \item{filename}{(character) name of file without file extension}
 }

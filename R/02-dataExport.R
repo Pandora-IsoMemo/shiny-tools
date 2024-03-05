@@ -14,11 +14,11 @@ dataExportButton <- function(id, label = "Export Data") {
 #' Backend for data export module
 #'
 #' @param id namespace id
-#' @param dfExport (reactive) a reactive function containing the data for export
+#' @param dataFun (reactive) a reactive function returning a data.frame for export
 #' @param filename (character) name of file without file extension
 #'
 #' @export
-dataExportServer <- function(id, dfExport, filename = "data") {
+dataExportServer <- function(id, dataFun, filename = "data") {
   moduleServer(id,
                function(input, output, session) {
                  observeEvent(input$export, {
@@ -51,9 +51,9 @@ dataExportServer <- function(id, dfExport, filename = "data") {
                    content = function(file){
                      switch(
                        input$exportType,
-                       csv = exportCSV(file, dfExport()(), input$colseparator, input$decseparator),
-                       xlsx = exportXLSX(file, dfExport()()),
-                       json = exportJSON(file, dfExport()())
+                       csv = exportCSV(file, dataFun()(), input$colseparator, input$decseparator),
+                       xlsx = exportXLSX(file, dataFun()()),
+                       json = exportJSON(file, dataFun()())
                      )
                    }
                  )
@@ -115,7 +115,7 @@ exportJSON <- function(file, dat){
 # )
 #
 # server <- function(input, output, session) {
-#   dataExportServer("expData", dfExport = reactive({function() mtcars}), filename = "data")
+#   dataExportServer("expData", dataFun = reactive({function() mtcars}), filename = "data")
 # }
 #
 # shinyApp(ui = ui, server = server)

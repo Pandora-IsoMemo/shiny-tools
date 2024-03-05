@@ -1,6 +1,6 @@
 test_that("Test module dataExportServer", {
   testServer(dataExportServer,
-             args = list(dfExport = reactive({function() mtcars})),
+             args = list(dataFun = reactive({function() mtcars})),
              {
                # Arrange
                print("test export 'mtcars'")
@@ -10,7 +10,7 @@ test_that("Test module dataExportServer", {
                  exportType = "xlsx"
                )
 
-               expect_equal(sapply(dfExport()(), class),
+               expect_equal(sapply(dataFun()(), class),
                             c(mpg = "numeric", cyl = "numeric", disp = "numeric", hp = "numeric",
                               drat = "numeric", wt = "numeric", qsec = "numeric", vs = "numeric",
                               am = "numeric", gear = "numeric", carb = "numeric"))

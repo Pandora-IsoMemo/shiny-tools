@@ -95,3 +95,27 @@ exportJSON <- function(file, dat){
   json <- toJSON(dat)
   write(json, file)
 }
+
+# TEST MODULE -------------------------------------------------------------
+# To test the module run devtools::load_all() first
+# Please comment this code before building the package
+
+# ui <- fluidPage(
+#   tagList(
+#     navbarPage(
+#       header = includeShinyToolsCSS(),
+#       title = "test app",
+#       theme = shinythemes::shinytheme("flatly"),
+#       position = "fixed-top",
+#       collapsible = TRUE,
+#       id = "test"
+#     ),
+#     dataExportButton(id = "expData")
+#   )
+# )
+#
+# server <- function(input, output, session) {
+#   dataExportServer("expData", dfExport = reactive({function() mtcars}), filename = "data")
+# }
+#
+# shinyApp(ui = ui, server = server)

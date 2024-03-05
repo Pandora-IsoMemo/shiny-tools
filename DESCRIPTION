@@ -10,8 +10,11 @@ Description: Helpful functions and modules that can be applied across the Isomem
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-Imports: 
-    shiny
+Imports:
+    openxlsx,
+    rjson,
+    shiny,
+    utils
 RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0)

@@ -1,5 +1,13 @@
 # shinyTools
 
+## Version 24.03.2
+
+### New Features
+- module for plotExport (#6)
+  - export a plot as "png", "jpeg", "svg", "pdf", or "tiff" file
+  - the module was extracted from PlotR, resources
+  - it can be applied in all new apps
+
 ## Version 24.03.0
 
 ### New Features

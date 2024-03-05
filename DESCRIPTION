@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.03.1
+Version: 24.03.2
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut"))
             )
@@ -11,7 +11,11 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports:
+    DataTools,
+    grDevices,
+    magrittr,
     openxlsx,
+    plotly,
     rjson,
     shiny,
     utils

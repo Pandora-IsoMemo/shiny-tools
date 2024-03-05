@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.2.0
+Version: 24.3.0
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut"))
             )
@@ -10,8 +10,11 @@ Description: Helpful functions and modules that can be applied across the Isomem
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-Imports: 
-    shiny
+Imports:
+    openxlsx,
+    rjson,
+    shiny,
+    utils
 RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0)

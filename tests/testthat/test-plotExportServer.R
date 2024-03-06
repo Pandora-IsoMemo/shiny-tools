@@ -6,11 +6,11 @@ test_that("Test module plotExportServer", {
   )
 
   # Create a scatter plot using ggplot2
-  plot <-   ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
-    ggplot2::geom_point() +
-    ggplot2::labs(title = "Simple Scatter Plot",
-                  x = "X-axis label",
-                  y = "Y-axis label")
+  plot <-   (ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
+    ggplot2::geom_point()) %>%
+    formatTitlesOfGGPlot(plotTitle = defaultTitleFormat(text = "justTesting"),
+                         axisTitleX = defaultTitleFormat(),
+                         axisTitleY = defaultTitleFormat(text = "moreTesting"))
 
   testServer(plotExportServer,
              args = list(plotFun = reactive({function() plot})),

@@ -89,3 +89,39 @@ plotExportServer <- function(id,
                  )
                })
 }
+
+# TEST MODULE -------------------------------------------------------------
+# To test the module run devtools::load_all() first
+# Please comment this code before building the package
+
+# ui <- fluidPage(
+#   tagList(
+#     navbarPage(
+#       header = includeShinyToolsCSS(),
+#       title = "test app",
+#       theme = shinythemes::shinytheme("flatly"),
+#       position = "fixed-top",
+#       collapsible = TRUE,
+#       id = "test"
+#     ),
+#     plotExportButton(id = "expPlot")
+#   )
+# )
+#
+# server <- function(input, output, session) {
+#   plotExportServer("expPlot",
+#                    plotFun = reactive({
+#                      function() {
+#                        data <- data.frame(
+#                          x = c(1, 2, 3, 4, 5),
+#                          y = c(2, 4, 1, 7, 3)
+#                        )
+#
+#                        ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
+#                          ggplot2::geom_point()
+#                      }
+#                      }),
+#                    filename = "plot")
+# }
+#
+# shinyApp(ui = ui, server = server)

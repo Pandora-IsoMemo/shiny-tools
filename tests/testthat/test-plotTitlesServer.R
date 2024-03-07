@@ -1,5 +1,6 @@
 test_that("Test module plotTitlesServer", {
   testServer(plotTitlesServer,
+             args = list(type = "ggplot"),
              {
                # Arrange
                print("test plot titles")

@@ -2,7 +2,7 @@
 
 export(dataExportButton)
 export(dataExportServer)
-export(fontChoices)
+export(fontChoicesSelect)
 export(headerButtonsUI)
 export(includeShinyToolsCSS)
 export(plotExportButton)

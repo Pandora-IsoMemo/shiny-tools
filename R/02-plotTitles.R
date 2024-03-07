@@ -26,7 +26,7 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
     selectInput(
       ns("fontType"),
       label = "Font type",
-      choices = fontChoices(type = type),
+      choices = fontChoicesSelect(type = type),
       selected = NULL
     ),
     colourInput(ns("color"), label = "Text color",
@@ -34,10 +34,10 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
     sliderInput(
       ns("size"),
       label = "Text size",
-      value = sizeValues(type = type)[["value"]],
-      min = sizeValues(type = type)[["min"]],
-      max = sizeValues(type = type)[["max"]],
-      step = sizeValues(type = type)[["step"]]
+      value = sizeValuesSlider(type = type)[["value"]],
+      min = sizeValuesSlider(type = type)[["min"]],
+      max = sizeValuesSlider(type = type)[["max"]],
+      step = sizeValuesSlider(type = type)[["step"]]
     ),
     checkboxInput(
       inputId = ns("hide"),
@@ -105,7 +105,7 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initTitles 
 #' @param type (character) plot type, one of "ggplot" or "base"
 #'
 #' @export
-fontChoices <- function(type = c("ggplot", "base")) {
+fontChoicesSelect <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
   switch (type,
@@ -120,12 +120,12 @@ fontChoices <- function(type = c("ggplot", "base")) {
   )
 }
 
-#' Size Values
+#' Size Values Slider
 #'
 #' Initial values for sliderInput title 'size' dependent on the plot type
 #'
 #' @param type (character) plot type, one of "ggplot" or "base"
-sizeValues  <- function(type = c("ggplot", "base")) {
+sizeValuesSlider  <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
   switch (type,

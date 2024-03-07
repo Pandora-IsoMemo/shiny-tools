@@ -66,9 +66,12 @@ plotExportServer <- function(id,
                               if (!plotly) numericInput(session$ns("width"), "Width (px)", value = plotWidth()) else NULL,
                               if (!plotly) numericInput(session$ns("height"), "Height (px)", value = plotHeight()) else NULL,
                        ),
+                       if (extraPlotFormatting == "ggplot") {
                        column(4, plotTitlesUI(session$ns("titlesFormat"),
                                               extraPlotFormatting = "ggplot"))
+                       } else NULL
                      ),
+                     tags$br(),
                      downloadButton(session$ns("exportExecute"), "Export"),
                      easyClose = TRUE
                    ))

@@ -23,14 +23,14 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
       selected = NA
     ),
     textInput(ns("text"), label = "Text", value = NULL),
+    colourInput(ns("color"), label = "Text color",
+                value = defaultTitleFormat(type = type)[["color"]]),
     selectInput(
       ns("fontType"),
       label = "Font type",
       choices = fontChoicesSelect(type = type),
       selected = NULL
     ),
-    colourInput(ns("color"), label = "Text color",
-                value = defaultTitleFormat(type = type)[["color"]]),
     sliderInput(
       ns("size"),
       label = "Text size",
@@ -153,24 +153,6 @@ defaultTitleFormat <- function(type = c("none", "ggplot", "base")) {
           "base" = config()$defaultBaseTitle,
           "ggplot" = config()$defaultGGTitle
   )
-}
-
-#' Update User Inputs
-#'
-#' @param id module id
-#' @param input input object from server function
-#' @param output output object from server function
-#' @param session session from server function
-#' @param userInputs (list) list of inputs to be updated
-updateUserInputs <- function(id, input, output, session, userInputs) {
-  ## get and filter input names
-  inputIDs <- names(userInputs)
-  inputIDs <- inputIDs[inputIDs %in% names(input)]
-
-  # update values
-  for (i in 1:length(inputIDs)) {
-    session$sendInputMessage(inputIDs[i], list(value = userInputs[[inputIDs[i]]]))
-  }
 }
 
 # TEST MODULE -------------------------------------------------------------

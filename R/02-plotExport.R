@@ -34,7 +34,7 @@ plotExportServer <- function(id,
   plotType <- match.arg(plotType)
   formatFun <- switch (plotType,
                        "none" = noExtraFormat,
-                       "ggplot" = formatTitlesOfGGPlot
+                       "ggplot" = formatWrapperGGPlot
   )
 
   moduleServer(id,
@@ -67,8 +67,11 @@ plotExportServer <- function(id,
                               if (!plotly) numericInput(session$ns("height"), "Height (px)", value = plotHeight()) else NULL,
                        ),
                        if (plotType == "ggplot") {
-                       column(4, plotTitlesUI(session$ns("titlesFormat"), type = "ggplot"))
-                       } else NULL
+                         column(4, plotTitlesUI(session$ns("titlesFormat"), type = "ggplot"))
+                       } else NULL,
+                       if (plotType == "ggplot") {
+                         column(4, plotRangesUI(session$ns("axesRanges"), type = "ggplot"))
+                       }
                      ),
                      tags$br(),
                      downloadButton(session$ns("exportExecute"), "Export"),
@@ -77,12 +80,15 @@ plotExportServer <- function(id,
                  })
 
                  titles <- plotTitlesServer("titlesFormat", type = plotType)
+                 ranges <- plotRangesServer("axesRanges", type = plotType)
 
                  output$plot <- renderPlot({
                    plotFun()() %>%
                      formatFun(plotTitle = titles[["plot"]],
                                axisTitleX = titles[["xAxis"]],
-                               axisTitleY = titles[["yAxis"]])
+                               axisTitleY = titles[["yAxis"]],
+                               axisRangeX = ranges[["xAxis"]],
+                               axisRangeY = ranges[["yAxis"]])
                  })
 
                  output$plotly <- renderPlotly({
@@ -108,7 +114,9 @@ plotExportServer <- function(id,
                        )
                        print(plotFun()() %>% formatFun(plotTitle = titles[["plot"]],
                                                        axisTitleX = titles[["xAxis"]],
-                                                       axisTitleY = titles[["yAxis"]]))
+                                                       axisTitleY = titles[["yAxis"]],
+                                                       axisRangeX = ranges[["xAxis"]],
+                                                       axisRangeY = ranges[["yAxis"]]))
                        dev.off()
                      }
                    }
@@ -116,8 +124,16 @@ plotExportServer <- function(id,
                })
 }
 
-noExtraFormat <- function(plot, plotTitle, axisTitleX, axisTitleY) {
+noExtraFormat <- function(plot, ...) {
   plot
+}
+
+formatWrapperGGPlot <- function(plot,
+                                plotTitle, axisTitleX, axisTitleY,
+                                axisRangeX, axisRangeY) {
+  plot %>%
+    formatTitlesOfGGPlot(plotTitle, axisTitleX, axisTitleY) %>%
+    axesRangeOfGGPlot(axisRangeX, axisRangeY)
 }
 
 formatTitlesOfGGPlot <- function(plot, plotTitle, axisTitleX, axisTitleY) {
@@ -139,6 +155,12 @@ formatTitlesOfGGPlot <- function(plot, plotTitle, axisTitleX, axisTitleY) {
       axis.title.x = getElementText(axisTitleX),
       axis.title.y = getElementText(axisTitleY)
     )
+}
+
+axesRangeOfGGPlot <- function(plot, axisRangeX, axisRangeY) {
+  plot +
+    xlim(axisRangeX[["min"]], axisRangeX[["max"]]) +
+    ylim(axisRangeY[["min"]], axisRangeY[["max"]])
 }
 
 # TEST MODULE -------------------------------------------------------------

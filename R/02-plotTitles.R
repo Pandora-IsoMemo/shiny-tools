@@ -65,13 +65,24 @@ plotTitlesServer <- function(id) {
                  )
 
                  observe({
+                   updateUserInputs(id, input = input, output = output, session = session,
+                                    userInputs = titles[[input[["labelName"]]]])
+                 }) %>%
+                   bindEvent(input[["labelName"]])
+
+                 observe({
                    req(input[["labelName"]])
                    titles[[input[["labelName"]]]] <- list(text = input[["text"]],
                                                           fontType = input[["fontType"]],
                                                           color = input[["color"]],
                                                           size = input[["size"]],
                                                           hide = input[["hide"]])
-                 })
+                 }) %>%
+                   bindEvent(list(input[["text"]],
+                                  input[["fontType"]],
+                                  input[["color"]],
+                                  input[["size"]],
+                                  input[["hide"]]))
 
                  return(titles)
                })
@@ -117,6 +128,24 @@ fontChoices <- function(type = c("none", "ggplot", "base")) {
   )
 }
 
+#' Update User Inputs
+#'
+#' @param id module id
+#' @param input input object from server function
+#' @param output output object from server function
+#' @param session session from server function
+#' @param userInputs (list) list of inputs to be updated
+updateUserInputs <- function(id, input, output, session, userInputs) {
+  ## get and filter input names
+  inputIDs <- names(userInputs)
+  inputIDs <- inputIDs[inputIDs %in% names(input)]
+
+  # update values
+  for (i in 1:length(inputIDs)) {
+    session$sendInputMessage(inputIDs[i], list(value = userInputs[[inputIDs[i]]]))
+  }
+}
+
 # TEST MODULE -------------------------------------------------------------
 # To test the module run devtools::load_all() first
 # Please comment this code before building the package
@@ -131,7 +160,7 @@ fontChoices <- function(type = c("none", "ggplot", "base")) {
 #       collapsible = TRUE,
 #       id = "test"
 #     ),
-#     plotTitlesUI(id = "testMod", fontChoices = fontChoices(type = "ggplot"))
+#     plotTitlesUI(id = "testMod", extraPlotFormatting = "ggplot")
 #   )
 # )
 #

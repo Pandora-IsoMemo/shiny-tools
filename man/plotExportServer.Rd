@@ -7,7 +7,7 @@
 plotExportServer(
   id,
   plotFun,
-  extraPlotFormatting = c("none", "ggplot"),
+  plotType = c("none", "ggplot"),
   filename = sprintf("\%s_plot", gsub("-", "", Sys.Date())),
   plotly = FALSE,
   plotWidth = reactive(1280),
@@ -19,7 +19,7 @@ plotExportServer(
 
 \item{plotFun}{(reactive) a reactive function returning a plot for export}
 
-\item{extraPlotFormatting}{(character) one of "none", "ggplot". Adds the option to format the
+\item{plotType}{(character) one of "none", "ggplot". Adds the option to format the
 plot before export}
 
 \item{filename}{(character) name of file without file extension}

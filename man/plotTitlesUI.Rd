@@ -4,13 +4,12 @@
 \alias{plotTitlesUI}
 \title{Plot Titles UI}
 \usage{
-plotTitlesUI(id, extraPlotFormatting = c("none", "ggplot"))
+plotTitlesUI(id, type = c("ggplot", "base"))
 }
 \arguments{
 \item{id}{module id}
 
-\item{extraPlotFormatting}{(character) one of "none", "ggplot". Adds the option to format the
-plot before export}
+\item{type}{(character) Type of the plot to add titles to, one of "ggplot", "base".}
 }
 \value{
 tagList

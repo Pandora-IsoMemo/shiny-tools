@@ -9,5 +9,6 @@
 #' @importFrom plotly renderPlotly plotlyOutput save_image
 #' @importFrom rjson toJSON
 #' @importFrom utils write.table
+#' @importFrom yaml yaml.load_file
 
 NULL

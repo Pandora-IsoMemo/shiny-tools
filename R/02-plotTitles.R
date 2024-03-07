@@ -2,12 +2,12 @@
 #'
 #'
 #' @param id module id
-#' @inheritParams plotExportServer
+#' @inheritParams plotTitlesServer
 #'
 #' @return tagList
 #' @export
-plotTitlesUI <- function(id, extraPlotFormatting = c("none", "ggplot")) {
-  extraPlotFormatting <- match.arg(extraPlotFormatting)
+plotTitlesUI <- function(id, type = c("ggplot", "base")) {
+  type <- match.arg(type)
 
   ns <- NS(id)
   tagList(
@@ -26,18 +26,18 @@ plotTitlesUI <- function(id, extraPlotFormatting = c("none", "ggplot")) {
     selectInput(
       ns("fontType"),
       label = "Font type",
-      choices = fontChoices(type = extraPlotFormatting),
+      choices = fontChoices(type = type),
       selected = NULL
     ),
     colourInput(ns("color"), label = "Text color",
-                value = defaultTitleFormat()[["color"]]),
+                value = defaultTitleFormat(type = type)[["color"]]),
     sliderInput(
       ns("size"),
       label = "Text size",
-      value = sizeValues(type = extraPlotFormatting)[["value"]],
-      min = sizeValues(type = extraPlotFormatting)[["min"]],
-      max = sizeValues(type = extraPlotFormatting)[["max"]],
-      step = sizeValues(type = extraPlotFormatting)[["step"]]
+      value = sizeValues(type = type)[["value"]],
+      min = sizeValues(type = type)[["min"]],
+      max = sizeValues(type = type)[["max"]],
+      step = sizeValues(type = type)[["step"]]
     ),
     checkboxInput(
       inputId = ns("hide"),
@@ -53,16 +53,26 @@ plotTitlesUI <- function(id, extraPlotFormatting = c("none", "ggplot")) {
 #' Backend for plot titles module
 #'
 #' @param id namespace id
+#' @param type (character) Type of the plot to add titles to, one of "ggplot", "base".
+#' @param initTitles (reactiveValues) initial titles to be used when loading the plot
 #'
 #' @export
-plotTitlesServer <- function(id) {
+plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initTitles = NULL) {
+  type <- match.arg(type)
+
   moduleServer(id,
                function(input, output, session) {
-                 titles <- reactiveValues(
-                   plot = defaultTitleFormat(),
-                   xAxis = defaultTitleFormat(),
-                   yAxis = defaultTitleFormat()
-                 )
+                 if (!is.null(initTitles)) {
+                   titles <- initTitles
+                 } else {
+                   titles <- reactiveValues(
+                     plot = defaultTitleFormat(type = type),
+                     xAxis = defaultTitleFormat(type = type),
+                     yAxis = defaultTitleFormat(type = type)
+                   )
+                 }
+
+                 if (type == "none") return(titles)
 
                  observe({
                    updateUserInputs(id, input = input, output = output, session = session,
@@ -88,14 +98,37 @@ plotTitlesServer <- function(id) {
                })
 }
 
-sizeValues  <- function(type = c("none", "ggplot", "base")) {
+#' Font Choices
+#'
+#' Mapping of font choices dependent on the plot type
+#'
+#' @param type (character) plot type, one of "ggplot" or "base"
+#'
+#' @export
+fontChoices <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
   switch (type,
-          "none" = list(value = 0.5,
-                        min = 0,
-                        max = 1,
-                        step = 0.1),
+          "base" = c("plain text" = 1,
+                     "bold face" = 2,
+                     "italic" = 3,
+                     "bold italic" = 4),
+          "ggplot" = c("plain text" = "plain",
+                       "bold face" = "bold",
+                       "italic" = "italic",
+                       "bold italic" = "bold.italic")
+  )
+}
+
+#' Size Values
+#'
+#' Initial values for sliderInput title 'size' dependent on the plot type
+#'
+#' @param type (character) plot type, one of "ggplot" or "base"
+sizeValues  <- function(type = c("ggplot", "base")) {
+  type <- match.arg(type)
+
+  switch (type,
           "base" = list(value = 1.2,
                         min = 0.1,
                         max = 5,
@@ -107,24 +140,18 @@ sizeValues  <- function(type = c("none", "ggplot", "base")) {
   )
 }
 
-#' Font Choices
+#' Default Title Format
+#'
+#' Initial values for title dependent on the plot type
 #'
 #' @param type (character) plot type, one of "ggplot" or "base"
-#'
-#' @export
-fontChoices <- function(type = c("none", "ggplot", "base")) {
+defaultTitleFormat <- function(type = c("none", "ggplot", "base")) {
   type <- match.arg(type)
 
   switch (type,
-          "none" = c("no font" = NA),
-          "base" = c("plain text" = 1,
-                     "bold face" = 2,
-                     "italic" = 3,
-                     "bold italic" = 4),
-          "ggplot" = c("plain text" = "plain",
-                       "bold face" = "bold",
-                       "italic" = "italic",
-                       "bold italic" = "bold.italic")
+          "none" = config()$defaultBaseTitle,
+          "base" = config()$defaultBaseTitle,
+          "ggplot" = config()$defaultGGTitle
   )
 }
 
@@ -160,7 +187,7 @@ updateUserInputs <- function(id, input, output, session, userInputs) {
 #       collapsible = TRUE,
 #       id = "test"
 #     ),
-#     plotTitlesUI(id = "testMod", extraPlotFormatting = "ggplot")
+#     plotTitlesUI(id = "testMod", type = "ggplot")
 #   )
 # )
 #

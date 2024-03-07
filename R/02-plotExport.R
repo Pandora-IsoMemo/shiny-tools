@@ -16,7 +16,7 @@ plotExportButton <- function(id, label = "Export Plot") {
 #'
 #' @param id namespace id
 #' @param plotFun (reactive) a reactive function returning a plot for export
-#' @param extraPlotFormatting (character) one of "none", "ggplot". Adds the option to format the
+#' @param plotType (character) one of "none", "ggplot". Adds the option to format the
 #'  plot before export
 #' @param filename (character) name of file without file extension
 #' @param plotly (logical) set TRUE if plotFun returns a plotly output
@@ -26,13 +26,13 @@ plotExportButton <- function(id, label = "Export Plot") {
 #' @export
 plotExportServer <- function(id,
                              plotFun,
-                             extraPlotFormatting = c("none", "ggplot"),
+                             plotType = c("none", "ggplot"),
                              filename = sprintf("%s_plot", gsub("-", "", Sys.Date())),
                              plotly = FALSE,
                              plotWidth = reactive(1280),
                              plotHeight = reactive(800)) {
-  extraPlotFormatting <- match.arg(extraPlotFormatting)
-  formatFun <- switch (extraPlotFormatting,
+  plotType <- match.arg(plotType)
+  formatFun <- switch (plotType,
                        "none" = noExtraFormat,
                        "ggplot" = formatTitlesOfGGPlot
   )
@@ -66,9 +66,8 @@ plotExportServer <- function(id,
                               if (!plotly) numericInput(session$ns("width"), "Width (px)", value = plotWidth()) else NULL,
                               if (!plotly) numericInput(session$ns("height"), "Height (px)", value = plotHeight()) else NULL,
                        ),
-                       if (extraPlotFormatting == "ggplot") {
-                       column(4, plotTitlesUI(session$ns("titlesFormat"),
-                                              extraPlotFormatting = "ggplot"))
+                       if (plotType == "ggplot") {
+                       column(4, plotTitlesUI(session$ns("titlesFormat"), type = "ggplot"))
                        } else NULL
                      ),
                      tags$br(),
@@ -77,13 +76,13 @@ plotExportServer <- function(id,
                    ))
                  })
 
-                 titles <- plotTitlesServer("titlesFormat")
+                 titles <- plotTitlesServer("titlesFormat", type = plotType)
 
                  output$plot <- renderPlot({
                    plotFun()() %>%
                      formatFun(plotTitle = titles[["plot"]],
-                                 axisTitleX = titles[["xAxis"]],
-                                 axisTitleY = titles[["yAxis"]])
+                               axisTitleX = titles[["xAxis"]],
+                               axisTitleY = titles[["yAxis"]])
                  })
 
                  output$plotly <- renderPlotly({
@@ -117,14 +116,6 @@ plotExportServer <- function(id,
                })
 }
 
-defaultTitleFormat <- function(text = "") {
-  list(text = text,
-       fontType = "plain",
-       color = "#000000",
-       size = 12,
-       hide = FALSE)
-}
-
 noExtraFormat <- function(plot, plotTitle, axisTitleX, axisTitleY) {
   plot
 }
@@ -154,35 +145,35 @@ formatTitlesOfGGPlot <- function(plot, plotTitle, axisTitleX, axisTitleY) {
 # To test the module run devtools::load_all() first
 # Please comment this code before building the package
 
-# ui <- fluidPage(
-#   tagList(
-#     navbarPage(
-#       header = includeShinyToolsCSS(),
-#       title = "test app",
-#       theme = shinythemes::shinytheme("flatly"),
-#       position = "fixed-top",
-#       collapsible = TRUE,
-#       id = "test"
-#     ),
-#     plotExportButton(id = "expPlot")
-#   )
-# )
-#
-# server <- function(input, output, session) {
-#   plotExportServer("expPlot",
-#                    plotFun = reactive({
-#                      function() {
-#                        data <- data.frame(
-#                          x = c(1, 2, 3, 4, 5),
-#                          y = c(2, 4, 1, 7, 3)
-#                        )
-#
-#                        ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
-#                          ggplot2::geom_point()
-#                      }
-#                      }),
-#                    extraPlotFormatting = "ggplot",
-#                    filename = "plot")
-# }
-#
-# shinyApp(ui = ui, server = server)
+ui <- fluidPage(
+  tagList(
+    navbarPage(
+      header = includeShinyToolsCSS(),
+      title = "test app",
+      theme = shinythemes::shinytheme("flatly"),
+      position = "fixed-top",
+      collapsible = TRUE,
+      id = "test"
+    ),
+    plotExportButton(id = "expPlot")
+  )
+)
+
+server <- function(input, output, session) {
+  plotExportServer("expPlot",
+                   plotFun = reactive({
+                     function() {
+                       data <- data.frame(
+                         x = c(1, 2, 3, 4, 5),
+                         y = c(2, 4, 1, 7, 3)
+                       )
+
+                       ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
+                         ggplot2::geom_point()
+                     }
+                     }),
+                   plotType = "ggplot",
+                   filename = "plot")
+}
+
+shinyApp(ui = ui, server = server)

@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.03.2
+Version: 24.03.3
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut"))
             )
@@ -20,7 +20,8 @@ Imports:
     plotly,
     rjson,
     shiny,
-    utils
+    utils,
+    yaml
 RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0)

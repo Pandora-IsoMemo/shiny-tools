@@ -1,0 +1,14 @@
+# default format of graph and axis titles
+defaultGGTitle:
+  text: ""
+  fontType: "plain"
+  color: "#000000"
+  size: 12
+  hide: false
+
+defaultBaseTitle:
+  text: ""
+  fontType: 1
+  color: "#000000"
+  size: 1.2
+  hide: false

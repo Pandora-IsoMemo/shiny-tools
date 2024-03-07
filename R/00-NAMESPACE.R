@@ -8,7 +8,6 @@
 #' @importFrom openxlsx write.xlsx
 #' @importFrom plotly renderPlotly plotlyOutput save_image
 #' @importFrom rjson toJSON
-#' @importFrom stats setNames
 #' @importFrom utils write.table
 
 NULL

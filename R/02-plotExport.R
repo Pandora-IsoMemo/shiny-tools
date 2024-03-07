@@ -74,19 +74,7 @@ plotExportServer <- function(id,
                    ))
                  })
 
-                 titlesFormat <- plotTitlesServer("titlesFormat")
-
-                 titles <- reactiveValues(
-                   plot = defaultTitleFormat(),
-                   xAxis = defaultTitleFormat(),
-                   yAxis = defaultTitleFormat()
-                 )
-
-                 observe({
-                   req(names(titlesFormat()))
-                   titles[[names(titlesFormat())]] <- titlesFormat()[[1]]
-                 }) %>%
-                   bindEvent(titlesFormat())
+                 titles <- plotTitlesServer("titlesFormat")
 
                  output$plot <- renderPlot({
                    plotFun()() %>%

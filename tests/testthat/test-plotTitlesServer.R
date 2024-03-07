@@ -13,8 +13,12 @@ test_that("Test module plotTitlesServer", {
                  hide = FALSE
                )
 
-               expect_equal(session$returned(),
-                            list(xAxis = list(text = "test", fontType = 2, color = "#FFFFFF",
-                                                   size = 5, hide = FALSE)))
+               expect_equal(session$returned %>% reactiveValuesToList(),
+                            list(plot = list(text = "", fontType = "plain", color = "#000000",
+                                             size = 12, hide = FALSE),
+                                 xAxis = list(text = "test", fontType = 2,
+                                              color = "#FFFFFF", size = 5, hide = FALSE),
+                                 yAxis = list(text = "", fontType = "plain", color = "#000000",
+                                              size = 12, hide = FALSE)))
              })
 })

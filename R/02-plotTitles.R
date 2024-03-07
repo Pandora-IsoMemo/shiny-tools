@@ -58,16 +58,22 @@ plotTitlesUI <- function(id, extraPlotFormatting = c("none", "ggplot")) {
 plotTitlesServer <- function(id) {
   moduleServer(id,
                function(input, output, session) {
-                 reactive(
-                   setNames(list(
-                     list(
-                       text = input[["text"]],
-                       fontType = input[["fontType"]],
-                       color = input[["color"]],
-                       size = input[["size"]],
-                       hide = input[["hide"]])
-                     ), input[["labelName"]])
+                 titles <- reactiveValues(
+                   plot = defaultTitleFormat(),
+                   xAxis = defaultTitleFormat(),
+                   yAxis = defaultTitleFormat()
                  )
+
+                 observe({
+                   req(input[["labelName"]])
+                   titles[[input[["labelName"]]]] <- list(text = input[["text"]],
+                                                          fontType = input[["fontType"]],
+                                                          color = input[["color"]],
+                                                          size = input[["size"]],
+                                                          hide = input[["hide"]])
+                 })
+
+                 return(titles)
                })
 }
 

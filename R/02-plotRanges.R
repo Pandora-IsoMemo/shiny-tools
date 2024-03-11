@@ -40,7 +40,7 @@ plotRangesUI <- function(id, type = c("ggplot", "base")) {
 #'
 #' @param id namespace id
 #' @param type (character) Type of the plot to add ranges to, one of "ggplot", "base".
-#' @param initTitles (reactiveValues) initial ranges to be used when loading the plot
+#' @param initRanges (reactiveValues) initial ranges to be used when loading the plot
 #'
 #' @export
 plotRangesServer <- function(id, type = c("none", "ggplot", "base"), initRanges = NULL) {

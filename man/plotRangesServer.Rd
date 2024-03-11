@@ -11,7 +11,7 @@ plotRangesServer(id, type = c("none", "ggplot", "base"), initRanges = NULL)
 
 \item{type}{(character) Type of the plot to add ranges to, one of "ggplot", "base".}
 
-\item{initTitles}{(reactiveValues) initial ranges to be used when loading the plot}
+\item{initRanges}{(reactiveValues) initial ranges to be used when loading the plot}
 }
 \description{
 Backend for plot ranges module

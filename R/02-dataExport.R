@@ -40,6 +40,7 @@ dataExportServer <- function(id, dataFun, filename = "data") {
                        div(style = "display: inline-block;horizontal-align:top; width: 80px;",
                            textInput(session$ns("decseparator"), "decimal separator:", value = "."))
                      ),
+                     tags$br(),
                      downloadButton(session$ns("exportExecute"), "Export")
                    ))
                  })

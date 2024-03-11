@@ -128,41 +128,6 @@ noExtraFormat <- function(plot, ...) {
   plot
 }
 
-formatWrapperGGPlot <- function(plot,
-                                plotTitle, axisTitleX, axisTitleY,
-                                axisRangeX, axisRangeY) {
-  plot %>%
-    formatTitlesOfGGPlot(plotTitle, axisTitleX, axisTitleY) %>%
-    axesRangeOfGGPlot(axisRangeX, axisRangeY)
-}
-
-formatTitlesOfGGPlot <- function(plot, plotTitle, axisTitleX, axisTitleY) {
-  getElementText <- function(title) {
-    if (title[["hide"]]) {
-      element_blank()
-    } else {
-      element_text(family = "Arial",
-                   size = title[["size"]],
-                   face = title[["fontType"]],
-                   color = title[["color"]])
-    }
-  }
-
-  plot +
-    labs(title = plotTitle[["text"]], x = axisTitleX[["text"]], y = axisTitleY[["text"]]) +
-    theme(
-      plot.title =   getElementText(plotTitle),
-      axis.title.x = getElementText(axisTitleX),
-      axis.title.y = getElementText(axisTitleY)
-    )
-}
-
-axesRangeOfGGPlot <- function(plot, axisRangeX, axisRangeY) {
-  plot +
-    xlim(axisRangeX[["min"]], axisRangeX[["max"]]) +
-    ylim(axisRangeY[["min"]], axisRangeY[["max"]])
-}
-
 # TEST MODULE -------------------------------------------------------------
 # To test the module run devtools::load_all() first
 # Please comment this code before building the package

@@ -1,22 +1,23 @@
 test_that("Test module plotExportServer", {
   # Create a sample data frame
   data <- data.frame(
-    x = c(1, 2, 3, 4, 5),
-    y = c(2, 4, 1, 7, 3)
+    x = c(0.1, 0.2, 0.3, 0.4, 0.5),
+    y = c(0.2, 0.4, 0.1, 0.7, 0.3)
   )
 
   # Create a scatter plot using ggplot2
-  plot <-   (ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
-    ggplot2::geom_point()) %>%
-    formatTitlesOfGGPlot(plotTitle = list(text = "justTesting", fontType = "plain",
-                                          color = "#000000", size = 12L, hide = FALSE),
-                         axisTitleX = list(text = "", fontType = "plain", color = "#000000",
-                                           size = 12L, hide = FALSE),
-                         axisTitleY = list(text = "moreTesting", fontType = "plain",
-                                           color = "#000000", size = 12L, hide = FALSE))
+  plot <- (ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
+             ggplot2::geom_point()) %>%
+    formatTitlesOfGGPlot(titles = list(plot = list(text = "justTesting", fontType = "plain",
+                                                   color = "#000000", size = 12L, hide = FALSE),
+                                       xAxis = list(text = "", fontType = "plain", color = "#000000",
+                                                    size = 12L, hide = FALSE),
+                                       yAxis = list(text = "moreTesting", fontType = "plain",
+                                                    color = "#000000", size = 12L, hide = FALSE)))
 
   testServer(plotExportServer,
-             args = list(plotFun = reactive({function() plot})),
+             args = list(plotFun = reactive({function() plot}),
+                         plotType = "ggplot"),
              {
                # Arrange
                print("test export plot")

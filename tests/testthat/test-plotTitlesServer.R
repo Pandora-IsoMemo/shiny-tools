@@ -1,5 +1,6 @@
 test_that("Test module plotTitlesServer", {
   testServer(plotTitlesServer,
+             args = list(type = "ggplot"),
              {
                # Arrange
                print("test plot titles")
@@ -7,7 +8,7 @@ test_that("Test module plotTitlesServer", {
                session$setInputs(
                  labelName = "xAxis",
                  text = "test",
-                 fontType = 2,
+                 fontType = "bold",
                  color = "#FFFFFF",
                  size = 5,
                  hide = FALSE
@@ -15,10 +16,10 @@ test_that("Test module plotTitlesServer", {
 
                expect_equal(session$returned %>% reactiveValuesToList(),
                             list(plot = list(text = "", fontType = "plain", color = "#000000",
-                                             size = 12, hide = FALSE),
-                                 xAxis = list(text = "test", fontType = 2,
+                                             size = 12L, hide = FALSE),
+                                 xAxis = list(text = "test", fontType = "bold",
                                               color = "#FFFFFF", size = 5, hide = FALSE),
                                  yAxis = list(text = "", fontType = "plain", color = "#000000",
-                                              size = 12, hide = FALSE)))
+                                              size = 12L, hide = FALSE)))
              })
 })

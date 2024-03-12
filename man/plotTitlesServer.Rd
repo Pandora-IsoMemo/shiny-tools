@@ -9,9 +9,9 @@ plotTitlesServer(id, type = c("none", "ggplot", "base"), initTitles = NULL)
 \arguments{
 \item{id}{namespace id}
 
-\item{type}{(character) Type of the plot to add titles to, one of "ggplot", "base".}
+\item{type}{(character) Type of the plot to add titles to, one of "none", "ggplot", "base".}
 
-\item{initTitles}{(reactiveValues) initial titles to be used when loading the plot}
+\item{initTitles}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
 }
 \description{
 Backend for plot titles module

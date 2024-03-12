@@ -1,4 +1,4 @@
-# default format of graph and axis titles
+# default format of graph and axis titles (for plotExport.R)
 defaultGGTitle:
   text: ""
   fontType: "plain"
@@ -12,3 +12,9 @@ defaultBaseTitle:
   color: "#000000"
   size: 1.2
   hide: false
+
+# default range of axis (for plotExport.R)
+defaultRange:
+  min: 0
+  max: 1
+  fromData: true

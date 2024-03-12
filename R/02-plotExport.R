@@ -22,6 +22,8 @@ plotExportButton <- function(id, label = "Export Plot") {
 #' @param plotly (logical) set TRUE if plotFun returns a plotly output
 #' @param plotWidth (reactive) default plot width
 #' @param plotHeight (reactive) default plot height
+#' @param initTitles (list) optional, named list with title definitions, or output of \code{plotTitlesServer}
+#' @param initRanges (list) optional, named list with range definitions, or output of \code{plotRangesServer}
 #'
 #' @export
 plotExportServer <- function(id,
@@ -30,20 +32,25 @@ plotExportServer <- function(id,
                              filename = sprintf("%s_plot", gsub("-", "", Sys.Date())),
                              plotly = FALSE,
                              plotWidth = reactive(1280),
-                             plotHeight = reactive(800)) {
+                             plotHeight = reactive(800),
+                             initTitles = NULL,
+                             initRanges = NULL) {
   plotType <- match.arg(plotType)
   formatFun <- switch (plotType,
                        "none" = noExtraFormat,
-                       "ggplot" = formatTitlesOfGGPlot
+                       "ggplot" = formatWrapperGGplot
   )
 
   moduleServer(id,
                function(input, output, session) {
-                 observeEvent(input$export, {
+                 observe({
+                   if (inherits(initTitles, "reactivevalues"))
+                     initTitles <- reactiveValuesToList(initTitles)
+
                    plotOutputElement <- if (plotly) {
-                     plotlyOutput(session$ns("plotly"))
+                     plotlyOutput(session$ns("exportPlotly"))
                    } else {
-                     plotOutput(session$ns("plot"), height = "300px")
+                     plotOutput(session$ns("exportPlot"), height = "300px")
                    }
 
                    exportTypeChoices <- if (plotly) {
@@ -67,25 +74,31 @@ plotExportServer <- function(id,
                               if (!plotly) numericInput(session$ns("height"), "Height (px)", value = plotHeight()) else NULL,
                        ),
                        if (plotType == "ggplot") {
-                       column(4, plotTitlesUI(session$ns("titlesFormat"), type = "ggplot"))
-                       } else NULL
+                         column(4, plotTitlesUI(session$ns("titlesFormat"),
+                                                type = "ggplot",
+                                                initTitles = initTitles))
+                       } else NULL,
+                       if (plotType == "ggplot") {
+                         column(4, plotRangesUI(session$ns("axesRanges"),
+                                                initRanges = initRanges))
+                       }
                      ),
                      tags$br(),
                      downloadButton(session$ns("exportExecute"), "Export"),
                      easyClose = TRUE
                    ))
-                 })
+                 }) %>%
+                   bindEvent(input$export)
 
-                 titles <- plotTitlesServer("titlesFormat", type = plotType)
+                 titles <- plotTitlesServer("titlesFormat", type = plotType, initTitles = initTitles)
+                 ranges <- plotRangesServer("axesRanges", type = plotType, initRanges = initRanges)
 
-                 output$plot <- renderPlot({
+                 output$exportPlot <- renderPlot({
                    plotFun()() %>%
-                     formatFun(plotTitle = titles[["plot"]],
-                               axisTitleX = titles[["xAxis"]],
-                               axisTitleY = titles[["yAxis"]])
+                     formatFun(titles = titles, ranges = ranges)
                  })
 
-                 output$plotly <- renderPlotly({
+                 output$exportPlotly <- renderPlotly({
                    plotFun()()
                  })
 
@@ -106,9 +119,10 @@ plotExportServer <- function(id,
                               tiff = tiff(file, width = input$width, height = input$height),
                               svg = svg(file, width = input$width / 72, height = input$height / 72)
                        )
-                       print(plotFun()() %>% formatFun(plotTitle = titles[["plot"]],
-                                                       axisTitleX = titles[["xAxis"]],
-                                                       axisTitleY = titles[["yAxis"]]))
+                       print(
+                         plotFun()() %>%
+                           formatFun(titles = titles, ranges = ranges)
+                       )
                        dev.off()
                      }
                    }
@@ -116,29 +130,8 @@ plotExportServer <- function(id,
                })
 }
 
-noExtraFormat <- function(plot, plotTitle, axisTitleX, axisTitleY) {
+noExtraFormat <- function(plot, ...) {
   plot
-}
-
-formatTitlesOfGGPlot <- function(plot, plotTitle, axisTitleX, axisTitleY) {
-  getElementText <- function(title) {
-    if (title[["hide"]]) {
-      element_blank()
-    } else {
-      element_text(family = "Arial",
-                   size = title[["size"]],
-                   face = title[["fontType"]],
-                   color = title[["color"]])
-    }
-  }
-
-  plot +
-    labs(title = plotTitle[["text"]], x = axisTitleX[["text"]], y = axisTitleY[["text"]]) +
-    theme(
-      plot.title =   getElementText(plotTitle),
-      axis.title.x = getElementText(axisTitleX),
-      axis.title.y = getElementText(axisTitleY)
-    )
 }
 
 # TEST MODULE -------------------------------------------------------------
@@ -155,25 +148,48 @@ formatTitlesOfGGPlot <- function(plot, plotTitle, axisTitleX, axisTitleY) {
 #       collapsible = TRUE,
 #       id = "test"
 #     ),
+#     plotOutput("plot"),
 #     plotExportButton(id = "expPlot")
 #   )
 # )
 #
 # server <- function(input, output, session) {
-#   plotExportServer("expPlot",
-#                    plotFun = reactive({
-#                      function() {
-#                        data <- data.frame(
-#                          x = c(1, 2, 3, 4, 5),
-#                          y = c(2, 4, 1, 7, 3)
-#                        )
+#   testTitles <- reactiveValues(
+#     plot = list(text = "testHeader", fontType = "italic", color = "#000000",
+#                 size = 30, hide = FALSE),
+#     xAxis = list(text = "test", fontType = "bold",
+#                  color = "#FF00EA", size = 25, hide = FALSE),
+#     yAxis = list(text = "", fontType = "plain", color = "#000000",
+#                  size = 12L, hide = FALSE)
+#   )
 #
-#                        ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
-#                          ggplot2::geom_point()
-#                      }
-#                      }),
+#   testRanges <- reactiveValues(
+#     xAxis = list(min = 0L, max = 20, fromData = TRUE),
+#     yAxis = list(min = 0L, max = 10L, fromData = FALSE)
+#   )
+#
+#   testPlotFun <- function() {
+#     data <- data.frame(
+#       x = c(1, 2, 3, 4, 5),
+#       y = c(2, 4, 1, 7, 3)
+#     )
+#
+#     ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
+#       ggplot2::geom_point()
+#   }
+#
+#   output$plot <- renderPlot({
+#     testPlotFun() %>%
+#       formatTitlesOfGGplot(titles = testTitles) %>%
+#       formatRangesOfGGplot(ranges = testRanges)
+#   })
+#
+#   plotExportServer("expPlot",
+#                    plotFun = reactive({ testPlotFun }),
 #                    plotType = "ggplot",
-#                    filename = "plot")
+#                    filename = "plot",
+#                    initTitles = testTitles,
+#                    initRanges = testRanges)
 # }
 #
 # shinyApp(ui = ui, server = server)

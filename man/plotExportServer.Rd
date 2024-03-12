@@ -11,7 +11,9 @@ plotExportServer(
   filename = sprintf("\%s_plot", gsub("-", "", Sys.Date())),
   plotly = FALSE,
   plotWidth = reactive(1280),
-  plotHeight = reactive(800)
+  plotHeight = reactive(800),
+  initTitles = NULL,
+  initRanges = NULL
 )
 }
 \arguments{
@@ -29,6 +31,10 @@ plot before export}
 \item{plotWidth}{(reactive) default plot width}
 
 \item{plotHeight}{(reactive) default plot height}
+
+\item{initTitles}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
+
+\item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
 }
 \description{
 Backend for plot export module

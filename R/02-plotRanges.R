@@ -10,9 +10,8 @@ plotRangesUI <- function(id, initRanges = NULL) {
   if (is.null(initRanges)) {
     # if null: take values from config
     initRanges <- list(
-      plot = defaultTitleFormat(type = type),
-      xAxis = defaultTitleFormat(type = type),
-      yAxis = defaultTitleFormat(type = type)
+      xAxis = config()$defaultRange,
+      yAxis = config()$defaultRange
     )
   }
 

@@ -48,9 +48,9 @@ plotExportServer <- function(id,
                      initTitles <- reactiveValuesToList(initTitles)
 
                    plotOutputElement <- if (plotly) {
-                     plotlyOutput(session$ns("plotly"))
+                     plotlyOutput(session$ns("exportPlotly"))
                    } else {
-                     plotOutput(session$ns("plot"), height = "300px")
+                     plotOutput(session$ns("exportPlot"), height = "300px")
                    }
 
                    exportTypeChoices <- if (plotly) {
@@ -93,12 +93,12 @@ plotExportServer <- function(id,
                  titles <- plotTitlesServer("titlesFormat", type = plotType, initTitles = initTitles)
                  ranges <- plotRangesServer("axesRanges", type = plotType, initRanges = initRanges)
 
-                 output$plot <- renderPlot({
+                 output$exportPlot <- renderPlot({
                    plotFun()() %>%
                      formatFun(titles = titles, ranges = ranges)
                  })
 
-                 output$plotly <- renderPlotly({
+                 output$exportPlotly <- renderPlotly({
                    plotFun()()
                  })
 

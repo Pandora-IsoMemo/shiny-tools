@@ -3,7 +3,7 @@
 export(dataExportButton)
 export(dataExportServer)
 export(fontChoicesSelect)
-export(formatRangeOfGGplot)
+export(formatRangesOfGGplot)
 export(formatTitlesOfGGplot)
 export(headerButtonsUI)
 export(includeShinyToolsCSS)

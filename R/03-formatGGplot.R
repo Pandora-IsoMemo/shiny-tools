@@ -1,7 +1,7 @@
 formatWrapperGGplot <- function(plot, titles, ranges) {
   plot %>%
     formatTitlesOfGGplot(titles = titles) %>%
-    formatRangeOfGGplot(ranges = ranges)
+    formatRangesOfGGplot(ranges = ranges)
 }
 
 #' Format Titles Of GGplot
@@ -41,7 +41,7 @@ formatTitlesOfGGplot <- function(plot, titles) {
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
 #'
 #' @export
-formatRangeOfGGplot <- function(plot, ranges) {
+formatRangesOfGGplot <- function(plot, ranges) {
   axisRangeX <- ranges[["xAxis"]]
   axisRangeY <- ranges[["yAxis"]]
 

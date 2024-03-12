@@ -2,13 +2,10 @@
 #'
 #'
 #' @param id module id
-#' @inheritParams plotTitlesServer
 #'
 #' @return tagList
 #' @export
-plotRangesUI <- function(id, type = c("ggplot", "base")) {
-  type <- match.arg(type)
-
+plotRangesUI <- function(id) {
   ns <- NS(id)
   tagList(
     h4("Ranges"),
@@ -24,7 +21,7 @@ plotRangesUI <- function(id, type = c("ggplot", "base")) {
     checkboxInput(
       inputId = ns("fromData"),
       label = "From data",
-      value = FALSE,
+      value = TRUE,
       width = "100%"
     ),
     numericInput(

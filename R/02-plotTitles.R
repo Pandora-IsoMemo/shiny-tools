@@ -22,7 +22,7 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
       ),
       selected = NA
     ),
-    textInput(ns("text"), label = "Text", value = NULL, placeholder = "Please set title first!"),
+    textInput(ns("text"), label = "Text", value = NULL, placeholder = "Custom title ..."),
     colourInput(ns("color"), label = "Text color",
                 value = defaultTitleFormat(type = type)[["color"]]),
     selectInput(
@@ -180,7 +180,14 @@ defaultTitleFormat <- function(type = c("none", "ggplot", "base")) {
 # )
 #
 # server <- function(input, output, session) {
-#   plotTitlesServer("testMod")
+#   plotTitlesServer("testMod",
+#                    type = "ggplot",
+#                    titles = list(plot = list(text = "testHeader", fontType = "italic", color = "#000000",
+#                                              size = 32L, hide = FALSE),
+#                                  xAxis = list(text = "test", fontType = "bold",
+#                                               color = "#FF00EA", size = 25, hide = FALSE),
+#                                  yAxis = list(text = "", fontType = "plain", color = "#000000",
+#                                               size = 12L, hide = FALSE)))
 # }
 #
 # shinyApp(ui = ui, server = server)

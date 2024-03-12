@@ -4,12 +4,10 @@
 \alias{plotRangesUI}
 \title{Plot Ranges UI}
 \usage{
-plotRangesUI(id, type = c("ggplot", "base"))
+plotRangesUI(id)
 }
 \arguments{
 \item{id}{module id}
-
-\item{type}{(character) Type of the plot to add titles to, one of "ggplot", "base".}
 }
 \value{
 tagList

@@ -74,7 +74,7 @@ plotExportServer <- function(id,
                          column(4, plotTitlesUI(session$ns("titlesFormat"), type = "ggplot"))
                        } else NULL,
                        if (plotType == "ggplot") {
-                         column(4, plotRangesUI(session$ns("axesRanges"), type = "ggplot"))
+                         column(4, plotRangesUI(session$ns("axesRanges")))
                        }
                      ),
                      tags$br(),
@@ -156,14 +156,14 @@ noExtraFormat <- function(plot, ...) {
 #                      }),
 #                    plotType = "ggplot",
 #                    filename = "plot",
-#                    titles = list(plot = list(text = "testHeader", fontType = "italic", color = "#000000",
-#                                              size = 32L, hide = FALSE),
-#                                  xAxis = list(text = "test", fontType = "bold",
-#                                               color = "#FF00EA", size = 25, hide = FALSE),
-#                                  yAxis = list(text = "", fontType = "plain", color = "#000000",
-#                                               size = 12L, hide = FALSE)),
-#                    ranges = list(xAxis = list(min = 0L, max = 20, fromData = TRUE),
-#                                  yAxis = list(min = 0L, max = 10L, fromData = FALSE)))
+#                    titles = reactiveValues(plot = list(text = "testHeader", fontType = "italic", color = "#000000",
+#                                                        size = 32L, hide = FALSE),
+#                                            xAxis = list(text = "test", fontType = "bold",
+#                                                         color = "#FF00EA", size = 25, hide = FALSE),
+#                                            yAxis = list(text = "", fontType = "plain", color = "#000000",
+#                                                         size = 12L, hide = FALSE)),
+#                    ranges = reactiveValues(xAxis = list(min = 0L, max = 20, fromData = TRUE),
+#                                            yAxis = list(min = 0L, max = 10L, fromData = FALSE)))
 # }
 #
 # shinyApp(ui = ui, server = server)

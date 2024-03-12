@@ -129,11 +129,11 @@ sizeValuesSlider  <- function(type = c("ggplot", "base")) {
   switch (type,
           "base" = list(value = 1.2,
                         min = 0.1,
-                        max = 5,
+                        max = 10,
                         step = 0.1),
           "ggplot" = list(value = 12,
                           min = 1,
-                          max = 20,
+                          max = 30,
                           step = 1)
   )
 }

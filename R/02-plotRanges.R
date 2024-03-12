@@ -14,7 +14,7 @@ plotRangesUI <- function(id, type = c("ggplot", "base")) {
     h4("Ranges"),
     selectInput(
       inputId = ns("labelName"),
-      label = "Label",
+      label = "Axis",
       choices = c(
         "x axis" = "xAxis",
         "y axis" = "yAxis"

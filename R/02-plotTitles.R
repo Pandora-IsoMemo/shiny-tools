@@ -22,7 +22,7 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
       ),
       selected = NA
     ),
-    textInput(ns("text"), label = "Text", value = NULL),
+    textInput(ns("text"), label = "Text", value = NULL, placeholder = "Please set title first!"),
     colourInput(ns("color"), label = "Text color",
                 value = defaultTitleFormat(type = type)[["color"]]),
     selectInput(

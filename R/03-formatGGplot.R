@@ -1,9 +1,7 @@
-formatWrapperGGplot <- function(plot,
-                                plotTitle, axisTitleX, axisTitleY,
-                                axisRangeX, axisRangeY) {
+formatWrapperGGplot <- function(plot, titles, ranges) {
   plot %>%
-    formatTitlesOfGGplot(titles = list(plot = plotTitle, xAxis = axisTitleX, yAxis = axisTitleY)) %>%
-    axesRangeOfGGplot(ranges = list(xAxis = axisRangeX, yAxis = axisRangeY))
+    formatTitlesOfGGplot(titles = titles) %>%
+    axesRangeOfGGplot(ranges = ranges)
 }
 
 #' Format Titles Of GGplot

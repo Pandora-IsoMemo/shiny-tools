@@ -83,12 +83,7 @@ plotExportServer <- function(id,
                  ranges <- plotRangesServer("axesRanges", type = plotType)
 
                  output$plot <- renderPlot({
-                   plotFun()() %>%
-                     formatFun(plotTitle = titles[["plot"]],
-                               axisTitleX = titles[["xAxis"]],
-                               axisTitleY = titles[["yAxis"]],
-                               axisRangeX = ranges[["xAxis"]],
-                               axisRangeY = ranges[["yAxis"]])
+                   plotFun()() %>% formatFun(titles = titles, ranges = ranges)
                  })
 
                  output$plotly <- renderPlotly({
@@ -112,11 +107,7 @@ plotExportServer <- function(id,
                               tiff = tiff(file, width = input$width, height = input$height),
                               svg = svg(file, width = input$width / 72, height = input$height / 72)
                        )
-                       print(plotFun()() %>% formatFun(plotTitle = titles[["plot"]],
-                                                       axisTitleX = titles[["xAxis"]],
-                                                       axisTitleY = titles[["yAxis"]],
-                                                       axisRangeX = ranges[["xAxis"]],
-                                                       axisRangeY = ranges[["yAxis"]]))
+                       print(plotFun()() %>% formatFun(titles = titles, ranges = ranges))
                        dev.off()
                      }
                    }

@@ -2,7 +2,7 @@
 
 #' @importFrom colourpicker colourInput
 #' @importFrom DataTools tryCatchWithWarningsAndErrors
-#' @importFrom ggplot2 element_blank element_text labs theme xlim ylim
+#' @importFrom ggplot2 element_blank element_text ggtitle theme xlab xlim ylab ylim
 #' @importFrom grDevices dev.off pdf png svg tiff
 #' @importFrom magrittr %>%
 #' @importFrom openxlsx write.xlsx

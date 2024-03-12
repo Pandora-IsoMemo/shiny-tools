@@ -28,8 +28,8 @@ test_that("Test module plotExportServer", {
                  exportType = "png"
                )
 
-               expect_equal(output$plot %>% names(),
+               expect_equal(output$exportPlot %>% names(),
                             c("src", "width", "height", "alt", "coordmap"))
-               expect_true(length(output$plot$coordmap$panels[[1]]$mapping) == 2)
+               expect_true(length(output$exportPlot$coordmap$panels[[1]]$mapping) == 2)
              })
 })

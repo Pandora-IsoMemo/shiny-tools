@@ -27,9 +27,9 @@ formatTitlesOfGGplot <- function(plot, titles) {
   axisTitleX <- titles[["xAxis"]]
   axisTitleY <- titles[["yAxis"]]
 
-  if (plotTitle[["text"]] != "") plot <- plot + labs(title = plotTitle[["text"]])
-  if (axisTitleX[["text"]] != "") plot <- plot + labs(x = axisTitleX[["text"]])
-  if (axisTitleY[["text"]] != "") plot <- plot + labs(y = axisTitleY[["text"]])
+  if (plotTitle[["text"]] != "") plot <- plot + ggtitle(label = plotTitle[["text"]])
+  if (axisTitleX[["text"]] != "") plot <- plot + xlab(axisTitleX[["text"]])
+  if (axisTitleY[["text"]] != "") plot <- plot + ylab(axisTitleY[["text"]])
 
   plot +
     theme(

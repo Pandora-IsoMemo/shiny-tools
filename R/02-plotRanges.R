@@ -2,10 +2,20 @@
 #'
 #'
 #' @param id module id
+#' @inheritParams plotExportServer
 #'
 #' @return tagList
 #' @export
-plotRangesUI <- function(id) {
+plotRangesUI <- function(id, initRanges = NULL) {
+  if (is.null(initRanges)) {
+    # if null: take values from config
+    initRanges <- list(
+      plot = defaultTitleFormat(type = type),
+      xAxis = defaultTitleFormat(type = type),
+      yAxis = defaultTitleFormat(type = type)
+    )
+  }
+
   ns <- NS(id)
   tagList(
     h4("Ranges"),
@@ -16,23 +26,23 @@ plotRangesUI <- function(id) {
         "x axis" = "xAxis",
         "y axis" = "yAxis"
       ),
-      selected = NA
+      selected = "xAxis"
     ),
     checkboxInput(
       inputId = ns("fromData"),
       label = "From data",
-      value = TRUE,
+      value = initRanges[["xAxis"]][["fromData"]],
       width = "100%"
     ),
     numericInput(
       ns("min"),
       label = "Minimum",
-      value = 0
+      value = initRanges[["xAxis"]][["min"]]
     ),
     numericInput(
       ns("max"),
       label = "Maximum",
-      value = 1
+      value = initRanges[["xAxis"]][["max"]]
     )
   )
 }
@@ -43,26 +53,28 @@ plotRangesUI <- function(id) {
 #'
 #' @param id namespace id
 #' @param type (character) Type of the plot to add ranges to, one of "ggplot", "base".
-#' @param ranges (reactiveValues) initial ranges to be used when loading the plot
+#' @inheritParams plotExportServer
 #'
 #' @export
-plotRangesServer <- function(id, type = c("none", "ggplot", "base"), ranges = NULL) {
+plotRangesServer <- function(id, type = c("none", "ggplot", "base"), initRanges = NULL) {
   type <- match.arg(type)
 
   moduleServer(id,
                function(input, output, session) {
-                 if (is.null(ranges)) {
+                 if (is.null(initRanges)) {
                    # if null: take values from config
                    ranges <- reactiveValues(
                      xAxis = config()$defaultRange,
                      yAxis = config()$defaultRange
                    )
-                 } else if (inherits(ranges, "list")) {
+                 } else if (inherits(initRanges, "list")) {
                    # if list: use values to set default values
                    ranges <- reactiveValues(
-                     xAxis = ranges[["xAxis"]],
-                     yAxis = ranges[["yAxis"]]
+                     xAxis = initRanges[["xAxis"]],
+                     yAxis = initRanges[["yAxis"]]
                    )
+                 } else {
+                   ranges <- initRanges
                  }
 
                  if (type == "none") return(ranges)

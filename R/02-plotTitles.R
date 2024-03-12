@@ -3,11 +3,21 @@
 #'
 #' @param id module id
 #' @inheritParams plotTitlesServer
+#' @inheritParams plotExportServer
 #'
 #' @return tagList
 #' @export
-plotTitlesUI <- function(id, type = c("ggplot", "base")) {
+plotTitlesUI <- function(id, type = c("ggplot", "base"), initTitles = NULL) {
   type <- match.arg(type)
+
+  if (is.null(initTitles)) {
+    # if null: take values from config
+    initTitles <- list(
+      plot = defaultTitleFormat(type = type),
+      xAxis = defaultTitleFormat(type = type),
+      yAxis = defaultTitleFormat(type = type)
+    )
+  }
 
   ns <- NS(id)
   tagList(
@@ -20,21 +30,23 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
         "x axis" = "xAxis",
         "y axis" = "yAxis"
       ),
-      selected = NA
+      selected = "plot"
     ),
-    textInput(ns("text"), label = "Text", value = NULL, placeholder = "Custom title ..."),
-    colourInput(ns("color"), label = "Text color",
-                value = defaultTitleFormat(type = type)[["color"]]),
+    textInput(ns("text"), label = "Text",
+              value = initTitles[["plot"]][["text"]],
+              placeholder = "Custom title ..."),
+    colourInput(ns("color"),
+                label = "Text color",
+                value = initTitles[["plot"]][["color"]]),
     selectInput(
       ns("fontType"),
       label = "Font type",
       choices = fontChoicesSelect(type = type),
-      selected = NULL
-    ),
+      selected = initTitles[["plot"]][["fontType"]]),
     sliderInput(
       ns("size"),
       label = "Text size",
-      value = sizeValuesSlider(type = type)[["value"]],
+      value = initTitles[["plot"]][["size"]],
       min = sizeValuesSlider(type = type)[["min"]],
       max = sizeValuesSlider(type = type)[["max"]],
       step = sizeValuesSlider(type = type)[["step"]]
@@ -42,7 +54,7 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
     checkboxInput(
       inputId = ns("hide"),
       label = "Hide label",
-      value = FALSE,
+      value = initTitles[["plot"]][["hide"]],
       width = "100%"
     )
   )
@@ -53,34 +65,36 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
 #' Backend for plot titles module
 #'
 #' @param id namespace id
-#' @param type (character) Type of the plot to add titles to, one of "ggplot", "base".
-#' @param titles (reactiveValues) initial titles to be used when loading the plot
+#' @param type (character) Type of the plot to add titles to, one of "none", "ggplot", "base".
+#' @inheritParams plotExportServer
 #'
 #' @export
-plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), titles = NULL) {
+plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initTitles = NULL) {
   type <- match.arg(type)
 
   moduleServer(id,
                function(input, output, session) {
-                 if (is.null(titles)) {
+                 if (is.null(initTitles)) {
                    # if null: take values from config
                    titles <- reactiveValues(
                      plot = defaultTitleFormat(type = type),
                      xAxis = defaultTitleFormat(type = type),
                      yAxis = defaultTitleFormat(type = type)
                    )
-                 } else if (inherits(titles, "list")) {
-                   # if list: use values to set default values
+                 } else if (inherits(initTitles, "list")) {
                    titles <- reactiveValues(
-                     plot = titles[["plot"]],
-                     xAxis = titles[["xAxis"]],
-                     yAxis = titles[["yAxis"]]
+                     plot = initTitles[["plot"]],
+                     xAxis = initTitles[["xAxis"]],
+                     yAxis = initTitles[["yAxis"]]
                    )
+                 } else {
+                   titles <- initTitles
                  }
 
                  if (type == "none") return(titles)
 
                  observe({
+                   req(input[["labelName"]])
                    updateUserInputs(id, input = input, output = output, session = session,
                                     userInputs = titles[[input[["labelName"]]]])
                  }) %>%
@@ -88,17 +102,33 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), titles = NU
 
                  observe({
                    req(input[["labelName"]])
-                   titles[[input[["labelName"]]]] <- list(text = input[["text"]],
-                                                          fontType = input[["fontType"]],
-                                                          color = input[["color"]],
-                                                          size = input[["size"]],
-                                                          hide = input[["hide"]])
+                   titles[[input[["labelName"]]]][["text"]] <- input[["text"]]
                  }) %>%
-                   bindEvent(list(input[["text"]],
-                                  input[["fontType"]],
-                                  input[["color"]],
-                                  input[["size"]],
-                                  input[["hide"]]))
+                   bindEvent(input[["text"]])
+
+                 observe({
+                   req(input[["labelName"]])
+                   titles[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
+                 }) %>%
+                   bindEvent(input[["fontType"]])
+
+                 observe({
+                   req(input[["labelName"]])
+                   titles[[input[["labelName"]]]][["color"]] <- input[["color"]]
+                 }) %>%
+                   bindEvent(input[["color"]])
+
+                 observe({
+                   req(input[["labelName"]])
+                   titles[[input[["labelName"]]]][["size"]] <- input[["size"]]
+                 }) %>%
+                   bindEvent(input[["size"]])
+
+                 observe({
+                   req(input[["labelName"]])
+                   titles[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
+                 }) %>%
+                   bindEvent(input[["hide"]])
 
                  return(titles)
                })

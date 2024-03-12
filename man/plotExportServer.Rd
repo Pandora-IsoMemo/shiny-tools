@@ -12,8 +12,8 @@ plotExportServer(
   plotly = FALSE,
   plotWidth = reactive(1280),
   plotHeight = reactive(800),
-  titles = NULL,
-  ranges = NULL
+  initTitles = NULL,
+  initRanges = NULL
 )
 }
 \arguments{
@@ -32,9 +32,9 @@ plot before export}
 
 \item{plotHeight}{(reactive) default plot height}
 
-\item{titles}{(list) optional, named list with title definitions, output of \code{plotTitlesServer}}
+\item{initTitles}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
 
-\item{ranges}{(list) optional, named list with range definitions, output of \code{plotRangesServer}}
+\item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
 }
 \description{
 Backend for plot export module

@@ -4,10 +4,12 @@
 \alias{plotRangesUI}
 \title{Plot Ranges UI}
 \usage{
-plotRangesUI(id)
+plotRangesUI(id, initRanges = NULL)
 }
 \arguments{
 \item{id}{module id}
+
+\item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
 }
 \value{
 tagList

@@ -4,12 +4,14 @@
 \alias{plotTitlesUI}
 \title{Plot Titles UI}
 \usage{
-plotTitlesUI(id, type = c("ggplot", "base"))
+plotTitlesUI(id, type = c("ggplot", "base"), initTitles = NULL)
 }
 \arguments{
 \item{id}{module id}
 
-\item{type}{(character) Type of the plot to add titles to, one of "ggplot", "base".}
+\item{type}{(character) Type of the plot to add titles to, one of "none", "ggplot", "base".}
+
+\item{initTitles}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
 }
 \value{
 tagList

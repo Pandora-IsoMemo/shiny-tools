@@ -1,9 +1,9 @@
-formatWrapperGGPlot <- function(plot,
+formatWrapperGGplot <- function(plot,
                                 plotTitle, axisTitleX, axisTitleY,
                                 axisRangeX, axisRangeY) {
   plot %>%
-    formatTitlesOfGGPlot(titles = list(plot = plotTitle, xAxis = axisTitleX, yAxis = axisTitleY)) %>%
-    axesRangeOfGGPlot(ranges = list(xAxis = axisRangeX, yAxis = axisRangeY))
+    formatTitlesOfGGplot(titles = list(plot = plotTitle, xAxis = axisTitleX, yAxis = axisTitleY)) %>%
+    axesRangeOfGGplot(ranges = list(xAxis = axisRangeX, yAxis = axisRangeY))
 }
 
 #' Format Titles Of GGplot
@@ -12,7 +12,7 @@ formatWrapperGGPlot <- function(plot,
 #' @param titles (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
 #' @export
-formatTitlesOfGGPlot <- function(plot, titles) {
+formatTitlesOfGGplot <- function(plot, titles) {
   getElementText <- function(titleDef) {
     if (titleDef[["hide"]]) {
       element_blank()
@@ -43,7 +43,7 @@ formatTitlesOfGGPlot <- function(plot, titles) {
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
 #'
 #' @export
-axesRangeOfGGPlot <- function(plot, ranges) {
+axesRangeOfGGplot <- function(plot, ranges) {
   axisRangeX <- ranges[["xAxis"]]
   axisRangeY <- ranges[["yAxis"]]
 

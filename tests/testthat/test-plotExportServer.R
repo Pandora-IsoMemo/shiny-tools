@@ -8,7 +8,7 @@ test_that("Test module plotExportServer", {
   # Create a scatter plot using ggplot2
   plot <- (ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
              ggplot2::geom_point()) %>%
-    formatTitlesOfGGPlot(titles = list(plot = list(text = "justTesting", fontType = "plain",
+    formatTitlesOfGGplot(titles = list(plot = list(text = "justTesting", fontType = "plain",
                                                    color = "#000000", size = 12L, hide = FALSE),
                                        xAxis = list(text = "", fontType = "plain", color = "#000000",
                                                     size = 12L, hide = FALSE),

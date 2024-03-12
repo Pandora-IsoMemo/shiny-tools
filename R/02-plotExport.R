@@ -34,7 +34,7 @@ plotExportServer <- function(id,
   plotType <- match.arg(plotType)
   formatFun <- switch (plotType,
                        "none" = noExtraFormat,
-                       "ggplot" = formatWrapperGGPlot
+                       "ggplot" = formatWrapperGGplot
   )
 
   moduleServer(id,

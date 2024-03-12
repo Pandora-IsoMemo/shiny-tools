@@ -54,17 +54,15 @@ plotTitlesUI <- function(id, type = c("ggplot", "base")) {
 #'
 #' @param id namespace id
 #' @param type (character) Type of the plot to add titles to, one of "ggplot", "base".
-#' @param initTitles (reactiveValues) initial titles to be used when loading the plot
+#' @param titles (reactiveValues) initial titles to be used when loading the plot
 #'
 #' @export
-plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initTitles = NULL) {
+plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), titles = NULL) {
   type <- match.arg(type)
 
   moduleServer(id,
                function(input, output, session) {
-                 if (!is.null(initTitles)) {
-                   titles <- initTitles
-                 } else {
+                 if (is.null(titles)) {
                    titles <- reactiveValues(
                      plot = defaultTitleFormat(type = type),
                      xAxis = defaultTitleFormat(type = type),

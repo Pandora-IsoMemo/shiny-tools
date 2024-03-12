@@ -22,6 +22,8 @@ plotExportButton <- function(id, label = "Export Plot") {
 #' @param plotly (logical) set TRUE if plotFun returns a plotly output
 #' @param plotWidth (reactive) default plot width
 #' @param plotHeight (reactive) default plot height
+#' @param titles (list) optional, named list with title definitions, output of \code{plotTitlesServer}
+#' @param ranges (list) optional, named list with range definitions, output of \code{plotRangesServer}
 #'
 #' @export
 plotExportServer <- function(id,
@@ -30,7 +32,9 @@ plotExportServer <- function(id,
                              filename = sprintf("%s_plot", gsub("-", "", Sys.Date())),
                              plotly = FALSE,
                              plotWidth = reactive(1280),
-                             plotHeight = reactive(800)) {
+                             plotHeight = reactive(800),
+                             titles = NULL,
+                             ranges = NULL) {
   plotType <- match.arg(plotType)
   formatFun <- switch (plotType,
                        "none" = noExtraFormat,
@@ -79,8 +83,8 @@ plotExportServer <- function(id,
                    ))
                  })
 
-                 titles <- plotTitlesServer("titlesFormat", type = plotType)
-                 ranges <- plotRangesServer("axesRanges", type = plotType)
+                 titles <- plotTitlesServer("titlesFormat", type = plotType, titles = titles)
+                 ranges <- plotRangesServer("axesRanges", type = plotType, ranges = ranges)
 
                  output$plot <- renderPlot({
                    plotFun()() %>% formatFun(titles = titles, ranges = ranges)
@@ -151,7 +155,15 @@ noExtraFormat <- function(plot, ...) {
 #                      }
 #                      }),
 #                    plotType = "ggplot",
-#                    filename = "plot")
+#                    filename = "plot",
+#                    titles = list(plot = list(text = "testHeader", fontType = "italic", color = "#000000",
+#                                              size = 32L, hide = FALSE),
+#                                  xAxis = list(text = "test", fontType = "bold",
+#                                               color = "#FFFFFF", size = 25, hide = FALSE),
+#                                  yAxis = list(text = "testY", fontType = "plain", color = "#000000",
+#                                               size = 12L, hide = FALSE)),
+#                    ranges = list(xAxis = list(min = 0, max = 20),
+#                                  yAxis = list(min = 0L, max = 10L)))
 # }
 #
 # shinyApp(ui = ui, server = server)

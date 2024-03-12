@@ -4,14 +4,14 @@
 \alias{plotTitlesServer}
 \title{Server function for plot titles}
 \usage{
-plotTitlesServer(id, type = c("none", "ggplot", "base"), initTitles = NULL)
+plotTitlesServer(id, type = c("none", "ggplot", "base"), titles = NULL)
 }
 \arguments{
 \item{id}{namespace id}
 
 \item{type}{(character) Type of the plot to add titles to, one of "ggplot", "base".}
 
-\item{initTitles}{(reactiveValues) initial titles to be used when loading the plot}
+\item{titles}{(reactiveValues) initial titles to be used when loading the plot}
 }
 \description{
 Backend for plot titles module

@@ -4,14 +4,14 @@
 \alias{plotRangesServer}
 \title{Server function for plot ranges}
 \usage{
-plotRangesServer(id, type = c("none", "ggplot", "base"), initRanges = NULL)
+plotRangesServer(id, type = c("none", "ggplot", "base"), ranges = NULL)
 }
 \arguments{
 \item{id}{namespace id}
 
 \item{type}{(character) Type of the plot to add ranges to, one of "ggplot", "base".}
 
-\item{initRanges}{(reactiveValues) initial ranges to be used when loading the plot}
+\item{ranges}{(reactiveValues) initial ranges to be used when loading the plot}
 }
 \description{
 Backend for plot ranges module

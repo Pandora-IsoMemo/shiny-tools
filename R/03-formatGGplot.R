@@ -18,7 +18,8 @@ formatTitlesOfGGplot <- function(plot, titles) {
       element_text(family = "Arial",
                    size = titleDef[["size"]],
                    face = titleDef[["fontType"]],
-                   color = titleDef[["color"]])
+                   color = titleDef[["color"]],
+                   hjust = 0.5)
     }
   }
 

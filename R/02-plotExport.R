@@ -160,9 +160,9 @@ noExtraFormat <- function(plot, ...) {
 #                                              size = 32L, hide = FALSE),
 #                                  xAxis = list(text = "test", fontType = "bold",
 #                                               color = "#FFFFFF", size = 25, hide = FALSE),
-#                                  yAxis = list(text = "testY", fontType = "plain", color = "#000000",
+#                                  yAxis = list(text = "", fontType = "plain", color = "#000000",
 #                                               size = 12L, hide = FALSE)),
-#                    ranges = list(xAxis = list(min = 0, max = 20),
+#                    ranges = list(xAxis = list(min = NA, max = 20),
 #                                  yAxis = list(min = 0L, max = 10L)))
 # }
 #

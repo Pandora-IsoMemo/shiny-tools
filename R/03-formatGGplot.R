@@ -27,8 +27,11 @@ formatTitlesOfGGplot <- function(plot, titles) {
   axisTitleX <- titles[["xAxis"]]
   axisTitleY <- titles[["yAxis"]]
 
+  if (plotTitle[["text"]] != "") plot <- plot + labs(title = plotTitle[["text"]])
+  if (axisTitleX[["text"]] != "") plot <- plot + labs(x = axisTitleX[["text"]])
+  if (axisTitleY[["text"]] != "") plot <- plot + labs(y = axisTitleY[["text"]])
+
   plot +
-    labs(title = plotTitle[["text"]], x = axisTitleX[["text"]], y = axisTitleY[["text"]]) +
     theme(
       plot.title   = getElementText(plotTitle),
       axis.title.x = getElementText(axisTitleX),
@@ -46,7 +49,11 @@ formatRangesOfGGplot <- function(plot, ranges) {
   axisRangeX <- ranges[["xAxis"]]
   axisRangeY <- ranges[["yAxis"]]
 
-  plot +
-    xlim(axisRangeX[["min"]], axisRangeX[["max"]]) +
-    ylim(axisRangeY[["min"]], axisRangeY[["max"]])
+  if (!is.na(axisRangeX[["min"]]) && !is.na(axisRangeX[["max"]]))
+    plot <- plot + xlim(axisRangeX[["min"]], axisRangeX[["max"]])
+
+  if (!is.na(axisRangeY[["min"]]) && !is.na(axisRangeY[["max"]]))
+    plot <- plot + ylim(axisRangeY[["min"]], axisRangeY[["max"]])
+
+  plot
 }

@@ -49,10 +49,10 @@ formatRangesOfGGplot <- function(plot, ranges) {
   axisRangeX <- ranges[["xAxis"]]
   axisRangeY <- ranges[["yAxis"]]
 
-  if (!is.na(axisRangeX[["min"]]) && !is.na(axisRangeX[["max"]]))
+  if (!axisRangeX[["fromData"]])
     plot <- plot + xlim(axisRangeX[["min"]], axisRangeX[["max"]])
 
-  if (!is.na(axisRangeY[["min"]]) && !is.na(axisRangeY[["max"]]))
+  if (!axisRangeY[["fromData"]])
     plot <- plot + ylim(axisRangeY[["min"]], axisRangeY[["max"]])
 
   plot

@@ -63,10 +63,18 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), titles = NU
   moduleServer(id,
                function(input, output, session) {
                  if (is.null(titles)) {
+                   # if null: take values from config
                    titles <- reactiveValues(
                      plot = defaultTitleFormat(type = type),
                      xAxis = defaultTitleFormat(type = type),
                      yAxis = defaultTitleFormat(type = type)
+                   )
+                 } else if (inherits(titles, "list")) {
+                   # if list: use values to set default values
+                   titles <- reactiveValues(
+                     plot = titles[["plot"]],
+                     xAxis = titles[["xAxis"]],
+                     yAxis = titles[["yAxis"]]
                    )
                  }
 

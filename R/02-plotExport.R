@@ -159,11 +159,11 @@ noExtraFormat <- function(plot, ...) {
 #                    titles = list(plot = list(text = "testHeader", fontType = "italic", color = "#000000",
 #                                              size = 32L, hide = FALSE),
 #                                  xAxis = list(text = "test", fontType = "bold",
-#                                               color = "#FFFFFF", size = 25, hide = FALSE),
+#                                               color = "#FF00EA", size = 25, hide = FALSE),
 #                                  yAxis = list(text = "", fontType = "plain", color = "#000000",
 #                                               size = 12L, hide = FALSE)),
-#                    ranges = list(xAxis = list(min = NA, max = 20),
-#                                  yAxis = list(min = 0L, max = 10L)))
+#                    ranges = list(xAxis = list(min = 0L, max = 20, fromData = TRUE),
+#                                  yAxis = list(min = 0L, max = 10L, fromData = FALSE)))
 # }
 #
 # shinyApp(ui = ui, server = server)

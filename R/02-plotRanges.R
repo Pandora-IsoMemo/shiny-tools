@@ -21,6 +21,12 @@ plotRangesUI <- function(id, type = c("ggplot", "base")) {
       ),
       selected = NA
     ),
+    checkboxInput(
+      inputId = ns("fromData"),
+      label = "From data",
+      value = FALSE,
+      width = "100%"
+    ),
     numericInput(
       ns("min"),
       label = "Minimum",
@@ -49,9 +55,16 @@ plotRangesServer <- function(id, type = c("none", "ggplot", "base"), ranges = NU
   moduleServer(id,
                function(input, output, session) {
                  if (is.null(ranges)) {
+                   # if null: take values from config
                    ranges <- reactiveValues(
                      xAxis = config()$defaultRange,
                      yAxis = config()$defaultRange
+                   )
+                 } else if (inherits(ranges, "list")) {
+                   # if list: use values to set default values
+                   ranges <- reactiveValues(
+                     xAxis = ranges[["xAxis"]],
+                     yAxis = ranges[["yAxis"]]
                    )
                  }
 
@@ -80,6 +93,12 @@ plotRangesServer <- function(id, type = c("none", "ggplot", "base"), ranges = NU
                    updateNumericInput(session, "min", value = minValue, max = input[["max"]])
                  }) %>%
                    bindEvent(input[["max"]])
+
+                 observe({
+                   req(input[["labelName"]])
+                   ranges[[input[["labelName"]]]][["fromData"]] <- input[["fromData"]]
+                 }) %>%
+                   bindEvent(input[["fromData"]])
 
                  return(ranges)
                })

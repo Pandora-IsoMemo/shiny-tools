@@ -45,4 +45,10 @@
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/index.html</loc>
   </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotExportButton.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotExportServer.html</loc>
+  </url>
 </urlset>

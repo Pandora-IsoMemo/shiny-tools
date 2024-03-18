@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.03.4
+Version: 24.03.3
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut"))
             )
@@ -24,5 +24,7 @@ Imports:
     yaml
 RoxygenNote: 7.2.3
 Suggests: 
+    ggplot2,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://pandora-isomemo.github.io/shiny-tools/

@@ -18,3 +18,12 @@ defaultRange:
   min: 0
   max: 1
   fromData: true
+
+# default point style
+defaultPointStyle:
+  symbol: 19
+  color: "#000000"
+  colorBg: "#000000"
+  size: 1
+  lineWidthBg: 2
+  hide: false

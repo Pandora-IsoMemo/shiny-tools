@@ -57,3 +57,22 @@ formatRangesOfGGplot <- function(plot, ranges) {
 
   plot
 }
+
+#' Point Style Of GGplot
+#'
+#' Style of points is defined with \code{pointStyle}. Overwrites previous definitions of \code{geom_point}
+#'
+#' @param plot (ggplot)
+#' @param pointStyle (list) named list with style definitions, or output of \code{plotPointsServer}
+#'
+#' @export
+formatPointsOfGGplot <- function(plot, pointStyle) {
+  dataPoints <- pointStyle[["dataPoints"]]
+
+  plot +
+    geom_point(shape = dataPoints[["symbol"]],
+               size = dataPoints[["size"]],
+               colour = dataPoints[["color"]],
+               fill = dataPoints[["colorBg"]],
+               alpha = ifelse(dataPoints[["hide"]], 0, 1))
+}

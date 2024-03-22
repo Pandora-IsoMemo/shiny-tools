@@ -89,7 +89,7 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
                      yAxisText = defaultInitText(type = type)[["yAxisText"]]
                    )
                  } else if (inherits(initText, "list")) {
-                   initText <- validateInitText(initText, type = type)
+                   #initText <- validateInitText(initText, type = type)
 
                    text <- reactiveValues(
                      plotTitle = initText[["plotTitle"]],

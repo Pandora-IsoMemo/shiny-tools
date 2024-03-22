@@ -22,6 +22,12 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/dataExportServer.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/defaultInitText.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/defaultTextFormat.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/dot-onLoad.html</loc>
   </url>
   <url>
@@ -37,6 +43,15 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportXLSX.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/fontChoicesSelect.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatRangesOfGGplot.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatTitlesOfGGplot.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/headerButtonsUI.html</loc>
   </url>
   <url>
@@ -46,9 +61,36 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/observeAndUpdateRangeElementsOfLabel.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/observeAndUpdateTextElementsOfLabel.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotExportButton.html</loc>
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotExportServer.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotRangesServer.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotRangesUI.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotTitlesServer.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotTitlesUI.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/sizeValuesSlider.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/updateUserInputs.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/validateInitText.html</loc>
   </url>
 </urlset>

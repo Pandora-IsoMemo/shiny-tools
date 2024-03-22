@@ -16,7 +16,7 @@ test_that("Test module plotPointsServer", {
                expect_equal(session$returned %>% reactiveValuesToList(),
                             list(dataPoints =
                                    list(symbol = 24, color = "#FF00EA", colorBg = "#00FF22",
-                                        size = 5, lineWidthBg = 2, hide = FALSE)))
+                                        size = 5, alpha = 1, lineWidthBg = 2, hide = FALSE)))
              })
 })
 
@@ -31,7 +31,7 @@ test_that("Test module formatPointsOfGGplot", {
   plot <- ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) %>%
     formatPointsOfGGplot(pointStyle = list(dataPoints =
                                              list(symbol = 24, color = "#FF00EA", colorBg = "#00FF22",
-                                                  size = 5, hide = FALSE)))
+                                                  size = 5, hide = FALSE, alpha = 0.2)))
 
   # test labels and titles
   expect_equal(plot$labels, list(x = "x", y = "y"))

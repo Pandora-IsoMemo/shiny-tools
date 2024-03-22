@@ -64,15 +64,23 @@ formatRangesOfGGplot <- function(plot, ranges) {
 #'
 #' @param plot (ggplot)
 #' @param pointStyle (list) named list with style definitions, or output of \code{plotPointsServer}
+#' @inheritParams ggplot2::geom_point
 #'
 #' @export
-formatPointsOfGGplot <- function(plot, pointStyle) {
+formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
+  if (is.null(pointStyle)) {
+    # if null: take values from config
+    pointStyle <- config()$defaultPointStyle
+  }
+
   dataPoints <- pointStyle[["dataPoints"]]
 
   plot +
-    geom_point(shape = dataPoints[["symbol"]],
+    geom_point(data = data,
+               shape = dataPoints[["symbol"]],
                size = dataPoints[["size"]],
                colour = dataPoints[["color"]],
                fill = dataPoints[["colorBg"]],
-               alpha = ifelse(dataPoints[["hide"]], 0, 1))
+               alpha = ifelse(dataPoints[["hide"]], 0, dataPoints[["alpha"]]),
+               ...)
 }

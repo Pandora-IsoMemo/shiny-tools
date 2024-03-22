@@ -7,9 +7,10 @@
 #' @return tagList
 #' @export
 plotPointsUI <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
+  type <- match.arg(type)
   if (is.null(initStyle)) {
     # if null: take values from config
-    initStyle <- list(dataPoints = config()$defaultPointStyle)
+    initStyle <- config()$defaultPointStyle
   }
 
   ns <- NS(id)
@@ -38,6 +39,13 @@ plotPointsUI <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
       min = 0,
       max = 20,
       value = initStyle[["dataPoints"]][["size"]]
+    ),
+    sliderInput(
+      inputId = ns("alpha"),
+      label = "Opacity",
+      min = 0,
+      max = 1,
+      value = initStyle[["dataPoints"]][["alpha"]]
     ),
     conditionalPanel(
       condition = "input.symbol == 21 | input.symbol == 22 |input.symbol == 23 |input.symbol == 24 |input.symbol == 25",
@@ -71,12 +79,13 @@ plotPointsUI <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
 #'
 #' @export
 plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
+  type <- match.arg(type)
   moduleServer(id,
                function(input, output, session) {
                  if (is.null(initStyle)) {
                    # if null: take values from config
                    style <- reactiveValues(
-                     dataPoints = config()$defaultPointStyle
+                     dataPoints = config()$defaultPointStyle[["dataPoints"]]
                      # one could add different types of points if needed, e.g. outliers, custom, ...
                      )
                  } else if (inherits(initStyle, "list")) {
@@ -107,6 +116,11 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
                    style[["dataPoints"]][["size"]] <- input[["size"]]
                  }) %>%
                    bindEvent(input[["size"]])
+
+                 observe({
+                   style[["dataPoints"]][["alpha"]] <- input[["alpha"]]
+                 }) %>%
+                   bindEvent(input[["alpha"]])
 
                  observe({
                    style[["dataPoints"]][["hide"]] <- input[["hide"]]
@@ -172,7 +186,7 @@ symbolChoicesSelect <- function() {
 
 # testStyle <- function() {
 #   list(dataPoints = list(symbol = 23, color = "#00FF22", colorBg = "#FF00EA",
-#                                     size = 8, lineWidthBg = 1, hide = FALSE))
+#                                     size = 8, alpha = 0.3, lineWidthBg = 1, hide = FALSE))
 # }
 #
 # ui <- fluidPage(

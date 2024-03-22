@@ -1,31 +1,33 @@
-formatWrapperGGplot <- function(plot, titles, ranges) {
+formatWrapperGGplot <- function(plot, text, ranges) {
   plot %>%
-    formatTitlesOfGGplot(titles = titles) %>%
+    formatTitlesOfGGplot(text = text) %>%
     formatRangesOfGGplot(ranges = ranges)
 }
 
 #' Format Titles Of GGplot
 #'
 #' @param plot (ggplot)
-#' @param titles (list) named list with title definitions, output of \code{plotTitlesServer}
+#' @param text (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
 #' @export
-formatTitlesOfGGplot <- function(plot, titles) {
-  getElementText <- function(titleDef) {
-    if (titleDef[["hide"]]) {
+formatTitlesOfGGplot <- function(plot, text) {
+  getElementText <- function(textDef) {
+    if (textDef[["hide"]]) {
       element_blank()
     } else {
       element_text(family = "Arial",
-                   size = titleDef[["size"]],
-                   face = titleDef[["fontType"]],
-                   color = titleDef[["color"]],
+                   size = textDef[["size"]],
+                   face = textDef[["fontType"]],
+                   color = textDef[["color"]],
                    hjust = 0.5)
     }
   }
 
-  plotTitle  <- titles[["plot"]]
-  axisTitleX <- titles[["xAxis"]]
-  axisTitleY <- titles[["yAxis"]]
+  plotTitle  <- text[["plotTitle"]]
+  axisTitleX <- text[["xAxisTitle"]]
+  axisTitleY <- text[["yAxisTitle"]]
+  axisTextX <- text[["xAxisText"]]
+  axisTextY <- text[["yAxisText"]]
 
   if (plotTitle[["text"]] != "") plot <- plot + ggtitle(label = plotTitle[["text"]])
   if (axisTitleX[["text"]] != "") plot <- plot + xlab(axisTitleX[["text"]])
@@ -35,7 +37,9 @@ formatTitlesOfGGplot <- function(plot, titles) {
     theme(
       plot.title   = getElementText(plotTitle),
       axis.title.x = getElementText(axisTitleX),
-      axis.title.y = getElementText(axisTitleY)
+      axis.title.y = getElementText(axisTitleY),
+      axis.text.x = getElementText(axisTextX),
+      axis.text.y = getElementText(axisTextY)
     )
 }
 

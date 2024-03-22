@@ -4,12 +4,12 @@
 \alias{formatTitlesOfGGplot}
 \title{Format Titles Of GGplot}
 \usage{
-formatTitlesOfGGplot(plot, titles)
+formatTitlesOfGGplot(plot, text)
 }
 \arguments{
 \item{plot}{(ggplot)}
 
-\item{titles}{(list) named list with title definitions, output of \code{plotTitlesServer}}
+\item{text}{(list) named list with title definitions, output of \code{plotTitlesServer}}
 }
 \description{
 Format Titles Of GGplot

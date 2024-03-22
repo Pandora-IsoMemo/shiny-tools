@@ -13,6 +13,18 @@ defaultBaseTitle:
   size: 1.2
   hide: false
 
+defaultGGText:
+  fontType: "plain"
+  color: "#000000"
+  size: 10
+  hide: false
+
+defaultBaseText:
+  fontType: 1
+  color: "#000000"
+  size: 1
+  hide: false
+
 # default range of axis (for plotExport.R)
 defaultRange:
   min: 0

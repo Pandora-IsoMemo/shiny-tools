@@ -22,7 +22,7 @@ plotExportButton <- function(id, label = "Export Plot") {
 #' @param plotly (logical) set TRUE if plotFun returns a plotly output
 #' @param plotWidth (reactive) default plot width
 #' @param plotHeight (reactive) default plot height
-#' @param initTitles (list) optional, named list with title definitions, or output of \code{plotTitlesServer}
+#' @param initText (list) optional, named list with title definitions, or output of \code{plotTitlesServer}
 #' @param initRanges (list) optional, named list with range definitions, or output of \code{plotRangesServer}
 #'
 #' @export
@@ -33,7 +33,7 @@ plotExportServer <- function(id,
                              plotly = FALSE,
                              plotWidth = reactive(1280),
                              plotHeight = reactive(800),
-                             initTitles = NULL,
+                             initText = NULL,
                              initRanges = NULL) {
   plotType <- match.arg(plotType)
   formatFun <- switch (plotType,
@@ -44,8 +44,8 @@ plotExportServer <- function(id,
   moduleServer(id,
                function(input, output, session) {
                  observe({
-                   if (inherits(initTitles, "reactivevalues"))
-                     initTitles <- reactiveValuesToList(initTitles)
+                   if (inherits(initText, "reactivevalues"))
+                     initText <- reactiveValuesToList(initText)
 
                    plotOutputElement <- if (plotly) {
                      plotlyOutput(session$ns("exportPlotly"))
@@ -76,7 +76,7 @@ plotExportServer <- function(id,
                        if (plotType == "ggplot") {
                          column(4, plotTitlesUI(session$ns("titlesFormat"),
                                                 type = "ggplot",
-                                                initTitles = initTitles))
+                                                initText = initText))
                        } else NULL,
                        if (plotType == "ggplot") {
                          column(4, plotRangesUI(session$ns("axesRanges"),
@@ -90,12 +90,12 @@ plotExportServer <- function(id,
                  }) %>%
                    bindEvent(input$export)
 
-                 titles <- plotTitlesServer("titlesFormat", type = plotType, initTitles = initTitles)
+                 text <- plotTitlesServer("titlesFormat", type = plotType, initText = initText)
                  ranges <- plotRangesServer("axesRanges", type = plotType, initRanges = initRanges)
 
                  output$exportPlot <- renderPlot({
                    plotFun()() %>%
-                     formatFun(titles = titles, ranges = ranges)
+                     formatFun(text = text, ranges = ranges)
                  })
 
                  output$exportPlotly <- renderPlotly({
@@ -121,7 +121,7 @@ plotExportServer <- function(id,
                        )
                        print(
                          plotFun()() %>%
-                           formatFun(titles = titles, ranges = ranges)
+                           formatFun(text = text, ranges = ranges)
                        )
                        dev.off()
                      }
@@ -155,12 +155,16 @@ noExtraFormat <- function(plot, ...) {
 #
 # server <- function(input, output, session) {
 #   testTitles <- reactiveValues(
-#     plot = list(text = "testHeader", fontType = "italic", color = "#000000",
+#     plotTitle = list(text = "testHeader", fontType = "italic", color = "#000000",
 #                 size = 30, hide = FALSE),
-#     xAxis = list(text = "test", fontType = "bold",
+#     xAxisTitle = list(text = "test", fontType = "bold",
 #                  color = "#FF00EA", size = 25, hide = FALSE),
-#     yAxis = list(text = "", fontType = "plain", color = "#000000",
-#                  size = 12L, hide = FALSE)
+#     yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
+#                  size = 12L, hide = FALSE),
+#     xAxisText = list(fontType = "bold",
+#                       color = "#FF00EA", size = 25, hide = FALSE),
+#     yAxisText = list(fontType = "plain", color = "#000000",
+#                       size = 12L, hide = FALSE)
 #   )
 #
 #   testRanges <- reactiveValues(
@@ -180,7 +184,7 @@ noExtraFormat <- function(plot, ...) {
 #
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%
-#       formatTitlesOfGGplot(titles = testTitles) %>%
+#       formatTitlesOfGGplot(text = testTitles) %>%
 #       formatRangesOfGGplot(ranges = testRanges)
 #   })
 #
@@ -188,7 +192,7 @@ noExtraFormat <- function(plot, ...) {
 #                    plotFun = reactive({ testPlotFun }),
 #                    plotType = "ggplot",
 #                    filename = "plot",
-#                    initTitles = testTitles,
+#                    initText = testTitles,
 #                    initRanges = testRanges)
 # }
 #

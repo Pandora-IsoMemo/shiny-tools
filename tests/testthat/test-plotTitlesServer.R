@@ -6,7 +6,7 @@ test_that("Test module plotTitlesServer", {
                print("test plot titles")
                # Act
                session$setInputs(
-                 labelName = "xAxis",
+                 labelName = "xAxisTitle",
                  text = "test",
                  fontType = "bold",
                  color = "#FFFFFF",
@@ -15,12 +15,17 @@ test_that("Test module plotTitlesServer", {
                )
 
                expect_equal(session$returned %>% reactiveValuesToList(),
-                            list(plot = list(text = "", fontType = "plain", color = "#000000",
-                                             size = 12L, hide = FALSE),
-                                 xAxis = list(text = "test", fontType = "bold",
-                                              color = "#FFFFFF", size = 5, hide = FALSE),
-                                 yAxis = list(text = "", fontType = "plain", color = "#000000",
-                                              size = 12L, hide = FALSE)))
+                            list(plotTitle = list(text = "", fontType = "plain", color = "#000000",
+                                                  size = 12L, hide = FALSE),
+                                 xAxisTitle = list(text = "test", fontType = "bold",
+                                                   color = "#FFFFFF", size = 5, hide = FALSE),
+                                 yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
+                                                   size = 12L, hide = FALSE),
+                                 xAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                                                  hide = FALSE),
+                                 yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                                                  hide = FALSE))
+                            )
              })
 })
 
@@ -34,13 +39,41 @@ test_that("Test module formatTitlesOfGGplot", {
   # Create a scatter plot using ggplot2
   plot <- (ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
              ggplot2::geom_point()) %>%
-    formatTitlesOfGGplot(titles = list(plot = list(text = "justTesting", fontType = "plain",
-                                                   color = "#000000", size = 12L, hide = FALSE),
-                                       xAxis = list(text = "", fontType = "plain", color = "#000000",
-                                                    size = 12L, hide = FALSE),
-                                       yAxis = list(text = "moreTesting", fontType = "plain",
-                                                    color = "#000000", size = 12L, hide = FALSE)))
+    formatTitlesOfGGplot(text = list(plotTitle = list(text = "justTesting", fontType = "plain",
+                                                      color = "#000000", size = 12L, hide = FALSE),
+                                     xAxisTitle = list(text = "", fontType = "plain", color = "#000000",
+                                                       size = 12L, hide = FALSE),
+                                     yAxisTitle = list(text = "moreTesting", fontType = "plain",
+                                                      color = "#000000", size = 12L, hide = FALSE),
+                                     xAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                                                      hide = FALSE),
+                                     yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                                                      hide = FALSE)
+                                     ))
 
   # test labels and titles
   expect_equal(plot$labels, list(y = "moreTesting", title = "justTesting", x = "x"))
+})
+
+test_that("Test validateInitText", {
+  testList <- list(plotTitle = list(text = "", fontType = "plain", color = "#000000",
+                                    size = 12L, hide = FALSE),
+                   xAxisTitle = list(text = "test", fontType = "bold",
+                                     color = "#FFFFFF", size = 5, hide = FALSE),
+                   yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                                    hide = FALSE))
+
+  testList <- validateInitText(testList, type = "ggplot")
+
+  expect_equal(testList,
+               list(plotTitle = list(text = "", fontType = "plain", color = "#000000",
+                                     size = 12L, hide = FALSE),
+                    xAxisTitle = list(text = "test", fontType = "bold",
+                                      color = "#FFFFFF", size = 5, hide = FALSE),
+                    yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
+                                      size = 12L, hide = FALSE),
+                    xAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                                     hide = FALSE),
+                    yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                                     hide = FALSE)))
 })

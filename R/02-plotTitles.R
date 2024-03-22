@@ -81,7 +81,7 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
                  if (is.null(initText)) {
                    # if null: take values from config
 
-                   text <- reactiveValues(
+                   plotText <- reactiveValues(
                      plotTitle = defaultInitText(type = type)[["plotTitle"]],
                      xAxisTitle = defaultInitText(type = type)[["xAxisTitle"]],
                      yAxisTitle = defaultInitText(type = type)[["yAxisTitle"]],
@@ -89,9 +89,9 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
                      yAxisText = defaultInitText(type = type)[["yAxisText"]]
                    )
                  } else if (inherits(initText, "list")) {
-                   initText <- validateInitText(initText)
+                   initText <- validateInitText(initText, type = type)
 
-                   text <- reactiveValues(
+                   plotText <- reactiveValues(
                      plotTitle = initText[["plotTitle"]],
                      xAxisTitle = initText[["xAxisTitle"]],
                      yAxisTitle = initText[["yAxisTitle"]],
@@ -99,21 +99,21 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
                      yAxisText = initText[["yAxisText"]]
                    )
                  } else {
-                   text <- initText
+                   plotText <- initText
                  }
 
-                 if (type == "none") return(text)
+                 if (type == "none") return(plotText)
 
                  observe({
-                   # load text element inputs of the selected label
+                   # load plotText element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
-                                    userInputs = text[[input[["labelName"]]]])
+                                    userInputs = plotText[[input[["labelName"]]]])
                  }) %>%
                    bindEvent(input[["labelName"]])
 
-                 text <- observeAndUpdateTextElementsOfLabel(input, output, session, text)
+                 plotText <- observeAndUpdateTextElementsOfLabel(input, output, session, plotText)
 
-                 return(text)
+                 return(plotText)
                })
 }
 
@@ -125,39 +125,39 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
 #' @param input input object from server function
 #' @param output output object from server function
 #' @param session session from server function
-#' @param text (reactiveValue) contains text elements
-observeAndUpdateTextElementsOfLabel <- function(input, output, session, text) {
+#' @param plotText (reactiveValue) contains text elements
+observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText) {
   observe({
     req(input[["labelName"]])
-    text[[input[["labelName"]]]][["text"]] <- input[["text"]]
+    plotText[[input[["labelName"]]]][["text"]] <- input[["text"]]
   }) %>%
     bindEvent(input[["text"]])
 
   observe({
     req(input[["labelName"]])
-    text[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
+    plotText[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
   }) %>%
     bindEvent(input[["fontType"]])
 
   observe({
     req(input[["labelName"]])
-    text[[input[["labelName"]]]][["color"]] <- input[["color"]]
+    plotText[[input[["labelName"]]]][["color"]] <- input[["color"]]
   }) %>%
     bindEvent(input[["color"]])
 
   observe({
     req(input[["labelName"]])
-    text[[input[["labelName"]]]][["size"]] <- input[["size"]]
+    plotText[[input[["labelName"]]]][["size"]] <- input[["size"]]
   }) %>%
     bindEvent(input[["size"]])
 
   observe({
     req(input[["labelName"]])
-    text[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
+    plotText[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
   }) %>%
     bindEvent(input[["hide"]])
 
-  return(text)
+  return(plotText)
 }
 
 #' Font Choices

@@ -80,12 +80,13 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
                function(input, output, session) {
                  if (is.null(initText)) {
                    # if null: take values from config
+
                    text <- reactiveValues(
-                     plotTitle = defaultTextFormat(type = type)[["title"]],
-                     xAxisTitle = defaultTextFormat(type = type)[["title"]],
-                     yAxisTitle = defaultTextFormat(type = type)[["title"]],
-                     xAxisText = defaultTextFormat(type = type)[["text"]],
-                     yAxisText = defaultTextFormat(type = type)[["text"]]
+                     plotTitle = defaultInitText(type = type)[["plotTitle"]],
+                     xAxisTitle = defaultInitText(type = type)[["xAxisTitle"]],
+                     yAxisTitle = defaultInitText(type = type)[["yAxisTitle"]],
+                     xAxisText = defaultInitText(type = type)[["xAxisText"]],
+                     yAxisText = defaultInitText(type = type)[["yAxisText"]]
                    )
                  } else if (inherits(initText, "list")) {
                    initText <- validateInitText(initText)
@@ -104,44 +105,59 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
                  if (type == "none") return(text)
 
                  observe({
-                   req(input[["labelName"]])
+                   # load text element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
                                     userInputs = text[[input[["labelName"]]]])
                  }) %>%
                    bindEvent(input[["labelName"]])
 
-                 observe({
-                   req(input[["labelName"]])
-                   text[[input[["labelName"]]]][["text"]] <- input[["text"]]
-                 }) %>%
-                   bindEvent(input[["text"]])
-
-                 observe({
-                   req(input[["labelName"]])
-                   text[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
-                 }) %>%
-                   bindEvent(input[["fontType"]])
-
-                 observe({
-                   req(input[["labelName"]])
-                   text[[input[["labelName"]]]][["color"]] <- input[["color"]]
-                 }) %>%
-                   bindEvent(input[["color"]])
-
-                 observe({
-                   req(input[["labelName"]])
-                   text[[input[["labelName"]]]][["size"]] <- input[["size"]]
-                 }) %>%
-                   bindEvent(input[["size"]])
-
-                 observe({
-                   req(input[["labelName"]])
-                   text[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
-                 }) %>%
-                   bindEvent(input[["hide"]])
+                 text <- observeAndUpdateTextElementsOfLabel(input, output, session, text)
 
                  return(text)
                })
+}
+
+#' Observe Text Elements Of Label
+#'
+#' Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
+#' plot title, axis text, ...) and store values in the reactiveValues list 'text'.
+#'
+#' @param input input object from server function
+#' @param output output object from server function
+#' @param session session from server function
+#' @param text (reactiveValue) contains text elements
+observeAndUpdateTextElementsOfLabel <- function(input, output, session, text) {
+  observe({
+    req(input[["labelName"]])
+    text[[input[["labelName"]]]][["text"]] <- input[["text"]]
+  }) %>%
+    bindEvent(input[["text"]])
+
+  observe({
+    req(input[["labelName"]])
+    text[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
+  }) %>%
+    bindEvent(input[["fontType"]])
+
+  observe({
+    req(input[["labelName"]])
+    text[[input[["labelName"]]]][["color"]] <- input[["color"]]
+  }) %>%
+    bindEvent(input[["color"]])
+
+  observe({
+    req(input[["labelName"]])
+    text[[input[["labelName"]]]][["size"]] <- input[["size"]]
+  }) %>%
+    bindEvent(input[["size"]])
+
+  observe({
+    req(input[["labelName"]])
+    text[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
+  }) %>%
+    bindEvent(input[["hide"]])
+
+  return(text)
 }
 
 #' Font Choices
@@ -190,7 +206,7 @@ sizeValuesSlider  <- function(type = c("ggplot", "base")) {
 #'
 #' If elements are missing in initText, add those with default values
 #'
-#' @inheritParams plotTitleServer
+#' @inheritParams plotTitlesServer
 #' @inheritParams plotExportServer
 validateInitText <- function(initText, type = c("none", "ggplot", "base")) {
   type <- match.arg(type)
@@ -212,7 +228,7 @@ validateInitText <- function(initText, type = c("none", "ggplot", "base")) {
 #'
 #' Initial list with default text elements
 #'
-#' @inheritParams plotTitleServer
+#' @inheritParams plotTitlesServer
 defaultInitText <- function(type = c("none", "ggplot", "base")) {
   type <- match.arg(type)
 
@@ -229,7 +245,7 @@ defaultInitText <- function(type = c("none", "ggplot", "base")) {
 #'
 #' Initial values for title dependent on the plot type
 #'
-#' @inheritParams plotTitleServer
+#' @inheritParams plotTitlesServer
 defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
   type <- match.arg(type)
 

@@ -6,6 +6,9 @@
 \usage{
 defaultTextFormat(type = c("none", "ggplot", "base"))
 }
+\arguments{
+\item{type}{(character) Type of the plot to add titles to, one of "none", "ggplot", "base".}
+}
 \description{
 Initial values for title dependent on the plot type
 }

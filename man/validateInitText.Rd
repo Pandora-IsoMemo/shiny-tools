@@ -8,6 +8,8 @@ validateInitText(initText, type = c("none", "ggplot", "base"))
 }
 \arguments{
 \item{initText}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
+
+\item{type}{(character) Type of the plot to add titles to, one of "none", "ggplot", "base".}
 }
 \description{
 If elements are missing in initText, add those with default values

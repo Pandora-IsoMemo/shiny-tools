@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.03.3
+Version: 24.03.4
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut"))
             )

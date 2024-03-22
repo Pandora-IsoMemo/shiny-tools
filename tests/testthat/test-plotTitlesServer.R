@@ -29,7 +29,7 @@ test_that("Test module plotTitlesServer", {
              })
 })
 
-test_that("Test module plotTitlesServer", {
+test_that("Test module validateInitText", {
   testList <- list(plotTitle = list(text = "", fontType = "plain", color = "#000000",
                                     size = 12L, hide = FALSE),
                    xAxisTitle = list(text = "test", fontType = "bold",

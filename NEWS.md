@@ -1,5 +1,12 @@
 # shinyTools
 
+## Version 24.03.3
+
+### New Features
+- module for plotExport (#6)
+  - option to add and format titles of a plot before export if the plot is a ggplot
+  - option to set ranges of a plot before export if the plot is a ggplot
+
 ## Version 24.03.2
 
 ### New Features

@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.03.2
+Version: 24.03.3
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut"))
             )
@@ -11,17 +11,19 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports:
+    colourpicker,
     DataTools,
+    ggplot2,
     grDevices,
     magrittr,
     openxlsx,
     plotly,
     rjson,
     shiny,
-    utils
-RoxygenNote: 7.2.3
+    utils,
+    yaml
+RoxygenNote: 7.3.1
 Suggests: 
-    ggplot2,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://pandora-isomemo.github.io/shiny-tools/

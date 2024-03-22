@@ -11,6 +11,9 @@ plotExportButton(id, label = "Export Plot")
 
 \item{label}{(character) button label}
 }
+\value{
+actionButton
+}
 \description{
 Plot Export Button
 }

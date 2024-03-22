@@ -7,16 +7,22 @@
 plotExportServer(
   id,
   plotFun,
+  plotType = c("none", "ggplot"),
   filename = sprintf("\%s_plot", gsub("-", "", Sys.Date())),
   plotly = FALSE,
   plotWidth = reactive(1280),
-  plotHeight = reactive(800)
+  plotHeight = reactive(800),
+  initText = NULL,
+  initRanges = NULL
 )
 }
 \arguments{
 \item{id}{namespace id}
 
 \item{plotFun}{(reactive) a reactive function returning a plot for export}
+
+\item{plotType}{(character) one of "none", "ggplot". Adds the option to format the
+plot before export}
 
 \item{filename}{(character) name of file without file extension}
 
@@ -25,6 +31,10 @@ plotExportServer(
 \item{plotWidth}{(reactive) default plot width}
 
 \item{plotHeight}{(reactive) default plot height}
+
+\item{initText}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
+
+\item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
 }
 \description{
 Backend for plot export module

@@ -4,7 +4,7 @@
 \alias{observeAndUpdateTextElementsOfLabel}
 \title{Observe Text Elements Of Label}
 \usage{
-observeAndUpdateTextElementsOfLabel(input, output, session, text)
+observeAndUpdateTextElementsOfLabel(input, output, session, plotText)
 }
 \arguments{
 \item{input}{input object from server function}
@@ -13,7 +13,7 @@ observeAndUpdateTextElementsOfLabel(input, output, session, text)
 
 \item{session}{session from server function}
 
-\item{text}{(reactiveValue) contains text elements}
+\item{plotText}{(reactiveValue) contains text elements}
 }
 \description{
 Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.

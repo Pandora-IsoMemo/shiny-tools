@@ -1,6 +1,6 @@
 # shinyTools
 
-## Version 24.03.4
+## Version 24.04.0
 
 ### New Features
 - new module plotPoints, and new function `formatPointsOfGGplot()` for formatting points of ggplots

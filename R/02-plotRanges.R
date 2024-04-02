@@ -2,11 +2,12 @@
 #'
 #'
 #' @param id module id
+#' @param title (character) module title
 #' @inheritParams plotExportServer
 #'
 #' @return tagList
 #' @export
-plotRangesUI <- function(id, initRanges = NULL) {
+plotRangesUI <- function(id, title = "Ranges", initRanges = NULL) {
   if (is.null(initRanges)) {
     # if null: take values from config
     initRanges <- list(
@@ -17,7 +18,7 @@ plotRangesUI <- function(id, initRanges = NULL) {
 
   ns <- NS(id)
   tagList(
-    h4("Ranges"),
+    h4(title),
     selectInput(
       inputId = ns("labelName"),
       label = "Axis",

@@ -4,10 +4,17 @@
 \alias{plotTitlesUI}
 \title{Plot Titles UI}
 \usage{
-plotTitlesUI(id, type = c("ggplot", "base"), initText = NULL)
+plotTitlesUI(
+  id,
+  title = "Plot Texts",
+  type = c("ggplot", "base"),
+  initText = NULL
+)
 }
 \arguments{
 \item{id}{module id}
+
+\item{title}{(character) module title}
 
 \item{type}{(character) Type of the plot to add titles to, one of "none", "ggplot", "base".}
 

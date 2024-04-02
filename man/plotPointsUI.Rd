@@ -4,10 +4,17 @@
 \alias{plotPointsUI}
 \title{Plot Points UI}
 \usage{
-plotPointsUI(id, type = c("ggplot", "base"), initStyle = NULL)
+plotPointsUI(
+  id,
+  title = "Data Points",
+  type = c("ggplot", "base"),
+  initStyle = NULL
+)
 }
 \arguments{
 \item{id}{module id}
+
+\item{title}{(character) module title}
 
 \item{type}{(character) Type of the plot to edit points for, one of "ggplot", "base".}
 

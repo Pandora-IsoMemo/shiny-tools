@@ -98,53 +98,66 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
                    style <- initStyle
                  }
 
-                 observe({
-                   style[["dataPoints"]][["symbol"]] <- as.numeric(input[["symbol"]])
-                 }) %>%
-                   bindEvent(input[["symbol"]])
-
-                 observe({
-                   style[["dataPoints"]][["color"]] <- input[["color"]]
-                 }) %>%
-                   bindEvent(input[["color"]])
-
-                 observe({
-                   style[["dataPoints"]][["colorBg"]] <- input[["colorBg"]]
-                 }) %>%
-                   bindEvent(input[["colorBg"]])
-
-                 observe({
-                   style[["dataPoints"]][["size"]] <- input[["size"]]
-                 }) %>%
-                   bindEvent(input[["size"]])
-
-                 observe({
-                   style[["dataPoints"]][["alpha"]] <- input[["alpha"]]
-                 }) %>%
-                   bindEvent(input[["alpha"]])
-
-                 observe({
-                   style[["dataPoints"]][["hide"]] <- input[["hide"]]
-                 }) %>%
-                   bindEvent(input[["hide"]])
-
-                 if (type == "base") {
-                   observe({
-                     style[["dataPoints"]][["lineWidthBg"]] <- input[["lineWidthBg"]]
-                   }) %>%
-                     bindEvent(input[["lineWidthBg"]])
-                 }
-
-                 # only needed if different type of points are in use
-                 # observe({
-                 #   updateUserInputs(id, input = input, output = output, session = session,
-                 #                    userInputs = ranges[[input[["labelName"]]]])
-                 # }) %>%
-                 #   bindEvent(input[["labelName"]])
+                 style <- observeAndUpdatePointElements(input, output, session,
+                                                        style = style,
+                                                        type = type)
 
                  return(style)
                })
 }
+
+
+#' Observe Point Elements
+#'
+#' Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
+#' plot title, axis text, ...) and store values in the reactiveValues list 'text'.
+#'
+#' @param input input object from server function
+#' @param output output object from server function
+#' @param session session from server function
+#' @param style (reactiveValue) contains point elements
+#' @inheritParams plotPointsServer
+observeAndUpdatePointElements <- function(input, output, session, style, type) {
+  observe({
+    style[["dataPoints"]][["symbol"]] <- as.numeric(input[["symbol"]])
+  }) %>%
+    bindEvent(input[["symbol"]])
+
+  observe({
+    style[["dataPoints"]][["color"]] <- input[["color"]]
+  }) %>%
+    bindEvent(input[["color"]])
+
+  observe({
+    style[["dataPoints"]][["colorBg"]] <- input[["colorBg"]]
+  }) %>%
+    bindEvent(input[["colorBg"]])
+
+  observe({
+    style[["dataPoints"]][["size"]] <- input[["size"]]
+  }) %>%
+    bindEvent(input[["size"]])
+
+  observe({
+    style[["dataPoints"]][["alpha"]] <- input[["alpha"]]
+  }) %>%
+    bindEvent(input[["alpha"]])
+
+  observe({
+    style[["dataPoints"]][["hide"]] <- input[["hide"]]
+  }) %>%
+    bindEvent(input[["hide"]])
+
+  if (type == "base") {
+    observe({
+      style[["dataPoints"]][["lineWidthBg"]] <- input[["lineWidthBg"]]
+    }) %>%
+      bindEvent(input[["lineWidthBg"]])
+  }
+
+  return(style)
+}
+
 
 #' Font Choices
 #'

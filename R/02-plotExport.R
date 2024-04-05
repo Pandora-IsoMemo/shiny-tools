@@ -16,8 +16,10 @@ plotExportButton <- function(id, label = "Export Plot") {
 #'
 #' @param id namespace id
 #' @param plotFun (reactive) a reactive function returning a plot for export
-#' @param plotType (character) one of "none", "ggplot". Adds the option to format the
-#'  plot before export
+#' @param plotType (character) one of "none", "ggplot", "ggplot_only_titles". Adds the option to
+#'  format titles and ranges of a plot within the export UI (currently only for ggplots). For
+#'  \code{plotType == "ggplot_only_titles"} only titles can be adjusted. This prevents that custom
+#'  formatting of axis ranges might be overwritten by \code{formatRangesOfGGplot()}.
 #' @param filename (character) name of file without file extension
 #' @param plotly (logical) set TRUE if plotFun returns a plotly output
 #' @param plotWidth (reactive) default plot width
@@ -28,7 +30,7 @@ plotExportButton <- function(id, label = "Export Plot") {
 #' @export
 plotExportServer <- function(id,
                              plotFun,
-                             plotType = c("none", "ggplot"),
+                             plotType = c("none", "ggplot", "ggplot_only_titles"),
                              filename = sprintf("%s_plot", gsub("-", "", Sys.Date())),
                              plotly = FALSE,
                              plotWidth = reactive(1280),
@@ -38,7 +40,9 @@ plotExportServer <- function(id,
   plotType <- match.arg(plotType)
   formatFun <- switch (plotType,
                        "none" = noExtraFormat,
-                       "ggplot" = formatWrapperGGplot
+                       "ggplot" = formatWrapperGGplot,
+                       "ggplot_only_titles" = function(plot, text, ranges, what = c("titles"))
+                         formatWrapperGGplot(plot, text, ranges, what)
   )
 
   moduleServer(id,
@@ -73,7 +77,7 @@ plotExportServer <- function(id,
                               if (!plotly) numericInput(session$ns("width"), "Width (px)", value = plotWidth()) else NULL,
                               if (!plotly) numericInput(session$ns("height"), "Height (px)", value = plotHeight()) else NULL,
                        ),
-                       if (plotType == "ggplot") {
+                       if (plotType %in% c("ggplot", "ggplot_only_titles")) {
                          column(4, plotTitlesUI(session$ns("titlesFormat"),
                                                 type = "ggplot",
                                                 initText = initText))
@@ -90,8 +94,12 @@ plotExportServer <- function(id,
                  }) %>%
                    bindEvent(input$export)
 
-                 text <- plotTitlesServer("titlesFormat", type = plotType, initText = initText)
-                 ranges <- plotRangesServer("axesRanges", type = plotType, initRanges = initRanges)
+                 text <- plotTitlesServer("titlesFormat",
+                                          type = extractType(plotType),
+                                          initText = initText)
+                 ranges <- plotRangesServer("axesRanges",
+                                            type = extractType(plotType),
+                                            initRanges = initRanges)
 
                  output$exportPlot <- renderPlot({
                    plotFun()() %>%
@@ -132,6 +140,29 @@ plotExportServer <- function(id,
 
 noExtraFormat <- function(plot, ...) {
   plot
+}
+
+formatWrapperGGplot <- function(plot, text, ranges, what = c("titles", "ranges")) {
+  if ("titles" %in% what) {
+    plot <- plot %>%
+      formatTitlesOfGGplot(text = text)
+  }
+
+  if ("ranges" %in% what) {
+    plot <- plot %>%
+      formatRangesOfGGplot(ranges = ranges)
+  }
+
+  plot
+}
+
+#' Extract Type
+#'
+#' @inheritParams plotExportServer
+#'
+#' @return (character) type required for \code{plotTitlesServer} or \code{plotRangesServer}
+extractType <- function(plotType) {
+  unlist(strsplit(plotType, split = "_"))[1]
 }
 
 # TEST MODULE -------------------------------------------------------------

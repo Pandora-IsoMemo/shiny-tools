@@ -1,9 +1,3 @@
-formatWrapperGGplot <- function(plot, text, ranges) {
-  plot %>%
-    formatTitlesOfGGplot(text = text) %>%
-    formatRangesOfGGplot(ranges = ranges)
-}
-
 #' Format Titles Of GGplot
 #'
 #' @param plot (ggplot)

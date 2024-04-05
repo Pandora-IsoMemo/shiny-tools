@@ -47,14 +47,16 @@ plotExportServer <- function(id,
 
   moduleServer(id,
                function(input, output, session) {
+                 ns <- session$ns
+
                  observe({
                    if (inherits(initText, "reactivevalues"))
                      initText <- reactiveValuesToList(initText)
 
                    plotOutputElement <- if (plotly) {
-                     plotlyOutput(session$ns("exportPlotly"))
+                     plotlyOutput(ns("exportPlotly"))
                    } else {
-                     plotOutput(session$ns("exportPlot"), height = "300px")
+                     plotOutput(ns("exportPlot"), height = "300px")
                    }
 
                    exportTypeChoices <- if (plotly) {
@@ -71,28 +73,34 @@ plotExportServer <- function(id,
                        column(4,
                               h4("File"),
                               selectInput(
-                                session$ns("exportType"), "Filetype",
+                                ns("exportType"), "Filetype",
                                 choices = exportTypeChoices
                               ),
-                              if (!plotly) numericInput(session$ns("width"), "Width (px)", value = plotWidth()) else NULL,
-                              if (!plotly) numericInput(session$ns("height"), "Height (px)", value = plotHeight()) else NULL,
+                              if (!plotly) numericInput(ns("width"), "Width (px)", value = plotWidth()) else NULL,
+                              if (!plotly) numericInput(ns("height"), "Height (px)", value = plotHeight()) else NULL,
                        ),
                        if (plotType %in% c("ggplot", "ggplot_only_titles")) {
-                         column(4, plotTitlesUI(session$ns("titlesFormat"),
+                         column(4, plotTitlesUI(ns("titlesFormat"),
                                                 type = "ggplot",
                                                 initText = initText))
                        } else NULL,
                        if (plotType == "ggplot") {
-                         column(4, plotRangesUI(session$ns("axesRanges"),
+                         column(4, plotRangesUI(ns("axesRanges"),
                                                 initRanges = initRanges))
                        }
                      ),
                      tags$br(),
-                     downloadButton(session$ns("exportExecute"), "Export"),
+                     downloadButton(ns("exportExecute"), "Export"),
                      easyClose = TRUE
                    ))
                  }) %>%
                    bindEvent(input$export)
+
+                 observe({
+                   if (length(plotFun()()) == 0)
+                     shinyjs::disable(ns("export"), asis = TRUE) else
+                       shinyjs::enable(ns("export"), asis = TRUE)
+                 })
 
                  text <- plotTitlesServer("titlesFormat",
                                           type = extractType(plotType),

@@ -20,6 +20,7 @@ Imports:
     plotly,
     rjson,
     shiny,
+    shinyjs,
     utils,
     yaml
 RoxygenNote: 7.3.1

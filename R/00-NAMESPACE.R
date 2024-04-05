@@ -8,6 +8,7 @@
 #' @importFrom openxlsx write.xlsx
 #' @importFrom plotly renderPlotly plotlyOutput save_image
 #' @importFrom rjson toJSON
+#' @importFrom shinyjs disable enable
 #' @importFrom utils write.table
 #' @importFrom yaml yaml.load_file
 

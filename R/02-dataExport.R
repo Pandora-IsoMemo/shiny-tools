@@ -21,28 +21,36 @@ dataExportButton <- function(id, label = "Export Data") {
 dataExportServer <- function(id, dataFun, filename = "data") {
   moduleServer(id,
                function(input, output, session) {
+                 ns <- session$ns
+
                  observeEvent(input$export, {
                    showModal(modalDialog(
                      "Export Data",
                      easyClose = TRUE,
                      footer = modalButton("OK"),
                      selectInput(
-                       session$ns("exportType"),
+                       ns("exportType"),
                        "File type",
                        choices = c("csv", "xlsx", "json"),
                        selected = "xlsx"
                      ),
                      conditionalPanel(
                        condition = "input['exportType'] == 'csv'",
-                       ns = session$ns,
+                       ns = ns,
                        div(style = "display: inline-block;horizontal-align:top; width: 80px;",
-                           textInput(session$ns("colseparator"), "column separator:", value = ",")),
+                           textInput(ns("colseparator"), "column separator:", value = ",")),
                        div(style = "display: inline-block;horizontal-align:top; width: 80px;",
-                           textInput(session$ns("decseparator"), "decimal separator:", value = "."))
+                           textInput(ns("decseparator"), "decimal separator:", value = "."))
                      ),
                      tags$br(),
-                     downloadButton(session$ns("exportExecute"), "Export")
+                     downloadButton(ns("exportExecute"), "Export")
                    ))
+                 })
+
+                 observe({
+                   if (length(dataFun()()) == 0)
+                     shinyjs::disable(ns("export"), asis = TRUE) else
+                       shinyjs::enable(ns("export"), asis = TRUE)
                  })
 
                  output$exportExecute <- downloadHandler(

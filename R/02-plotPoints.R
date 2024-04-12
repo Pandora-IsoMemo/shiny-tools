@@ -77,12 +77,17 @@ plotPointsUI <- function(id, title = "Data Points", type = c("ggplot", "base"), 
 #' @param type (character) Type of the plot to edit points for, one of "ggplot", "base".
 #' @param initStyle (list) optional, named list with style definitions, should have the same format
 #'  as the default output of \code{plotPointsServer}
+#' @param hideInput (character) inputs that should be disabled (hidden) when applying this module.
+#'  Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
+#'  Please use \code{shinyjs::useShinyjs()} in your UI function to enable this feature.
 #'
 #' @export
-plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
+plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL, hideInput = c()) {
   type <- match.arg(type)
   moduleServer(id,
                function(input, output, session) {
+                 ns <- session$ns
+
                  if (is.null(initStyle)) {
                    # if null: take values from config
                    style <- reactiveValues(
@@ -97,6 +102,14 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL) {
                  } else {
                    style <- initStyle
                  }
+
+                 observe({
+                   req(length(hideInput) > 0)
+                   # hide inputs
+                   for (i in hideInput) {
+                     shinyjs::hide(ns(i), asis = TRUE)
+                   }
+                 })
 
                  style <- observeAndUpdatePointElements(input, output, session,
                                                         style = style,
@@ -203,7 +216,7 @@ symbolChoicesSelect <- function() {
 #                                     size = 8, alpha = 0.3, lineWidthBg = 1, hide = FALSE))
 # }
 #
-# ui <- fluidPage(
+# ui <- fluidPage(shinyjs::useShinyjs(),
 #   tagList(
 #     navbarPage(
 #       header = includeShinyToolsCSS(),
@@ -233,9 +246,10 @@ symbolChoicesSelect <- function() {
 #       formatPointsOfGGplot(pointStyle = thisStyle)
 #   })
 #
-#   thisStyle <- plotPointsServer("testMod",
+#   thisStyle <- plotPointsServer(id = "testMod",
 #                                 type = "ggplot",
-#                                 initStyle = testStyle())
+#                                 initStyle = testStyle(),
+#                                 hideInput = c("color"))
 # }
 #
 # shinyApp(ui = ui, server = server)

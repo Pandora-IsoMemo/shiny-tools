@@ -4,7 +4,12 @@
 \alias{plotPointsServer}
 \title{Server function for plot points}
 \usage{
-plotPointsServer(id, type = c("ggplot", "base"), initStyle = NULL)
+plotPointsServer(
+  id,
+  type = c("ggplot", "base"),
+  initStyle = NULL,
+  hideInput = c()
+)
 }
 \arguments{
 \item{id}{namespace id}
@@ -13,6 +18,10 @@ plotPointsServer(id, type = c("ggplot", "base"), initStyle = NULL)
 
 \item{initStyle}{(list) optional, named list with style definitions, should have the same format
 as the default output of \code{plotPointsServer}}
+
+\item{hideInput}{(character) inputs that should be disabled (hidden) when applying this module.
+Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
+Please use \code{shinyjs::useShinyjs()} in your UI function to enable this feature.}
 }
 \description{
 Backend for plot points module

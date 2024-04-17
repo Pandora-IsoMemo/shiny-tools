@@ -17,15 +17,26 @@ formatTitlesOfGGplot <- function(plot, text) {
     }
   }
 
+  if (!all(names(text) %in% c("plotTitle", "xAxisTitle", "xAxisText", "yAxisTitle", "yAxisText",
+                              "legendTitle")))
+    stop("New element found, please add the new case to 'formatTitlesOfGGplot()' first!")
+
+  if ("legendTitle" %in% names(text))
+    message("Note: formatting of element 'legendTitle' not included in 'formatTitlesOfGGplot()'. Please integrate separately.")
+
+
+  # set titles
   plotTitle  <- text[["plotTitle"]]
   axisTitleX <- text[["xAxisTitle"]]
   axisTitleY <- text[["yAxisTitle"]]
-  axisTextX <- text[["xAxisText"]]
-  axisTextY <- text[["yAxisText"]]
 
   if (plotTitle[["text"]] != "") plot <- plot + ggtitle(label = plotTitle[["text"]])
   if (axisTitleX[["text"]] != "") plot <- plot + xlab(axisTitleX[["text"]])
   if (axisTitleY[["text"]] != "") plot <- plot + ylab(axisTitleY[["text"]])
+
+  # apply text formatting
+  axisTextX <- text[["xAxisText"]]
+  axisTextY <- text[["yAxisText"]]
 
   plot +
     theme(

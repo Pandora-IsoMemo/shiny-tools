@@ -63,8 +63,6 @@ formatTitlesOfGGplot <- function(plot, text) {
 #'
 #' @param textDef (list) named list with specs for text formatting, see e.g.
 #' \code{config()$defaultGGTitle}
-#'
-#' @export
 getElementText <- function(textDef = list(fontType = "plain",
                                           color = "#000000",
                                           size = 12L,

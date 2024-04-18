@@ -50,10 +50,10 @@ test_that("Test validateInitText", {
                                      size = 12L, hide = FALSE),
                     xAxisTitle = list(text = "test", fontType = "bold",
                                       color = "#FFFFFF", size = 5, hide = FALSE),
-                    yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
-                                      size = 12L, hide = FALSE),
                     xAxisText = list(fontType = "plain", color = "#000000", size = 10L,
                                      hide = FALSE),
+                    yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
+                                      size = 12L, hide = FALSE),
                     yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
                                      hide = FALSE)))
 })
@@ -112,6 +112,12 @@ test_that("Test defaultInitText", {
         fontType = "plain",
         color = "#000000",
         size = 12L,
+        hide = FALSE
+      ),
+      legendText = list(
+        fontType = "plain",
+        color = "#000000",
+        size = 10L,
         hide = FALSE
       )
     )

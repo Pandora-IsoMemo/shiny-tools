@@ -9,6 +9,7 @@ availableElements:
     y axis text: "yAxisText"
   legend:
     legend title: "legendTitle"
+    legend text: "legendText"
 
 defaultGGTitle:
   text: ""

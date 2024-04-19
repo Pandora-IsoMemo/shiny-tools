@@ -84,16 +84,48 @@ exportFilename <- function(filename, fileending){
 #' @param colseparator column seperator
 #' @param decseparator decimal seperator
 exportCSV <- function(file, dat, colseparator, decseparator){
+  if (length(dat) == 0 || !is.list(dat) || (is.list(dat) && any(!sapply(dat, is.data.frame))))
+    stop("Wrong type of 'dat'! 'dat' is neither a data.frame nor a list of data.frames.")
+
   write.table(x = dat, file = file, sep = colseparator,
               dec = decseparator, row.names = FALSE)
 }
 
 #' Export to xlsx
 #'
+#' Export a single data.frame, or export a list of data.frames into workbook containing one
+#' data.frame in each sheet of a workbook
+#'
 #' @param file filename
-#' @param dat data.frame
+#' @param dat (list) If \code{dat} is a data.frame \code{dat} will be written into a single sheet
+#'  "Sheet 1". If \code{dat} is a named list of data.frames \code{dat} each data.frame is written
+#'   into a separate sheet with sheet names taken from the names of the list.
 exportXLSX <- function(file, dat){
-  write.xlsx(dat, file)
+  # Export a single data.frame
+  if (is.data.frame(dat)) {
+    write.xlsx(dat, file)
+    return()
+  }
+
+  # abort if wrong type of dat
+  if (length(dat) == 0 || !is.list(dat) || (is.list(dat) && any(!sapply(dat, is.data.frame))))
+    stop("Wrong type of 'dat'! 'dat' is neither a data.frame nor a list of data.frames.")
+
+  # Or export a workbook containing a data.frame from a list in each sheet
+  wb <- createWorkbook()
+
+  sheetName <- names(dat)
+
+  # Loop through each dataframe in the list and write it to a separate sheet in the Excel file
+  for (i in seq_along(dat)) {
+    # Add a new worksheet with a specific name
+    addWorksheet(wb, sheetName = names(dat)[i])
+    # Write the dataframe to the newly added worksheet
+    writeData(wb, sheet = i, x = dat[[i]])
+  }
+
+  # Save the Excel workbook
+  saveWorkbook(wb, file = file, overwrite = TRUE)
 }
 
 #' Export to json

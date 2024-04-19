@@ -1,4 +1,16 @@
 # default format of graph and axis titles (for plotExport.R)
+availableElements:
+  title:
+    plot title: "plotTitle"
+  axis:
+    x axis title: "xAxisTitle"
+    x axis text: "xAxisText"
+    y axis title: "yAxisTitle"
+    y axis text: "yAxisText"
+  legend:
+    legend title: "legendTitle"
+    legend text: "legendText"
+
 defaultGGTitle:
   text: ""
   fontType: "plain"

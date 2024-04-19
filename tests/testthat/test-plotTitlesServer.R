@@ -35,7 +35,7 @@ test_that("Test module plotTitlesServer", {
              })
 })
 
-test_that("Test module validateInitText", {
+test_that("Test validateInitText", {
   testList <- list(plotTitle = list(text = "", fontType = "plain", color = "#000000",
                                     size = 12L, hide = FALSE),
                    xAxisTitle = list(text = "test", fontType = "bold",
@@ -50,10 +50,76 @@ test_that("Test module validateInitText", {
                                      size = 12L, hide = FALSE),
                     xAxisTitle = list(text = "test", fontType = "bold",
                                       color = "#FFFFFF", size = 5, hide = FALSE),
-                    yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
-                                      size = 12L, hide = FALSE),
                     xAxisText = list(fontType = "plain", color = "#000000", size = 10L,
                                      hide = FALSE),
+                    yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
+                                      size = 12L, hide = FALSE),
                     yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
                                      hide = FALSE)))
+})
+
+test_that("Test defaultInitText", {
+  expect_equal(defaultInitText(type = "ggplot"),
+               list(
+                 plotTitle = defaultTextFormat(type = "ggplot")[["title"]],
+                 xAxisTitle = defaultTextFormat(type = "ggplot")[["title"]],
+                 xAxisText = defaultTextFormat(type = "ggplot")[["text"]],
+                 yAxisTitle = defaultTextFormat(type = "ggplot")[["title"]],
+                 yAxisText = defaultTextFormat(type = "ggplot")[["text"]]
+               ))
+
+  expect_equal(
+    defaultInitText(
+      type = "ggplot",
+      availableElements = c("title", "axis", "legend")
+    ),
+    list(
+      plotTitle = list(
+        text = "",
+        fontType = "plain",
+        color = "#000000",
+        size = 12L,
+        hide = FALSE
+      ),
+      xAxisTitle = list(
+        text = "",
+        fontType = "plain",
+        color = "#000000",
+        size = 12L,
+        hide = FALSE
+      ),
+      xAxisText = list(
+        fontType = "plain",
+        color = "#000000",
+        size = 10L,
+        hide = FALSE
+      ),
+      yAxisTitle = list(
+        text = "",
+        fontType = "plain",
+        color = "#000000",
+        size = 12L,
+        hide = FALSE
+      ),
+      yAxisText = list(
+        fontType = "plain",
+        color = "#000000",
+        size = 10L,
+        hide = FALSE
+      ),
+      legendTitle = list(
+        text = "",
+        fontType = "plain",
+        color = "#000000",
+        size = 12L,
+        hide = FALSE
+      ),
+      legendText = list(
+        fontType = "plain",
+        color = "#000000",
+        size = 10L,
+        hide = FALSE
+      )
+    )
+  )
 })

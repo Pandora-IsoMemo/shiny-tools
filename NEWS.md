@@ -1,3 +1,10 @@
+# shinyTools 24.04.2
+
+## New Features
+- option to use named lists of data.frames in the dataExport module
+  - for `xlsx` export, each data.frame is written into a separate sheet with sheet names taken from
+    the names of the list
+
 # shinyTools 24.04.1
 
 ## New Features

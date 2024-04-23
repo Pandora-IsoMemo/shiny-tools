@@ -46,6 +46,9 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/fontChoicesSelect.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatPointsOfGGplot.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatRangesOfGGplot.html</loc>
   </url>
   <url>
@@ -61,6 +64,9 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/observeAndUpdatePointElements.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/observeAndUpdateRangeElementsOfLabel.html</loc>
   </url>
   <url>
@@ -71,6 +77,12 @@
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotExportServer.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotPointsServer.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotPointsUI.html</loc>
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotRangesServer.html</loc>
@@ -86,6 +98,9 @@
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/sizeValuesSlider.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/symbolChoicesSelect.html</loc>
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/updateUserInputs.html</loc>

@@ -4,10 +4,12 @@
 \alias{plotRangesUI}
 \title{Plot Ranges UI}
 \usage{
-plotRangesUI(id, initRanges = NULL)
+plotRangesUI(id, title = "Ranges", initRanges = NULL)
 }
 \arguments{
 \item{id}{module id}
+
+\item{title}{(character) module title}
 
 \item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
 }

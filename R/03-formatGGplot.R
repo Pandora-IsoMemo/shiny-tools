@@ -1,9 +1,3 @@
-formatWrapperGGplot <- function(plot, text, ranges) {
-  plot %>%
-    formatTitlesOfGGplot(text = text) %>%
-    formatRangesOfGGplot(ranges = ranges)
-}
-
 #' Format Titles Of GGplot
 #'
 #' @param plot (ggplot)
@@ -11,36 +5,77 @@ formatWrapperGGplot <- function(plot, text, ranges) {
 #'
 #' @export
 formatTitlesOfGGplot <- function(plot, text) {
-  getElementText <- function(textDef) {
-    if (textDef[["hide"]]) {
-      element_blank()
-    } else {
-      element_text(family = "Arial",
-                   size = textDef[["size"]],
-                   face = textDef[["fontType"]],
-                   color = textDef[["color"]],
-                   hjust = 0.5)
-    }
+  if (!all(
+    names(text) %in% c(
+      "plotTitle",
+      "xAxisTitle",
+      "xAxisText",
+      "yAxisTitle",
+      "yAxisText",
+      "legendTitle",
+      "legendText"
+    )
+  ))
+    stop("New element found, please add the new case to 'formatTitlesOfGGplot()' first!")
+
+  # AXES ----
+  if (any(grepl("Axis", names(text)))) {
+    # set titles
+    axisTitleX <- text[["xAxisTitle"]]
+    axisTitleY <- text[["yAxisTitle"]]
+
+
+    if (axisTitleX[["text"]] != "")
+      plot <- plot + xlab(axisTitleX[["text"]])
+    if (axisTitleY[["text"]] != "")
+      plot <- plot + ylab(axisTitleY[["text"]])
+
+    # apply text formatting
+    plot <- plot +
+      theme(
+        axis.title.x = getElementText(axisTitleX),
+        axis.title.y = getElementText(axisTitleY),
+        axis.text.x = getElementText(text[["xAxisText"]]),
+        axis.text.y = getElementText(text[["yAxisText"]])
+      )
   }
 
-  plotTitle  <- text[["plotTitle"]]
-  axisTitleX <- text[["xAxisTitle"]]
-  axisTitleY <- text[["yAxisTitle"]]
-  axisTextX <- text[["xAxisText"]]
-  axisTextY <- text[["yAxisText"]]
+  # PLOT TITLE ----
+  if (any(grepl("plot", names(text)))) {
+    plotTitle  <- text[["plotTitle"]]
+    if (plotTitle[["text"]] != "")
+      plot <- plot + ggtitle(label = plotTitle[["text"]])
 
-  if (plotTitle[["text"]] != "") plot <- plot + ggtitle(label = plotTitle[["text"]])
-  if (axisTitleX[["text"]] != "") plot <- plot + xlab(axisTitleX[["text"]])
-  if (axisTitleY[["text"]] != "") plot <- plot + ylab(axisTitleY[["text"]])
+    plot <- plot + theme(plot.title   = getElementText(plotTitle))
+  }
 
-  plot +
-    theme(
-      plot.title   = getElementText(plotTitle),
-      axis.title.x = getElementText(axisTitleX),
-      axis.title.y = getElementText(axisTitleY),
-      axis.text.x = getElementText(axisTextX),
-      axis.text.y = getElementText(axisTextY)
-    )
+  # LEGEND ----
+  if (any(grepl("legend", names(text)))) {
+    plot <- plot +
+      theme(legend.title = getElementText(text[["legendTitle"]]),
+            legend.text  = getElementText(text[["legendText"]]))
+  }
+
+  plot
+}
+
+#' Get Element Text
+#'
+#' @param textDef (list) named list with specs for text formatting, see e.g.
+#' \code{config()$defaultGGTitle}
+getElementText <- function(textDef = list(fontType = "plain",
+                                          color = "#000000",
+                                          size = 12L,
+                                          hide = FALSE)) {
+  if (textDef[["hide"]]) {
+    element_blank()
+  } else {
+    element_text(family = "Arial",
+                 size = textDef[["size"]],
+                 face = textDef[["fontType"]],
+                 color = textDef[["color"]],
+                 hjust = 0.5)
+  }
 }
 
 #' Axes Ranges Of GGplot

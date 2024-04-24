@@ -4,12 +4,20 @@
 \alias{plotTitlesServer}
 \title{Server function for plot titles}
 \usage{
-plotTitlesServer(id, type = c("none", "ggplot", "base"), initText = NULL)
+plotTitlesServer(
+  id,
+  type = c("none", "ggplot", "base"),
+  availableElements = c("title", "axis"),
+  initText = NULL
+)
 }
 \arguments{
 \item{id}{namespace id}
 
 \item{type}{(character) Type of the plot to add titles to, one of "none", "ggplot", "base".}
+
+\item{availableElements}{(character) set of available labels for specifying the format of text.
+May contain elements from \code{c("title", "axis", "legend")}.}
 
 \item{initText}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
 }

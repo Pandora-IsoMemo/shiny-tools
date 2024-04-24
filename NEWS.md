@@ -1,34 +1,47 @@
-# shinyTools
+# shinyTools 24.04.1
 
-## Version 24.04.0
+## New Features  
+- module _plotTitles_:
+  - optionally specify elements that can be selected from the 'Label' input. Can 
+  be one or several of `"title", "axis", "legend"` elements.
+- module _dataExport_:
+  - disable button if no data
+- module _plotExport_: 
+  - disable button if no data
+  - optionally hide the range UI but show the titles UI in the _plotExport_ popup.
+- module _plotPoints_:
+  - optionally hide (disable) specific inputs in the UI. E.g. if `alpha` should be set outside of
+    this module
 
-### New Features
+# shinyTools 24.04.0
+
+## New Features
 - new module plotPoints, and new function `formatPointsOfGGplot()` for formatting points of ggplots
 
-## Version 24.03.3
+# shinyTools 24.03.3
 
-### New Features
+## New Features
 - module for plotExport (#6)
   - option to add and format titles of a plot before export if the plot is a ggplot
   - option to set ranges of a plot before export if the plot is a ggplot
 
-## Version 24.03.2
+# shinyTools 24.03.2
 
-### New Features
+## New Features
 - module for plotExport (#6)
   - export a plot as "png", "jpeg", "svg", "pdf", or "tiff" file
   - the module was extracted from PlotR, resources
   - it can be applied in all new apps
 
-## Version 24.03.0
+# shinyTools 24.03.0
 
-### New Features
+## New Features
 - module for dataExport (#4)
   - export a data.frame as xlsx, csv, or json file
   - the module was extracted from MapR, iso-app
   - it can be applied in all new apps
 
-## Version 24.02.0
+# shinyTools 24.02.0
 
-### New Features
+## New Features
 - headerButtons module applicable across apps

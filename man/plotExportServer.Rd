@@ -7,7 +7,7 @@
 plotExportServer(
   id,
   plotFun,
-  plotType = c("none", "ggplot"),
+  plotType = c("none", "ggplot", "ggplot_only_titles"),
   filename = sprintf("\%s_plot", gsub("-", "", Sys.Date())),
   plotly = FALSE,
   plotWidth = reactive(1280),
@@ -21,8 +21,10 @@ plotExportServer(
 
 \item{plotFun}{(reactive) a reactive function returning a plot for export}
 
-\item{plotType}{(character) one of "none", "ggplot". Adds the option to format the
-plot before export}
+\item{plotType}{(character) one of "none", "ggplot", "ggplot_only_titles". Adds the option to
+format titles and ranges of a plot within the export UI (currently only for ggplots). For
+\code{plotType == "ggplot_only_titles"} only titles can be adjusted. This prevents that custom
+formatting of axis ranges might be overwritten by \code{formatRangesOfGGplot()}.}
 
 \item{filename}{(character) name of file without file extension}
 

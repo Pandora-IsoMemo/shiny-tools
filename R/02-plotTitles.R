@@ -24,18 +24,12 @@ plotTitlesUI <- function(id, title = "Plot Texts", type = c("ggplot", "base"), i
     selectInput(
       inputId = ns("labelName"),
       label = "Label",
-      choices = c(
-        "plot title" = "plotTitle",
-        "x axis title" = "xAxisTitle",
-        "y axis title" = "yAxisTitle",
-        "x axis text" = "xAxisText",
-        "y axis text" = "yAxisText"
-      ),
+      choices = c("No label available ..." = ""),
       selected = "plotTitle"
     ),
     conditionalPanel(
       ns = ns,
-      condition = "input.labelName == 'plotTitle' | input.labelName == 'xAxisTitle' | input.labelName == 'yAxisTitle'",
+      condition = "input.labelName == 'legendTitle' | input.labelName == 'plotTitle' | input.labelName == 'xAxisTitle' | input.labelName == 'yAxisTitle'",
       textInput(ns("text"), label = "Text",
                 value = initText[["plotTitle"]][["text"]],
                 placeholder = "Custom title ..."),
@@ -71,34 +65,38 @@ plotTitlesUI <- function(id, title = "Plot Texts", type = c("ggplot", "base"), i
 #'
 #' @param id namespace id
 #' @param type (character) Type of the plot to add titles to, one of "none", "ggplot", "base".
+#' @param availableElements (character) set of available labels for specifying the format of text.
+#'  May contain elements from \code{c("title", "axis", "legend")}.
 #' @inheritParams plotExportServer
 #'
 #' @export
-plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = NULL) {
+plotTitlesServer <- function(id,
+                             type = c("none", "ggplot", "base"),
+                             availableElements = c("title", "axis"),
+                             initText = NULL) {
   type <- match.arg(type)
+  availableElements <- availableElements %>%
+    checkElements()
 
   moduleServer(id,
                function(input, output, session) {
+                 plotText <- reactiveValues()
+
                  if (is.null(initText)) {
                    # if null: take values from config
 
-                   plotText <- reactiveValues(
-                     plotTitle = defaultInitText(type = type)[["plotTitle"]],
-                     xAxisTitle = defaultInitText(type = type)[["xAxisTitle"]],
-                     yAxisTitle = defaultInitText(type = type)[["yAxisTitle"]],
-                     xAxisText = defaultInitText(type = type)[["xAxisText"]],
-                     yAxisText = defaultInitText(type = type)[["yAxisText"]]
-                   )
+                   for (i in availableLabels(availableElements = availableElements)) {
+                     plotText[[i]] <- defaultInitText(type = type,
+                                                      availableElements = availableElements)[[i]]
+                   }
                  } else if (inherits(initText, "list")) {
-                   initText <- validateInitText(initText, type = type)
+                   initText <- validateInitText(initText,
+                                                type = type,
+                                                availableElements = availableElements)
 
-                   plotText <- reactiveValues(
-                     plotTitle = initText[["plotTitle"]],
-                     xAxisTitle = initText[["xAxisTitle"]],
-                     yAxisTitle = initText[["yAxisTitle"]],
-                     xAxisText = initText[["xAxisText"]],
-                     yAxisText = initText[["yAxisText"]]
-                   )
+                   for (i in names(initText)) {
+                     plotText[[i]] <- initText[[i]]
+                   }
                  } else {
                    plotText <- initText
                  }
@@ -106,6 +104,14 @@ plotTitlesServer <- function(id, type = c("none", "ggplot", "base"), initText = 
                  if (type == "none") return(plotText)
 
                  observe({
+                   updateSelectInput(session,
+                                     "labelName",
+                                     choices = availableLabels(availableElements = availableElements),
+                                     selected = availableLabels(availableElements = availableElements)[1])
+                 })
+
+                 observe({
+                   req(input[["labelName"]])
                    # load plotText element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
                                     userInputs = plotText[[input[["labelName"]]]])
@@ -209,17 +215,20 @@ sizeValuesSlider  <- function(type = c("ggplot", "base")) {
 #'
 #' @inheritParams plotTitlesServer
 #' @inheritParams plotExportServer
-validateInitText <- function(initText, type = c("none", "ggplot", "base")) {
+validateInitText <- function(initText,
+                             type = c("none", "ggplot", "base"),
+                             availableElements = c("title", "axis")) {
   type <- match.arg(type)
 
-  if (!setequal(names(initText), names(defaultInitText(type)))) {
+  defaultText <- defaultInitText(type, availableElements = availableElements)
+  if (!setequal(names(initText), names(defaultText))) {
     # add missing
-    for (i in names(defaultInitText(type))[!(names(defaultInitText(type)) %in% names(initText))]) {
-      initText[[i]] <- defaultInitText(type)[[i]]
+    for (i in names(defaultText)[!(names(defaultText) %in% names(initText))]) {
+      initText[[i]] <- defaultText[[i]]
     }
 
     # order list
-    initText <- initText[names(defaultInitText(type))]
+    initText <- initText[names(defaultText)]
   }
 
   return(initText)
@@ -230,16 +239,21 @@ validateInitText <- function(initText, type = c("none", "ggplot", "base")) {
 #' Initial list with default text elements
 #'
 #' @inheritParams plotTitlesServer
-defaultInitText <- function(type = c("none", "ggplot", "base")) {
+defaultInitText <- function(type = c("none", "ggplot", "base"),
+                            availableElements = c("title", "axis")) {
   type <- match.arg(type)
+  thisLabels <- availableLabels(availableElements = availableElements)
 
-  list(
-    plotTitle = defaultTextFormat(type = type)[["title"]],
-    xAxisTitle = defaultTextFormat(type = type)[["title"]],
-    yAxisTitle = defaultTextFormat(type = type)[["title"]],
-    xAxisText = defaultTextFormat(type = type)[["text"]],
-    yAxisText = defaultTextFormat(type = type)[["text"]]
-  )
+  names(entry) <- entry <- thisLabels
+  entry[grepl("Title", thisLabels)] <- "title"
+  entry[grepl("Text", thisLabels)] <- "text"
+
+  res <- list()
+  for (i in thisLabels) {
+    res[[i]] <- defaultTextFormat(type = type)[[entry[i]]]
+  }
+
+  res
 }
 
 #' Default Title Format
@@ -264,6 +278,38 @@ defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
 
   list(title = title,
        text = text)
+}
+
+availableLabels <- function(availableElements = c("title", "axis")) {
+  availableElements <- availableElements %>%
+    checkElements()
+
+  config()[["availableElements"]][availableElements] %>%
+  unlist() %>%
+  keep_deepest_names()
+}
+
+checkElements <- function(availableElements) {
+  if (!all(availableElements %in% c("title", "axis", "legend")))
+    stop(sprintf("Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
+                 paste0(c("title", "axis", "legend"), collapse = "', '")))
+
+  availableElements
+}
+
+#' Keep Deepest Names
+#'
+#' Extracts the names of the deepest level elements from nested names.
+#'
+#' @param x (vector)  A named vector with named elements and nested names separated by '.'
+#'
+#' @return A character vector containing the names of the deepest level elements.
+keep_deepest_names <- function(x) {
+  deepestNames <- names(x) %>%
+    sapply(FUN = function(x) gsub(pattern = ".*\\.", replacement = "", x = x), USE.NAMES = FALSE)
+
+  names(x) <- deepestNames
+  return(x)
 }
 
 # TEST MODULE -------------------------------------------------------------
@@ -300,18 +346,53 @@ defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
 #         formatTitlesOfGGplot(text = thisTitles)
 #     })
 #
-#   thisTitles <- plotTitlesServer("testMod",
-#                                  type = "ggplot",
-#                                  initText = list(plotTitle = list(text = "testHeader", fontType = "italic", color = "#000000",
-#                                                                   size = 32L, hide = FALSE),
-#                                                  xAxisTitle = list(text = "test", fontType = "bold",
-#                                                                    color = "#FF00EA", size = 25, hide = FALSE),
-#                                                  yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
-#                                                                    size = 12L, hide = FALSE),
-#                                                  xAxisText = list(fontType = "bold",
-#                                                                   color = "#FF00EA", size = 25, hide = FALSE),
-#                                                  yAxisText = list(fontType = "plain", color = "#000000",
-#                                                                   size = 12L, hide = FALSE)))
+#     thisTitles <- plotTitlesServer(
+#       "testMod",
+#       type = "ggplot",
+#       availableElements = c("title", "axis", "legend"),
+#       initText = list(
+#         plotTitle = list(
+#           text = "testHeader",
+#           fontType = "italic",
+#           color = "#000000",
+#           size = 32L,
+#           hide = FALSE
+#         ),
+#         xAxisTitle = list(
+#           text = "test",
+#           fontType = "bold",
+#           color = "#FF00EA",
+#           size = 25,
+#           hide = FALSE
+#         ),
+#         xAxisText = list(
+#           fontType = "bold",
+#           color = "#FF00EA",
+#           size = 25,
+#           hide = FALSE
+#         ),
+#         yAxisTitle = list(
+#           text = "",
+#           fontType = "plain",
+#           color = "#000000",
+#           size = 12L,
+#           hide = FALSE
+#         ),
+#         yAxisText = list(
+#           fontType = "plain",
+#           color = "#000000",
+#           size = 12L,
+#           hide = FALSE
+#         ),
+#         legendTitle = list(
+#           text = "",
+#           fontType = "plain",
+#           color = "#000000",
+#           size = 12L,
+#           hide = FALSE
+#         )
+#       )
+#     )
 # }
 #
 # shinyApp(ui = ui, server = server)

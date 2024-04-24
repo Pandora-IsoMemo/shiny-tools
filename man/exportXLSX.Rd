@@ -14,6 +14,6 @@ exportXLSX(file, dat)
  into a separate sheet with sheet names taken from the names of the list.}
 }
 \description{
-Export a single data.frame, or export a list of data.frames into workbook containing one
-data.frame in each sheet of a workbook
+Export a single data.frame. Or, export a list of data.frames into workbook containing one
+data.frame in each sheet of a workbook. Sheet names are taken from the names of the list.
 }

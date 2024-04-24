@@ -2,6 +2,7 @@
 
 export(dataExportButton)
 export(dataExportServer)
+export(exportXLSX)
 export(fontChoicesSelect)
 export(formatPointsOfGGplot)
 export(formatRangesOfGGplot)

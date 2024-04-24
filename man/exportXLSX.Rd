@@ -9,8 +9,11 @@ exportXLSX(file, dat)
 \arguments{
 \item{file}{filename}
 
-\item{dat}{data.frame}
+\item{dat}{(list) If \code{dat} is a data.frame \code{dat} will be written into a single sheet
+"Sheet 1". If \code{dat} is a named list of data.frames \code{dat} each data.frame is written
+ into a separate sheet with sheet names taken from the names of the list.}
 }
 \description{
-Export to xlsx
+Export a single data.frame. Or, export a list of data.frames into workbook containing one
+data.frame in each sheet of a workbook. Sheet names are taken from the names of the list.
 }

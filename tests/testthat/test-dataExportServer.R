@@ -39,6 +39,8 @@ test_that("Test exportJSON", {
                              dat = dataList[[1]]))
   expect_no_error(exportJSON(file = file.path(tempdir(), "test_file.json"),
                              dat = dataList))
+  expect_error(exportJSON(file = file.path(tempdir(), "test_file.json"),
+                          dat = list(a = list())))
 })
 
 test_that("Test exportCSV", {

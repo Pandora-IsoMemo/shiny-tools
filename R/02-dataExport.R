@@ -84,8 +84,7 @@ exportFilename <- function(filename, fileending){
 #' @param colseparator column seperator
 #' @param decseparator decimal seperator
 exportCSV <- function(file, dat, colseparator, decseparator){
-  if (length(dat) == 0 || !is.list(dat) || (is.list(dat) && any(!sapply(dat, is.data.frame))))
-    stop("Wrong type of 'dat'! 'dat' is neither a data.frame nor a list of data.frames.")
+  abortIfWrongExportType(dat)
 
   write.table(x = dat, file = file, sep = colseparator,
               dec = decseparator, row.names = FALSE)
@@ -109,9 +108,7 @@ exportXLSX <- function(file, dat){
     return()
   }
 
-  # abort if wrong type of dat
-  if (length(dat) == 0 || !is.list(dat) || (is.list(dat) && any(!sapply(dat, is.data.frame))))
-    stop("Wrong type of 'dat'! 'dat' is neither a data.frame nor a list of data.frames.")
+  abortIfWrongExportType(dat)
 
   # Or export a workbook containing a data.frame from a list in each sheet
   wb <- createWorkbook()
@@ -135,8 +132,20 @@ exportXLSX <- function(file, dat){
 #' @param file filename
 #' @param dat data.frame
 exportJSON <- function(file, dat){
+  abortIfWrongExportType(dat)
+
   json <- toJSON(dat)
   write(json, file)
+}
+
+abortIfWrongExportType <- function(dat) {
+  # abort if wrong type of dat
+  if (
+    length(dat) == 0 ||
+    !is.list(dat) ||
+    (is.list(dat) && !is.data.frame(dat) && any(!sapply(dat, is.data.frame)))
+  )
+    stop("Wrong type of 'dat'! 'dat' is neither a data.frame nor a list of data.frames.")
 }
 
 # TEST MODULE -------------------------------------------------------------

@@ -1,4 +1,4 @@
-# shinyTools 24.04.2
+# shinyTools 24.04.2  
 
 ## New Features
 - option to use named lists of data.frames in the dataExport module

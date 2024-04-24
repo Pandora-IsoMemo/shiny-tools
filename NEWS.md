@@ -1,6 +1,6 @@
 # shinyTools 24.04.1
 
-## New Features
+## New Features  
 - module _plotTitles_:
   - optionally specify elements that can be selected from the 'Label' input. Can 
   be one or several of `"title", "axis", "legend"` elements.

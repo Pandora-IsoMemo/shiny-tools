@@ -3,7 +3,8 @@ Type: Package
 Title: Tools for Shiny Apps
 Version: 24.04.2
 Authors@R: c(
-            person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut"))
+            person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut")),
+            person("Antonia", "Runge", email = "antonia.runge@inwt-statistics.de", role = c("aut"))
             )
 Maintainer: Lukas Fuchs <lukas.fuchs@inwt-statistics.de>
 Description: Helpful functions and modules that can be applied across the Isomemo Apps.

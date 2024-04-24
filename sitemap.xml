@@ -43,6 +43,9 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportXLSX.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractType.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/fontChoicesSelect.html</loc>
   </url>
   <url>
@@ -55,6 +58,9 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatTitlesOfGGplot.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/getElementText.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/headerButtonsUI.html</loc>
   </url>
   <url>
@@ -62,6 +68,9 @@
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/keep_deepest_names.html</loc>
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/observeAndUpdatePointElements.html</loc>

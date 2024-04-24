@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">shinyTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">24.04.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">24.04.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotExportServer</span><span class="op">(</span></span>
 <span>  <span class="va">id</span>,</span>
 <span>  <span class="va">plotFun</span>,</span>
-<span>  plotType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"ggplot"</span><span class="op">)</span>,</span>
+<span>  plotType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"ggplot"</span>, <span class="st">"ggplot_only_titles"</span><span class="op">)</span>,</span>
 <span>  filename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s_plot"</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  plotly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plotWidth <span class="op">=</span> <span class="fu">reactive</span><span class="op">(</span><span class="fl">1280</span><span class="op">)</span>,</span>
@@ -69,8 +69,10 @@
 
 
 <dt>plotType</dt>
-<dd><p>(character) one of "none", "ggplot". Adds the option to format the
-plot before export</p></dd>
+<dd><p>(character) one of "none", "ggplot", "ggplot_only_titles". Adds the option to
+format titles and ranges of a plot within the export UI (currently only for ggplots). For
+<code>plotType == "ggplot_only_titles"</code> only titles can be adjusted. This prevents that custom
+formatting of axis ranges might be overwritten by <code><a href="formatRangesOfGGplot.html">formatRangesOfGGplot()</a></code>.</p></dd>
 
 
 <dt>filename</dt>

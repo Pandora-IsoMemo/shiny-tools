@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">shinyTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">24.04.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">24.04.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,12 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotPointsServer</span><span class="op">(</span><span class="va">id</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ggplot"</span>, <span class="st">"base"</span><span class="op">)</span>, initStyle <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotPointsServer</span><span class="op">(</span></span>
+<span>  <span class="va">id</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ggplot"</span>, <span class="st">"base"</span><span class="op">)</span>,</span>
+<span>  initStyle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hideInput <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -61,6 +66,12 @@
 <dt>initStyle</dt>
 <dd><p>(list) optional, named list with style definitions, should have the same format
 as the default output of <code>plotPointsServer</code></p></dd>
+
+
+<dt>hideInput</dt>
+<dd><p>(character) inputs that should be disabled (hidden) when applying this module.
+Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
+Please use <code><a href="https://rdrr.io/pkg/shinyjs/man/useShinyjs.html" class="external-link">shinyjs::useShinyjs()</a></code> in your UI function to enable this feature.</p></dd>
 
 </dl></div>
 

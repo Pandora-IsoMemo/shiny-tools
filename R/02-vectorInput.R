@@ -2,19 +2,21 @@
 #'
 #'
 #' @param id module id
+#' @param newValueRange (numeric) Range of values that can be entered in the numeric input field
 #' @inheritParams setModuleTitle
 #'
 #' @return tagList
 #' @export
-vectorInputUI <- function(id, title = NULL, titleTag = "strong") {
+vectorInputUI <- function(id, newValueRange, title = NULL, titleTag = "strong") {
   ns <- NS(id)
   tagList(
     tags$hr(),
-    setModuleTitle(title = title, titleTag = titleTag),
-    tags$br(), tags$br(),
+    div(
+      style = "margin-bottom: 0.5em;",
+      setModuleTitle(title = title, titleTag = titleTag)
+    ),
     # Output field to display the current vector
-    tags$strong("Current vector:"),
-    verbatimTextOutput(ns("current_vector")),
+    shiny::verbatimTextOutput(ns("current_vector")),
     # Dropdown to select the index of the vector element to update
     pickerInput(
       ns("index_select"),
@@ -27,7 +29,12 @@ vectorInputUI <- function(id, title = NULL, titleTag = "strong") {
     fluidRow(
       column(8,
              # Input field to enter a new value for the selected vector element
-             numericInput(ns("new_value"), "New value:", value = NA, width = "100%")),
+             numericInput(ns("new_value"),
+                          "New value:",
+                          value = NA,
+                          min = newValueRange[1],
+                          max = newValueRange[2],
+                          width = "100%")),
       column(4,
              align = "right",
              style = "margin-top: 1.5em;",
@@ -53,8 +60,11 @@ vectorInputServer <- function(id, defaultInputs) {
     # Update vector whenever defaultInputs changes
     observe({
       vector(defaultInputs())
+
+      index_choices <- seq_along(defaultInputs())
+      names(index_choices) <- names(defaultInputs())
       # Ensure the picker input is updated with the new indices
-      updatePickerInput(session, "index_select", choices = seq_along(defaultInputs()))
+      updatePickerInput(session, "index_select", choices = index_choices)
     })
 
     # Observe event on clicking the submit button to update the vector
@@ -72,7 +82,16 @@ vectorInputServer <- function(id, defaultInputs) {
 
     # Render the text output displaying the current state of the vector
     output$current_vector <- renderText({
-      sprintf("(%s)", toString(vector()))
+      vec <- vector()
+      # Create a string representation of the named vector
+      if (is.null(vec)) {
+        "Vector is empty"
+      } else {
+        sprintf(
+          "(%s)",
+          paste(sapply(names(vec), function(n) paste(n, vec[n], sep = ": ")), collapse = ", ")
+        )
+      }
     })
 
     # Return the reactive vector for use elsewhere in the application
@@ -86,16 +105,17 @@ vectorInputServer <- function(id, defaultInputs) {
 # Please comment this code before building the package
 
 # ui <- shiny::fluidPage(
-#   #shiny::titlePanel("Numeric Vector Input Module"),
-#   vectorInputUI("vector_module", title = "Vector Input"),
+#   vectorInputUI("vector_module", title = "Vector Input", newValueRange = c(0.0001, 100)),
 #   numericInput("vector_size", "Vector Size", min = 1, max = 10, value = 5),
-#   verbatimTextOutput("sum_output")
+#   shiny::verbatimTextOutput("sum_output")
 # )
 #
 # server <- function(input, output) {
 #   # Create a reactive expression for defaultInputs based on input
 #   defaultInputs <- reactive({
-#     seq_len(input$vector_size)
+#     values <- seq_len(input$vector_size)
+#     names(values) <- paste0("Element", seq_along(values))
+#     values
 #   })
 #
 #   # Initialize the module with reactive default inputs

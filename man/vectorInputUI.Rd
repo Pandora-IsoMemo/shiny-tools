@@ -4,10 +4,12 @@
 \alias{vectorInputUI}
 \title{Vector Input UI}
 \usage{
-vectorInputUI(id, title = NULL, titleTag = "strong")
+vectorInputUI(id, newValueRange, title = NULL, titleTag = "strong")
 }
 \arguments{
 \item{id}{module id}
+
+\item{newValueRange}{(numeric) Range of values that can be entered in the numeric input field}
 
 \item{title}{(character) module title}
 

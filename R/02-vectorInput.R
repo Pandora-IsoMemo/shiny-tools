@@ -22,11 +22,7 @@ vectorInputUI <- function(id, title = NULL, titleTag = "strong") {
       width = "100%",
       choices = NULL,
       multiple = TRUE,
-      options = list(`actions-box` = TRUE),  # Enables the action box for select/deselect all
-      choicesOpt = list(
-        `icon-base` = "glyphicon",
-        `tick-icon` = "glyphicon-ok"
-      )
+      options = list(`actions-box` = TRUE)  # Enables the action box for select/deselect all
     ),
     fluidRow(
       column(8,

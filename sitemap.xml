@@ -106,6 +106,9 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotTitlesUI.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/setModuleTitle.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/sizeValuesSlider.html</loc>
   </url>
   <url>
@@ -116,5 +119,11 @@
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/validateInitText.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/vectorInputServer.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/vectorInputUI.html</loc>
   </url>
 </urlset>

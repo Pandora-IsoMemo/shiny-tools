@@ -7,6 +7,7 @@
 plotTitlesUI(
   id,
   title = "Plot Texts",
+  titleTag = "h4",
   type = c("ggplot", "base"),
   initText = NULL
 )
@@ -15,6 +16,9 @@ plotTitlesUI(
 \item{id}{module id}
 
 \item{title}{(character) module title}
+
+\item{titleTag}{(character) HTML tag to put around the title, e.g. "h4" for \code{h4} from
+\code{htmltools}}
 
 \item{type}{(character) Type of the plot to add titles to, one of "none", "ggplot", "base".}
 

@@ -2,12 +2,12 @@
 #'
 #'
 #' @param id module id
-#' @param title (character) module title
+#' @inheritParams setModuleTitle
 #' @inheritParams plotExportServer
 #'
 #' @return tagList
 #' @export
-plotRangesUI <- function(id, title = "Ranges", initRanges = NULL) {
+plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NULL) {
   if (is.null(initRanges)) {
     # if null: take values from config
     initRanges <- list(
@@ -18,7 +18,7 @@ plotRangesUI <- function(id, title = "Ranges", initRanges = NULL) {
 
   ns <- NS(id)
   tagList(
-    h4(title),
+    setModuleTitle(title = title, titleTag = titleTag),
     selectInput(
       inputId = ns("labelName"),
       label = "Axis",
@@ -34,15 +34,19 @@ plotRangesUI <- function(id, title = "Ranges", initRanges = NULL) {
       value = initRanges[["xAxis"]][["fromData"]],
       width = "100%"
     ),
-    numericInput(
-      ns("min"),
-      label = "Minimum",
-      value = initRanges[["xAxis"]][["min"]]
-    ),
-    numericInput(
-      ns("max"),
-      label = "Maximum",
-      value = initRanges[["xAxis"]][["max"]]
+    conditionalPanel(
+      ns = ns,
+      condition = "!input.fromData",
+      numericInput(
+        ns("min"),
+        label = "Minimum",
+        value = initRanges[["xAxis"]][["min"]]
+      ),
+      numericInput(
+        ns("max"),
+        label = "Maximum",
+        value = initRanges[["xAxis"]][["max"]]
+      )
     )
   )
 }
@@ -144,8 +148,10 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 #       id = "test"
 #     ),
 #     plotOutput("plot"),
-#     plotRangesUI(id = "testMod", initRanges = list(xAxis = list(min = 0, max = 10, fromData = FALSE),
-#                                                    yAxis = list(min = 0, max = 10, fromData = TRUE)))
+#     plotRangesUI(id = "testMod",
+#                  titleTag = "h1",
+#                  initRanges = list(xAxis = list(min = 0, max = 10, fromData = FALSE),
+#                                    yAxis = list(min = 0, max = 10, fromData = TRUE)))
 #   )
 # )
 #

@@ -2,13 +2,13 @@
 #'
 #'
 #' @param id module id
-#' @param title (character) module title
+#' @inheritParams setModuleTitle
 #' @inheritParams plotTitlesServer
 #' @inheritParams plotExportServer
 #'
 #' @return tagList
 #' @export
-plotTitlesUI <- function(id, title = "Plot Texts", type = c("ggplot", "base"), initText = NULL) {
+plotTitlesUI <- function(id, title = "Plot Texts", titleTag = "h4", type = c("ggplot", "base"), initText = NULL) {
   type <- match.arg(type)
 
   if (is.null(initText)) {
@@ -20,7 +20,7 @@ plotTitlesUI <- function(id, title = "Plot Texts", type = c("ggplot", "base"), i
 
   ns <- NS(id)
   tagList(
-    h4(title),
+    setModuleTitle(title = title, titleTag = titleTag),
     selectInput(
       inputId = ns("labelName"),
       label = "Label",

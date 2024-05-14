@@ -7,6 +7,7 @@
 plotPointsUI(
   id,
   title = "Data Points",
+  titleTag = "h4",
   type = c("ggplot", "base"),
   initStyle = NULL
 )
@@ -15,6 +16,9 @@ plotPointsUI(
 \item{id}{module id}
 
 \item{title}{(character) module title}
+
+\item{titleTag}{(character) HTML tag to put around the title, e.g. "h4" for \code{h4} from
+\code{htmltools}}
 
 \item{type}{(character) Type of the plot to edit points for, one of "ggplot", "base".}
 

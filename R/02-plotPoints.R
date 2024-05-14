@@ -2,12 +2,12 @@
 #'
 #'
 #' @param id module id
-#' @param title (character) module title
+#' @inheritParams setModuleTitle
 #' @inheritParams plotPointsServer
 #'
 #' @return tagList
 #' @export
-plotPointsUI <- function(id, title = "Data Points", type = c("ggplot", "base"), initStyle = NULL) {
+plotPointsUI <- function(id, title = "Data Points", titleTag = "h4", type = c("ggplot", "base"), initStyle = NULL) {
   type <- match.arg(type)
   if (is.null(initStyle)) {
     # if null: take values from config
@@ -16,7 +16,7 @@ plotPointsUI <- function(id, title = "Data Points", type = c("ggplot", "base"), 
 
   ns <- NS(id)
   tagList(
-    h4(title),
+    setModuleTitle(title = title, titleTag = titleTag),
     checkboxInput(
       inputId = ns("hide"),
       label = "Hide points",

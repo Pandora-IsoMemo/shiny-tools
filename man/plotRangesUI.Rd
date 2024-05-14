@@ -4,12 +4,15 @@
 \alias{plotRangesUI}
 \title{Plot Ranges UI}
 \usage{
-plotRangesUI(id, title = "Ranges", initRanges = NULL)
+plotRangesUI(id, title = "Ranges", titleTag = "h4", initRanges = NULL)
 }
 \arguments{
 \item{id}{module id}
 
 \item{title}{(character) module title}
+
+\item{titleTag}{(character) HTML tag to put around the title, e.g. "h4" for \code{h4} from
+\code{htmltools}}
 
 \item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
 }

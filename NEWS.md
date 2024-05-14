@@ -1,3 +1,9 @@
+# shinyTools 24.05.0
+
+## New Features
+- optionally, specify the tag of a modules title
+- new input module that allows a user to update a numeric vector
+
 # shinyTools 24.04.2  
 
 ## New Features

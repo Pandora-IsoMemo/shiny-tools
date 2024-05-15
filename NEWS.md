@@ -1,3 +1,8 @@
+# shinyTools 24.05.1
+
+## New Features
+- _plotTitles_ module: optionally, change the angle, hjust or vjust of axis texts
+
 # shinyTools 24.05.0
 
 ## New Features

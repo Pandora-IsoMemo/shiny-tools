@@ -74,7 +74,9 @@ getElementText <- function(textDef = list(fontType = "plain",
                  size = textDef[["size"]],
                  face = textDef[["fontType"]],
                  color = textDef[["color"]],
-                 hjust = 0.5)
+                 angle = textDef[["angle"]],
+                 hjust = textDef[["hjust"]],
+                 vjust = textDef[["vjust"]])
   }
 }
 

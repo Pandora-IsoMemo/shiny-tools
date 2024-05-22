@@ -126,7 +126,7 @@ plotExportServer <- function(id,
                      if (plotly) {
                        tmpfile <- paste0("plot.", input$exportType)
                        save_image(plotFun()(), file = tmpfile) %>%
-                         tryCatchWithWarningsAndErrors(errorTitle = "Export failed", alertStyle = "shinyalert")
+                         shinyTryCatch(errorTitle = "Export failed", alertStyle = "shinyalert")
                        file.copy(tmpfile, file)
                      } else {
                        switch(input$exportType,

@@ -21,26 +21,12 @@ shinyTryCatch <- function(expr,
   tryCatchMessage <- list()
 
   w.handler <- function(w) {
-    # warning handler
-    warningText <- w$message %>%
-      gsub(pattern = "\033\\[[0-9;]*m", replacement = "") %>% # removes ANSI codes (formatting of warnings)
-      paste0(collapse = "\n")
-    tryCatchMessage <<- c(tryCatchMessage, list(list(
-      text = warningText,
-      type = "warning"
-    )))
+    tryCatchMessage <<- c(tryCatchMessage, extractSingleTryCatch(condition = w, type = "warning"))
     invokeRestart("muffleWarning")
   }
 
   e.handler <- function(e) {
-    # error handler
-    errorText <- e$message %>%
-      gsub(pattern = "\033\\[[0-9;]*m", replacement = "") %>% # removes ANSI codes (formatting of errors)
-      paste0(collapse = "\n")
-    tryCatchMessage <<- c(tryCatchMessage, list(list(
-      text = errorText,
-      type = "error"
-    )))
+    tryCatchMessage <<- c(tryCatchMessage, extractSingleTryCatch(condition = e, type = "error"))
     return(NULL)
   }
 
@@ -90,6 +76,18 @@ shinyTryCatch <- function(expr,
 
   # output result of expr
   res
+}
+
+#' Extract Single Try Catch
+#'
+#' @param condition error or warning object
+#' @param type (character) type of the message: "error" or "warning"
+extractSingleTryCatch <- function(condition, type) {
+  text <- condition$message %>%
+    gsub(pattern = "\033\\[[0-9;]*m", replacement = "") %>% # remove ANSI codes (formatting of warnings)
+    paste0(collapse = "\n")
+
+  return(list(list(text = text, type = type)))
 }
 
 # TEST MODULE -------------------------------------------------------------

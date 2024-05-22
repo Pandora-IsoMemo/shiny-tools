@@ -119,14 +119,16 @@ plotExportServer <- function(id,
                      formatFun(text = text, ranges = ranges) %>%
                      print() %>%
                      tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                   alertStyle = "shinyalert")
+                                                   alertStyle = "shinyalert",
+                                                   silent = TRUE)
                  })
 
                  output$exportPlotly <- renderPlotly({
                    plotFun()() %>%
                      print() %>%
                      tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                   alertStyle = "shinyalert")
+                                                   alertStyle = "shinyalert",
+                                                   silent = TRUE)
                  })
 
                  output$exportExecute <- downloadHandler(
@@ -139,7 +141,8 @@ plotExportServer <- function(id,
                        p <- plotFun()() %>%
                          print() %>%
                          tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                       alertStyle = "shinyalert")
+                                                       alertStyle = "shinyalert",
+                                                       silent = TRUE)
                        save_image(p, file = tmpfile)
                        file.copy(tmpfile, file)
                      } else {
@@ -153,7 +156,8 @@ plotExportServer <- function(id,
                          formatFun(text = text, ranges = ranges) %>%
                          print() %>%
                          tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                       alertStyle = "shinyalert")
+                                                       alertStyle = "shinyalert",
+                                                       silent = TRUE)
                        dev.off()
                      }
                    }

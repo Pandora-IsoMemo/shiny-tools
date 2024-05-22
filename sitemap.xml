@@ -43,6 +43,9 @@
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportXLSX.html</loc>
   </url>
   <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractSingleTryCatch.html</loc>
+  </url>
+  <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractType.html</loc>
   </url>
   <url>
@@ -107,6 +110,9 @@
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/setModuleTitle.html</loc>
+  </url>
+  <url>
+    <loc>https://pandora-isomemo.github.io/shiny-tools/reference/shinyTryCatch.html</loc>
   </url>
   <url>
     <loc>https://pandora-isomemo.github.io/shiny-tools/reference/sizeValuesSlider.html</loc>

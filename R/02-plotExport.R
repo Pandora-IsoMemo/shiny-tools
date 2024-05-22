@@ -118,17 +118,17 @@ plotExportServer <- function(id,
                    plotFun()() %>%
                      formatFun(text = text, ranges = ranges) %>%
                      print() %>%
-                     tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                   alertStyle = "shinyalert",
-                                                   silent = TRUE)
+                     shinyTryCatch(errorTitle = "Plot failed",
+                                   alertStyle = "shinyalert",
+                                   inShiny = FALSE)
                  })
 
                  output$exportPlotly <- renderPlotly({
                    plotFun()() %>%
                      print() %>%
-                     tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                   alertStyle = "shinyalert",
-                                                   silent = TRUE)
+                     shinyTryCatch(errorTitle = "Plot failed",
+                                   alertStyle = "shinyalert",
+                                   inShiny = FALSE)
                  })
 
                  output$exportExecute <- downloadHandler(
@@ -140,9 +140,9 @@ plotExportServer <- function(id,
                        tmpfile <- paste0("plot.", input$exportType)
                        p <- plotFun()() %>%
                          print() %>%
-                         tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                       alertStyle = "shinyalert",
-                                                       silent = TRUE)
+                         shinyTryCatch(errorTitle = "Plot failed",
+                                       alertStyle = "shinyalert",
+                                       inShiny = FALSE)
                        save_image(p, file = tmpfile)
                        file.copy(tmpfile, file)
                      } else {
@@ -155,9 +155,9 @@ plotExportServer <- function(id,
                        plotFun()() %>%
                          formatFun(text = text, ranges = ranges) %>%
                          print() %>%
-                         tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-                                                       alertStyle = "shinyalert",
-                                                       silent = TRUE)
+                         shinyTryCatch(errorTitle = "Plot failed",
+                                       alertStyle = "shinyalert",
+                                       inShiny = FALSE)
                        dev.off()
                      }
                    }
@@ -252,8 +252,7 @@ extractType <- function(plotType) {
 #       formatTitlesOfGGplot(text = testTitles) %>%
 #       formatRangesOfGGplot(ranges = testRanges) %>%
 #       print() %>%
-#       tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-#                                     alertStyle = "shinyalert")
+#       shinyTryCatch(errorTitle = "Plot failed", alertStyle = "shinyalert")
 #   })
 #
 #   plotExportServer("expPlot",
@@ -278,8 +277,7 @@ extractType <- function(plotType) {
 #   output$plotly <- renderPlotly({
 #     testPlotlyFun() %>%
 #       print() %>%
-#       tryCatchWithWarningsAndErrors(errorTitle = "Plot failed",
-#                                     alertStyle = "shinyalert")
+#       shinyTryCatch(errorTitle = "Plot failed", alertStyle = "shinyalert")
 #   })
 #
 #   plotExportServer("expPlotly",

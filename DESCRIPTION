@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.05.1
+Version: 24.05.2
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut")),
             person("Antonia", "Runge", email = "antonia.runge@inwt-statistics.de", role = c("aut"))
@@ -13,7 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     colourpicker,
-    DataTools,
     ggplot2,
     grDevices,
     magrittr,
@@ -21,6 +20,7 @@ Imports:
     plotly,
     rjson,
     shiny,
+    shinyalert,
     shinyjs,
     shinyWidgets,
     utils,

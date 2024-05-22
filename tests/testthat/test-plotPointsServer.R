@@ -3,7 +3,7 @@ test_that("Test module plotPointsServer", {
              args = list(type = "ggplot"),
              {
                # Arrange
-               print("test plot titles")
+               print("test plot points")
                # Act
                session$setInputs(
                  symbol = 24,

@@ -38,11 +38,16 @@ plotExportServer <- function(id,
                              initText = NULL,
                              initRanges = NULL) {
   plotType <- match.arg(plotType)
-  formatFun <- switch (plotType,
-                       "none" = noExtraFormat,
-                       "ggplot" = formatWrapperGGplot,
-                       "ggplot_only_titles" = function(plot, text, ranges, what = c("titles"))
-                         formatWrapperGGplot(plot, text, ranges, what)
+  if (plotly == TRUE && plotType != "none") {
+    # currently we have not defined any formatting functions for plotly plots
+    warning("Formatting of plotly plots is not supported yet. Setting plotType to 'none'.")
+    plotType <- "none"
+  }
+  formatFun <- switch(plotType,
+                      "none" = noExtraFormat,
+                      "ggplot" = formatWrapperGGplot,
+                      "ggplot_only_titles" = function(plot, text, ranges, what = c("titles"))
+                        formatWrapperGGplot(plot, text, ranges, what)
   )
 
   moduleServer(id,
@@ -111,11 +116,19 @@ plotExportServer <- function(id,
 
                  output$exportPlot <- renderPlot({
                    plotFun()() %>%
-                     formatFun(text = text, ranges = ranges)
+                     formatFun(text = text, ranges = ranges) %>%
+                     print() %>%
+                     shinyTryCatch(errorTitle = "Plot failed",
+                                   alertStyle = "shinyalert",
+                                   inShiny = FALSE)
                  })
 
                  output$exportPlotly <- renderPlotly({
-                   plotFun()()
+                   plotFun()() %>%
+                     print() %>%
+                     shinyTryCatch(errorTitle = "Plot failed",
+                                   alertStyle = "shinyalert",
+                                   inShiny = FALSE)
                  })
 
                  output$exportExecute <- downloadHandler(
@@ -125,8 +138,12 @@ plotExportServer <- function(id,
                    content = function(file) {
                      if (plotly) {
                        tmpfile <- paste0("plot.", input$exportType)
-                       save_image(plotFun()(), file = tmpfile) %>%
-                         shinyTryCatch(errorTitle = "Export failed", alertStyle = "shinyalert")
+                       p <- plotFun()() %>%
+                         print() %>%
+                         shinyTryCatch(errorTitle = "Plot failed",
+                                       alertStyle = "shinyalert",
+                                       inShiny = FALSE)
+                       save_image(p, file = tmpfile)
                        file.copy(tmpfile, file)
                      } else {
                        switch(input$exportType,
@@ -135,10 +152,12 @@ plotExportServer <- function(id,
                               tiff = tiff(file, width = input$width, height = input$height),
                               svg = svg(file, width = input$width / 72, height = input$height / 72)
                        )
-                       print(
-                         plotFun()() %>%
-                           formatFun(text = text, ranges = ranges)
-                       )
+                       plotFun()() %>%
+                         formatFun(text = text, ranges = ranges) %>%
+                         print() %>%
+                         shinyTryCatch(errorTitle = "Plot failed",
+                                       alertStyle = "shinyalert",
+                                       inShiny = FALSE)
                        dev.off()
                      }
                    }
@@ -188,7 +207,9 @@ extractType <- function(plotType) {
 #       id = "test"
 #     ),
 #     plotOutput("plot"),
-#     plotExportButton(id = "expPlot")
+#     plotlyOutput("plotly"),
+#     plotExportButton(id = "expPlot", label = "Export GGplot"),
+#     plotExportButton(id = "expPlotly", label = "Export plotly")
 #   )
 # )
 #
@@ -201,9 +222,13 @@ extractType <- function(plotType) {
 #     yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
 #                  size = 12L, hide = FALSE),
 #     xAxisText = list(fontType = "bold",
-#                       color = "#FF00EA", size = 25, hide = FALSE),
+#                       color = "#FF00EA", size = 25, hide = FALSE, angle = 45, hjust = 1, vjust = 0.5),
 #     yAxisText = list(fontType = "plain", color = "#000000",
-#                       size = 12L, hide = FALSE)
+#                       size = 12L, hide = FALSE, angle = 0, hjust = 0.5, vjust = 0.5),
+#     legendTitle = list(text = "", fontType = "plain", color = "#000000",
+#                        size = 12L, hide = FALSE),
+#     legendText = list(fontType = "plain",
+#                       color = "#FF00EA", size = 25, hide = FALSE, angle = 45, hjust = 1),
 #   )
 #
 #   testRanges <- reactiveValues(
@@ -212,24 +237,53 @@ extractType <- function(plotType) {
 #   )
 #
 #   testPlotFun <- function() {
-#     data <- data.frame(
-#       x = c(1, 2, 3, 4, 5),
-#       y = c(2, 4, 1, 7, 3)
-#     )
+#     p <- ggplot2::ggplot(mtcars, ggplot2::aes(x = factor(cyl), y = mpg)) +
+#       ggplot2::geom_boxplot() +
+#       ggplot2::labs(title = "Boxplot of MPG by Cylinder",
+#                     x = "Number of Cylinders",
+#                     y = "Miles per Gallon")
 #
-#     ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
-#       ggplot2::geom_point()
+#     # in order to force an error use:
+#     #p <- p + ggplot2::xlim(c(3, 8))
 #   }
 #
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%
 #       formatTitlesOfGGplot(text = testTitles) %>%
-#       formatRangesOfGGplot(ranges = testRanges)
+#       formatRangesOfGGplot(ranges = testRanges) %>%
+#       print() %>%
+#       shinyTryCatch(errorTitle = "Plot failed", alertStyle = "shinyalert")
 #   })
 #
 #   plotExportServer("expPlot",
 #                    plotFun = reactive({ testPlotFun }),
 #                    plotType = "ggplot",
+#                    filename = "plot",
+#                    initText = testTitles,
+#                    initRanges = testRanges)
+#
+#   testPlotlyFun <- function() {
+#     p <- plotly::plot_ly(mtcars, x = ~factor(cyl),
+#                          y = ~mpg,
+#                          # in order to force an error use:
+#                          #y = ~non_existent_column,
+#                          type = "box") %>%
+#       plotly::layout(title = "Boxplot of MPG by Cylinder",
+#                      xaxis = list(title = "Number of Cylinders", range = c(0, 10)),
+#                      yaxis = list(title = "Miles per Gallon"))
+#     p
+#   }
+#
+#   output$plotly <- renderPlotly({
+#     testPlotlyFun() %>%
+#       print() %>%
+#       shinyTryCatch(errorTitle = "Plot failed", alertStyle = "shinyalert")
+#   })
+#
+#   plotExportServer("expPlotly",
+#                    plotFun = reactive({ testPlotlyFun }),
+#                    plotType = "ggplot",
+#                    plotly = TRUE,
 #                    filename = "plot",
 #                    initText = testTitles,
 #                    initRanges = testRanges)

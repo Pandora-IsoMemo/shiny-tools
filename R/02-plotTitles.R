@@ -14,7 +14,8 @@ plotTitlesUI <- function(id, title = "Plot Texts", titleTag = "h4", type = c("gg
   if (is.null(initText)) {
     # if null: take values from config
     initText <- list(
-      plotTitle = defaultTextFormat(type = type)[["title"]]
+      plotTitle = defaultTextFormat(type = type)[["title"]],
+      xAxisText = defaultTextFormat(type = type)[["text"]]
     )
   }
 
@@ -27,9 +28,15 @@ plotTitlesUI <- function(id, title = "Plot Texts", titleTag = "h4", type = c("gg
       choices = c("No label available ..." = ""),
       selected = "plotTitle"
     ),
+    checkboxInput(
+      inputId = ns("hide"),
+      label = "Hide label",
+      value = initText[["plotTitle"]][["hide"]],
+      width = "100%"
+    ),
     conditionalPanel(
       ns = ns,
-      condition = "input.labelName == 'legendTitle' | input.labelName == 'plotTitle' | input.labelName == 'xAxisTitle' | input.labelName == 'yAxisTitle'",
+      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle'].includes(input.labelName)",
       textInput(ns("text"), label = "Text",
                 value = initText[["plotTitle"]][["text"]],
                 placeholder = "Custom title ..."),
@@ -50,11 +57,33 @@ plotTitlesUI <- function(id, title = "Plot Texts", titleTag = "h4", type = c("gg
       max = sizeValuesSlider(type = type)[["max"]],
       step = sizeValuesSlider(type = type)[["step"]]
     ),
-    checkboxInput(
-      inputId = ns("hide"),
-      label = "Hide label",
-      value = initText[["plotTitle"]][["hide"]],
-      width = "100%"
+    conditionalPanel(
+      ns = ns,
+      condition = "['xAxisText', 'yAxisText'].includes(input.labelName)",
+      sliderInput(
+        ns("angle"),
+        label = "Text angle",
+        value = initText[["xAxisText"]][["angle"]],
+        min = 0,
+        max = 360,
+        step = 5
+      ),
+      sliderInput(
+        ns("hjust"),
+        label = "Horizontal adjustment",
+        value = initText[["xAxisText"]][["hjust"]],
+        min = 0,
+        max = 1,
+        step = 0.1
+      ),
+      sliderInput(
+        ns("vjust"),
+        label = "Vertical adjustment",
+        value = initText[["xAxisText"]][["vjust"]],
+        min = 0,
+        max = 1,
+        step = 0.1
+      )
     )
   )
 }
@@ -82,6 +111,7 @@ plotTitlesServer <- function(id,
                function(input, output, session) {
                  plotText <- reactiveValues()
 
+                 # initialize plotText
                  if (is.null(initText)) {
                    # if null: take values from config
 
@@ -101,6 +131,7 @@ plotTitlesServer <- function(id,
                    plotText <- initText
                  }
 
+                 # if no type available, return plotText
                  if (type == "none") return(plotText)
 
                  observe({
@@ -134,6 +165,8 @@ plotTitlesServer <- function(id,
 #' @param session session from server function
 #' @param plotText (reactiveValue) contains text elements
 observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText) {
+  # set up all observers for text elements
+  # we cannot loop over the elements. When looping reactivity gets lost.
   observe({
     req(input[["labelName"]])
     plotText[[input[["labelName"]]]][["text"]] <- input[["text"]]
@@ -163,6 +196,24 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
     plotText[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
   }) %>%
     bindEvent(input[["hide"]])
+
+  observe({
+    req(input[["labelName"]])
+    plotText[[input[["labelName"]]]][["angle"]] <- input[["angle"]]
+  }) %>%
+    bindEvent(input[["angle"]])
+
+  observe({
+    req(input[["labelName"]])
+    plotText[[input[["labelName"]]]][["hjust"]] <- input[["hjust"]]
+  }) %>%
+    bindEvent(input[["hjust"]])
+
+  observe({
+    req(input[["labelName"]])
+    plotText[[input[["labelName"]]]][["vjust"]] <- input[["vjust"]]
+  }) %>%
+    bindEvent(input[["vjust"]])
 
   return(plotText)
 }
@@ -369,7 +420,9 @@ keep_deepest_names <- function(x) {
 #           fontType = "bold",
 #           color = "#FF00EA",
 #           size = 25,
-#           hide = FALSE
+#           hide = FALSE,
+#           angle = 45,
+#           hjust = 1
 #         ),
 #         yAxisTitle = list(
 #           text = "",
@@ -382,7 +435,9 @@ keep_deepest_names <- function(x) {
 #           fontType = "plain",
 #           color = "#000000",
 #           size = 12L,
-#           hide = FALSE
+#           hide = FALSE,
+#           angle = 0,
+#           vjust = 0.5
 #         ),
 #         legendTitle = list(
 #           text = "",

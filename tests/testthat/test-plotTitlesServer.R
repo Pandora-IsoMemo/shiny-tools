@@ -31,7 +31,8 @@ test_that("Test module plotTitlesServer", {
                )
 
                expect_equal(session$returned[["yAxisText"]],
-                            list(fontType = "bold", color = "#FFFFFF", size = 5, hide = FALSE))
+                            list(fontType = "bold", color = "#FFFFFF", size = 5, hide = FALSE,
+                                 angle = 0, hjust = 0.5, vjust = 0.5))
              })
 })
 
@@ -41,7 +42,7 @@ test_that("Test validateInitText", {
                    xAxisTitle = list(text = "test", fontType = "bold",
                                      color = "#FFFFFF", size = 5, hide = FALSE),
                    yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
-                                    hide = FALSE))
+                                    hide = FALSE, angle = 0L, hjust = 0.5, vjust = 0.5))
 
   testList <- validateInitText(testList, type = "ggplot")
 
@@ -51,11 +52,11 @@ test_that("Test validateInitText", {
                     xAxisTitle = list(text = "test", fontType = "bold",
                                       color = "#FFFFFF", size = 5, hide = FALSE),
                     xAxisText = list(fontType = "plain", color = "#000000", size = 10L,
-                                     hide = FALSE),
+                                     hide = FALSE, angle = 0L, hjust = 0.5, vjust = 0.5),
                     yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
                                       size = 12L, hide = FALSE),
                     yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
-                                     hide = FALSE)))
+                                     hide = FALSE, angle = 0L, hjust = 0.5, vjust = 0.5)))
 })
 
 test_that("Test defaultInitText", {
@@ -92,7 +93,10 @@ test_that("Test defaultInitText", {
         fontType = "plain",
         color = "#000000",
         size = 10L,
-        hide = FALSE
+        hide = FALSE,
+        angle = 0L,
+        hjust = 0.5,
+        vjust = 0.5
       ),
       yAxisTitle = list(
         text = "",
@@ -105,7 +109,10 @@ test_that("Test defaultInitText", {
         fontType = "plain",
         color = "#000000",
         size = 10L,
-        hide = FALSE
+        hide = FALSE,
+        angle = 0L,
+        hjust = 0.5,
+        vjust = 0.5
       ),
       legendTitle = list(
         text = "",
@@ -118,7 +125,10 @@ test_that("Test defaultInitText", {
         fontType = "plain",
         color = "#000000",
         size = 10L,
-        hide = FALSE
+        hide = FALSE,
+        angle = 0L,
+        hjust = 0.5,
+        vjust = 0.5
       )
     )
   )

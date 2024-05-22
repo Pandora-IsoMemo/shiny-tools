@@ -30,12 +30,18 @@ defaultGGText:
   color: "#000000"
   size: 10
   hide: false
+  angle: 0
+  hjust: 0.5
+  vjust: 0.5
 
 defaultBaseText:
   fontType: 1
   color: "#000000"
   size: 1
   hide: false
+  angle: 0
+  hjust: 0.5
+  vjust: 0.5
 
 # default range of axis (for plotExport.R)
 defaultRange:

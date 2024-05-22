@@ -1,7 +1,7 @@
 # shinyTools 24.05.1
 
 ## New Features
-- catch _multiple errors and warnings_:
+- catch _multiple errors and warnings_ (#20):
   - shifted the function `DataTools::tryCatchWithWarningsAndErrors()` to this package
   - renamed function to `shinyTryCatch()`
   - updated the logic such that now all errors/warnings are caught and displayed in the app

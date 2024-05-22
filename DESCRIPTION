@@ -20,6 +20,7 @@ Imports:
     plotly,
     rjson,
     shiny,
+    shinyalert,
     shinyjs,
     shinyWidgets,
     utils,

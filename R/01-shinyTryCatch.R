@@ -69,10 +69,13 @@ shinyTryCatch <- function(expr,
         type = messageType
       )
     )
-  } else {
-    # give out the error or warning, but always as a warning to not interrupt the calculation/app
-    warning(paste0(messageTitle, "\n", messageText), call. = FALSE)
+
+
   }
+
+  # always give out the error or warning (for logging), but always as a warning to not interrupt
+  # the calculation/app
+  warning(paste0(messageTitle, "\n", messageText), call. = FALSE)
 
   # output result of expr
   res

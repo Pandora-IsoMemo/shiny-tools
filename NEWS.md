@@ -1,3 +1,8 @@
+# shinyTools 24.05.3
+
+## New Features
+- _plotTitles_ module: optionally, change the font family of titles and axis texts
+
 # shinyTools 24.05.2
 
 ## New Features

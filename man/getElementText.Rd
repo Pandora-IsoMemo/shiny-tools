@@ -5,7 +5,8 @@
 \title{Get Element Text}
 \usage{
 getElementText(
-  textDef = list(fontType = "plain", color = "#000000", size = 12L, hide = FALSE)
+  textDef = list(fontFamily = "sans", hide = FALSE, size = 12L, fontType = "plain", color
+    = "#000000", angle = 0, hjust = 0.5, vjust = 0.5)
 )
 }
 \arguments{

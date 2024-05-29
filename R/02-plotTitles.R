@@ -45,6 +45,12 @@ plotTitlesUI <- function(id, title = "Plot Texts", titleTag = "h4", type = c("gg
                 label = "Text color",
                 value = initText[["plotTitle"]][["color"]]),
     selectInput(
+      inputId = ns("fontFamily"),
+      label = "Font family",
+      selected = initText[["plotTitle"]][["fontFamily"]],
+      choices = availableFonts()
+    ),
+    selectInput(
       ns("fontType"),
       label = "Font type",
       choices = fontChoicesSelect(type = type),
@@ -175,6 +181,12 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
 
   observe({
     req(input[["labelName"]])
+    plotText[[input[["labelName"]]]][["fontFamily"]] <- input[["fontFamily"]]
+  }) %>%
+    bindEvent(input[["fontFamily"]])
+
+  observe({
+    req(input[["labelName"]])
     plotText[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
   }) %>%
     bindEvent(input[["fontType"]])
@@ -218,6 +230,11 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
   return(plotText)
 }
 
+#' Available Fonts
+availableFonts <- function() {
+  c("sans", "serif", "mono")
+}
+
 #' Font Choices
 #'
 #' Mapping of font choices dependent on the plot type
@@ -228,15 +245,15 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
 fontChoicesSelect <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
-  switch (type,
-          "base" = c("plain text" = 1,
-                     "bold face" = 2,
-                     "italic" = 3,
-                     "bold italic" = 4),
-          "ggplot" = c("plain text" = "plain",
-                       "bold face" = "bold",
-                       "italic" = "italic",
-                       "bold italic" = "bold.italic")
+  switch(type,
+         "base" = c("plain text" = 1,
+                    "bold face" = 2,
+                    "italic" = 3,
+                    "bold italic" = 4),
+         "ggplot" = c("plain text" = "plain",
+                      "bold face" = "bold",
+                      "italic" = "italic",
+                      "bold italic" = "bold.italic")
   )
 }
 
@@ -404,6 +421,7 @@ keep_deepest_names <- function(x) {
 #       initText = list(
 #         plotTitle = list(
 #           text = "testHeader",
+#           fontFamily = "sans",
 #           fontType = "italic",
 #           color = "#000000",
 #           size = 32L,
@@ -411,12 +429,14 @@ keep_deepest_names <- function(x) {
 #         ),
 #         xAxisTitle = list(
 #           text = "test",
+#           fontFamily = "sans",
 #           fontType = "bold",
 #           color = "#FF00EA",
 #           size = 25,
 #           hide = FALSE
 #         ),
 #         xAxisText = list(
+#           fontFamily = "sans",
 #           fontType = "bold",
 #           color = "#FF00EA",
 #           size = 25,
@@ -426,12 +446,14 @@ keep_deepest_names <- function(x) {
 #         ),
 #         yAxisTitle = list(
 #           text = "",
+#           fontFamily = "sans",
 #           fontType = "plain",
 #           color = "#000000",
 #           size = 12L,
 #           hide = FALSE
 #         ),
 #         yAxisText = list(
+#           fontFamily = "sans",
 #           fontType = "plain",
 #           color = "#000000",
 #           size = 12L,
@@ -441,6 +463,7 @@ keep_deepest_names <- function(x) {
 #         ),
 #         legendTitle = list(
 #           text = "",
+#           fontFamily = "sans",
 #           fontType = "plain",
 #           color = "#000000",
 #           size = 12L,

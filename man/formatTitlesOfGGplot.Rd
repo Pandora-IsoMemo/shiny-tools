@@ -12,5 +12,5 @@ formatTitlesOfGGplot(plot, text)
 \item{text}{(list) named list with title definitions, output of \code{plotTitlesServer}}
 }
 \description{
-Format Titles Of GGplot
+Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
 }

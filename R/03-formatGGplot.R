@@ -1,5 +1,7 @@
 #' Format Titles Of GGplot
 #'
+#' Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
+#'
 #' @param plot (ggplot)
 #' @param text (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
@@ -63,14 +65,19 @@ formatTitlesOfGGplot <- function(plot, text) {
 #'
 #' @param textDef (list) named list with specs for text formatting, see e.g.
 #' \code{config()$defaultGGTitle}
-getElementText <- function(textDef = list(fontType = "plain",
-                                          color = "#000000",
+getElementText <- function(textDef = list(fontFamily = "sans",
+                                          hide = FALSE,
                                           size = 12L,
-                                          hide = FALSE)) {
+                                          fontType = "plain",
+                                          color = "#000000",
+                                          angle = 0,
+                                          hjust = 0.5,
+                                          vjust = 0.5
+                                          )) {
   if (textDef[["hide"]]) {
     element_blank()
   } else {
-    element_text(family = "Arial",
+    element_text(family = textDef[["fontFamily"]],
                  size = textDef[["size"]],
                  face = textDef[["fontType"]],
                  color = textDef[["color"]],

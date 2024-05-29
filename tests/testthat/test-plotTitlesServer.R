@@ -9,6 +9,7 @@ test_that("Test module plotTitlesServer", {
                session$setInputs(
                  labelName = "xAxisTitle",
                  text = "test",
+                 fontFamily = "mono",
                  fontType = "bold",
                  color = "#FFFFFF",
                  size = 5,
@@ -16,14 +17,15 @@ test_that("Test module plotTitlesServer", {
                )
 
                expect_equal(session$returned[["plotTitle"]],
-                            list(text = "", fontType = "plain", color = "#000000", size = 12L,
-                                 hide = FALSE))
+                            list(text = "",  fontFamily = "sans", fontType = "plain",
+                                 color = "#000000", size = 12L, hide = FALSE))
                expect_equal(session$returned[["xAxisTitle"]],
-                            list(text = "test", fontType = "bold", color = "#FFFFFF", size = 5,
-                                 hide = FALSE))
+                            list(text = "test", fontFamily = "mono", fontType = "bold",
+                                 color = "#FFFFFF", size = 5, hide = FALSE))
 
                session$setInputs(
                  labelName = "yAxisText",
+                 fontFamily = "serif",
                  fontType = "bold",
                  color = "#FFFFFF",
                  size = 5,
@@ -31,31 +33,31 @@ test_that("Test module plotTitlesServer", {
                )
 
                expect_equal(session$returned[["yAxisText"]],
-                            list(fontType = "bold", color = "#FFFFFF", size = 5, hide = FALSE,
-                                 angle = 0, hjust = 0.5, vjust = 0.5))
+                            list(fontFamily = "serif", fontType = "bold", color = "#FFFFFF",
+                                 size = 5, hide = FALSE, angle = 0, hjust = 0.5, vjust = 0.5))
              })
 })
 
 test_that("Test validateInitText", {
-  testList <- list(plotTitle = list(text = "", fontType = "plain", color = "#000000",
-                                    size = 12L, hide = FALSE),
-                   xAxisTitle = list(text = "test", fontType = "bold",
+  testList <- list(plotTitle = list(text = "", fontFamily = "serif", fontType = "plain",
+                                    color = "#000000", size = 12L, hide = FALSE),
+                   xAxisTitle = list(text = "test", fontFamily = "serif", fontType = "bold",
                                      color = "#FFFFFF", size = 5, hide = FALSE),
-                   yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
-                                    hide = FALSE, angle = 0L, hjust = 0.5, vjust = 0.5))
+                   yAxisText = list(fontFamily = "serif", fontType = "plain", color = "#000000",
+                                    size = 10L, hide = FALSE, angle = 0L, hjust = 0.5, vjust = 0.5))
 
   testList <- validateInitText(testList, type = "ggplot")
 
   expect_equal(testList,
-               list(plotTitle = list(text = "", fontType = "plain", color = "#000000",
-                                     size = 12L, hide = FALSE),
-                    xAxisTitle = list(text = "test", fontType = "bold",
+               list(plotTitle = list(text = "", fontFamily = "serif", fontType = "plain",
+                                     color = "#000000", size = 12L, hide = FALSE),
+                    xAxisTitle = list(text = "test", fontFamily = "serif", fontType = "bold",
                                       color = "#FFFFFF", size = 5, hide = FALSE),
-                    xAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                    xAxisText = list(fontFamily = "sans", fontType = "plain", color = "#000000", size = 10L,
                                      hide = FALSE, angle = 0L, hjust = 0.5, vjust = 0.5),
-                    yAxisTitle = list(text = "", fontType = "plain", color = "#000000",
+                    yAxisTitle = list(text = "", fontFamily = "sans", fontType = "plain", color = "#000000",
                                       size = 12L, hide = FALSE),
-                    yAxisText = list(fontType = "plain", color = "#000000", size = 10L,
+                    yAxisText = list(fontFamily = "serif", fontType = "plain", color = "#000000", size = 10L,
                                      hide = FALSE, angle = 0L, hjust = 0.5, vjust = 0.5)))
 })
 
@@ -77,6 +79,7 @@ test_that("Test defaultInitText", {
     list(
       plotTitle = list(
         text = "",
+        fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
         size = 12L,
@@ -84,12 +87,14 @@ test_that("Test defaultInitText", {
       ),
       xAxisTitle = list(
         text = "",
+        fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
         size = 12L,
         hide = FALSE
       ),
       xAxisText = list(
+        fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
         size = 10L,
@@ -100,12 +105,14 @@ test_that("Test defaultInitText", {
       ),
       yAxisTitle = list(
         text = "",
+        fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
         size = 12L,
         hide = FALSE
       ),
       yAxisText = list(
+        fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
         size = 10L,
@@ -116,12 +123,14 @@ test_that("Test defaultInitText", {
       ),
       legendTitle = list(
         text = "",
+        fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
         size = 12L,
         hide = FALSE
       ),
       legendText = list(
+        fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
         size = 10L,

@@ -30,7 +30,7 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
     ),
     checkboxInput(
       inputId = ns("fromData"),
-      label = "From data",
+      label = "Range detected from data",
       value = initRanges[["xAxis"]][["fromData"]],
       width = "100%"
     ),

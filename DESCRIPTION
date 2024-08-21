@@ -18,7 +18,7 @@ Imports:
     magrittr,
     openxlsx,
     plotly,
-    rjson,
+    rjson (== 0.2.21),
     shiny,
     shinyalert,
     shinyjs,

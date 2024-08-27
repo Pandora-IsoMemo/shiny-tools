@@ -22,21 +22,16 @@ formatTitlesOfGGplot <- function(plot, text) {
 
   # AXES ----
   if (any(grepl("Axis", names(text)))) {
-    # set titles
-    axisTitleX <- text[["xAxisTitle"]]
-    axisTitleY <- text[["yAxisTitle"]]
+    plot <- plot %>%
+      setCustomTitle(labFun = xlab, label = text[["xAxisTitle"]][["text"]])
+    plot <- plot %>%
+      setCustomTitle(labFun = ylab, label = text[["yAxisTitle"]][["text"]])
 
-
-    if (axisTitleX[["text"]] != "")
-      plot <- plot + xlab(axisTitleX[["text"]])
-    if (axisTitleY[["text"]] != "")
-      plot <- plot + ylab(axisTitleY[["text"]])
-
-    # apply text formatting
+    # apply text formatting (theme)
     plot <- plot +
       theme(
-        axis.title.x = getElementText(axisTitleX),
-        axis.title.y = getElementText(axisTitleY),
+        axis.title.x = getElementText(text[["xAxisTitle"]]),
+        axis.title.y = getElementText(text[["yAxisTitle"]]),
         axis.text.x = getElementText(text[["xAxisText"]]),
         axis.text.y = getElementText(text[["yAxisText"]])
       )
@@ -44,21 +39,46 @@ formatTitlesOfGGplot <- function(plot, text) {
 
   # PLOT TITLE ----
   if (any(grepl("plot", names(text)))) {
-    plotTitle  <- text[["plotTitle"]]
-    if (plotTitle[["text"]] != "")
-      plot <- plot + ggtitle(label = plotTitle[["text"]])
+    plot <- plot %>%
+      setCustomTitle(labFun = ggtitle, label = text[["plotTitle"]][["text"]])
 
-    plot <- plot + theme(plot.title   = getElementText(plotTitle))
+    # apply text formatting (theme)
+    plot <- plot + theme(plot.title = getElementText(text[["plotTitle"]]))
   }
 
   # LEGEND ----
   if (any(grepl("legend", names(text)))) {
+    plot <- plot %>%
+      setCustomTitle(labFun = labs,
+                     color = text[["legendTitle"]][["text"]],
+                     size = text[["legendTitle"]][["text"]],
+                     fill = text[["legendTitle"]][["text"]],
+                     shape = text[["legendTitle"]][["text"]])
+    # apply text formatting (theme)
     plot <- plot +
       theme(legend.title = getElementText(text[["legendTitle"]]),
             legend.text  = getElementText(text[["legendText"]]))
   }
 
   plot
+}
+
+#' Set Custom Title
+#'
+#' Set label of a ggplot object
+#'
+#' @param plot (ggplot)
+#' @param labFun (function) function to set label, e.g. \code{xlab}
+#' @param ... (list) arguments for \code{labFun}
+setCustomTitle <- function(plot, labFun, ...) {
+  args <- list(...)
+  if (length(args) == 0 || is.null(args[[1]]) || args[[1]] == "") {
+    # do not overwrite default title for empty inputs
+    return(plot)
+  }
+
+  # apply custom title
+  plot + labFun(...)
 }
 
 #' Get Element Text
@@ -131,4 +151,16 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
                fill = dataPoints[["colorBg"]],
                alpha = ifelse(dataPoints[["hide"]], 0, dataPoints[["alpha"]]),
                ...)
+}
+
+#' Legend Style Of GGplot
+#'
+#' Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
+#'
+#' @param plot (ggplot)
+#' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
+#' @inheritParams ggplot2::theme
+formatLegendOfGGplot <- function(plot, legend, ...) {
+  plot +
+    theme(legend.position = legend$position, ...)
 }

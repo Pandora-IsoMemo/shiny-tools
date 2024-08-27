@@ -1,14 +1,16 @@
 #' Plot Titles UI
 #'
-#'
-#' @param id module id
 #' @inheritParams setModuleTitle
-#' @inheritParams plotTitlesServer
-#' @inheritParams plotExportServer
+#' @rdname plotTitlesServer
 #'
 #' @return tagList
 #' @export
-plotTitlesUI <- function(id, title = "Plot Texts", titleTag = "h4", type = c("ggplot", "base"), initText = NULL) {
+plotTitlesUI <- function(id,
+                         title = "Plot Texts",
+                         titleTag = "h4",
+                         type = c("ggplot", "base", "none"),
+                         initText = NULL
+                         ) {
   type <- match.arg(type)
 
   if (is.null(initText)) {
@@ -402,11 +404,13 @@ keep_deepest_names <- function(x) {
 # server <- function(input, output, session) {
 #     testPlotFun <- function() {
 #       data <- data.frame(
-#         x = c(1, 2, 3, 4, 5),
-#         y = c(2, 4, 1, 7, 3)
+#               x = c(1, 2, 3, 4, 5),
+#               y = c(3, 5, 2, 8, 7),
+#               group = factor(c("A", "B", "A", "B", "A"))
 #       )
 #
-#       ggplot2::ggplot(data, ggplot2::aes(x = x, y = y))
+#       ggplot2::ggplot(data, ggplot2::aes(x = x, y = y, color = group)) +
+#         ggplot2::geom_line()
 #     }
 #
 #     output$plot <- renderPlot({

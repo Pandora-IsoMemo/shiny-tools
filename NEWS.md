@@ -1,3 +1,11 @@
+# shinyTools 24.08.0
+
+## New Features
+- new UI for legends (specify the position of a legend)
+
+## Updates
+- update to the UI and logic to set custom titles of plots
+
 # shinyTools 24.05.3
 
 ## New Features

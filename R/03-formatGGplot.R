@@ -160,6 +160,8 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
 #' @param plot (ggplot)
 #' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
 #' @inheritParams ggplot2::theme
+#'
+#' @export
 formatLegendOfGGplot <- function(plot, legend, ...) {
   plot +
     theme(legend.position = legend$position, ...)

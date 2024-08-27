@@ -6,6 +6,8 @@
 #' @param titleTag (character) HTML tag to put around the title, e.g. "h4" for \code{h4} from
 #' \code{htmltools}
 #' @rdname plotLegendServer
+#'
+#' @export
 plotLegendUI <- function(id, title = NULL, titleTag = "h4") {
   ns <- NS(id)
   tagList(
@@ -47,6 +49,8 @@ plotLegendUI <- function(id, title = NULL, titleTag = "h4") {
 #' Function to create the server for the legend
 #'
 #' @param id namespace id
+#'
+#' @export
 plotLegendServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     legend <- reactiveValues(position = "none")

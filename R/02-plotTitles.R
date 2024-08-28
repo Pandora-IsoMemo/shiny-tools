@@ -42,6 +42,16 @@ plotTitlesUI <- function(id,
       textInput(ns("text"), label = "Text",
                 value = initText[["plotTitle"]][["text"]],
                 placeholder = "Custom title ..."),
+      checkboxInput(ns("useSubOrSuperscript"),
+                    label = "Use notation for sub- and superscript",
+                    value = FALSE,
+                    width = "100%"),
+      conditionalPanel(
+        ns = ns,
+        condition = "input.useSubOrSuperscript",
+        helpText("Example notation: x[1] for x₁ and x^2 for x²"),
+        helpText("Please note that the use of sub- and superscript is experimental and might fail. 'Font type' is not available in this case. Please report any issues!")
+      ),
     ),
     colourInput(ns("color"),
                 label = "Text color",
@@ -52,11 +62,15 @@ plotTitlesUI <- function(id,
       selected = initText[["plotTitle"]][["fontFamily"]],
       choices = availableFonts()
     ),
-    selectInput(
-      ns("fontType"),
-      label = "Font type",
-      choices = fontChoicesSelect(type = type),
-      selected = initText[["plotTitle"]][["fontType"]]),
+    conditionalPanel(
+      ns = ns,
+      condition = "!input.useSubOrSuperscript",
+      selectInput(
+        ns("fontType"),
+        label = "Font type",
+        choices = fontChoicesSelect(type = type),
+        selected = initText[["plotTitle"]][["fontType"]])
+    ),
     sliderInput(
       ns("size"),
       label = "Text size",
@@ -177,7 +191,14 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
   # we cannot loop over the elements. When looping reactivity gets lost.
   observe({
     req(input[["labelName"]])
-    plotText[[input[["labelName"]]]][["text"]] <- input[["text"]]
+    if (input[["useSubOrSuperscript"]]) {
+      plotText[[input[["labelName"]]]][["text"]] <- input[["text"]] %>%
+        convertToExpression() %>%
+        shinyTryCatch(errorTitle = "Error during conversion into expression",
+                      alertStyle = "shinyalert")
+    } else {
+      plotText[[input[["labelName"]]]][["text"]] <- input[["text"]]
+    }
   }) %>%
     bindEvent(input[["text"]])
 

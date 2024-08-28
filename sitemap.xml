@@ -17,6 +17,7 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractSingleTryCatch.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractType.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/fontChoicesSelect.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatLegendOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatPointsOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatRangesOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatTitlesOfGGplot.html</loc></url>
@@ -30,12 +31,13 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/observeAndUpdateTextElementsOfLabel.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotExportButton.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotExportServer.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotLegendServer.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotPointsServer.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotPointsUI.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotRangesServer.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotRangesUI.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotTitlesServer.html</loc></url>
-<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotTitlesUI.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/setCustomTitle.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/setModuleTitle.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/shinyTryCatch.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/sizeValuesSlider.html</loc></url>

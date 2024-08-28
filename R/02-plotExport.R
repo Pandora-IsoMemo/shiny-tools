@@ -102,7 +102,8 @@ plotExportServer <- function(id,
                    bindEvent(input$export)
 
                  observe({
-                   if (length(plotFun()()) == 0)
+                   res <- try(plotFun()())
+                   if (inherits(res, "try-error") || length(res) == 0)
                      shinyjs::disable(ns("export"), asis = TRUE) else
                        shinyjs::enable(ns("export"), asis = TRUE)
                  })

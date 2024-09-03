@@ -7,7 +7,8 @@
 #' @importFrom openxlsx addWorksheet createWorkbook saveWorkbook writeData write.xlsx
 #' @importFrom plotly renderPlotly plotlyOutput save_image
 #' @importFrom rjson toJSON
-#' @importFrom shinyjs disable enable hide
+#' @importFrom shinyalert shinyalert
+#' @importFrom shinyjs alert disable enable hide
 #' @importFrom shinyWidgets pickerInput updatePickerInput
 #' @importFrom utils write.table
 #' @importFrom yaml yaml.load_file

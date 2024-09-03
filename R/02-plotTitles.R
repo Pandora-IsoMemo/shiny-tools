@@ -28,8 +28,7 @@ plotTitlesUI <- function(id,
       inputId = ns("labelName"),
       label = "Label",
       choices = c("No label available ..." = ""),
-      selected = "plotTitle",
-      width = "100%"
+      selected = "plotTitle"
     ),
     checkboxInput(
       inputId = ns("hide"),
@@ -40,40 +39,35 @@ plotTitlesUI <- function(id,
     conditionalPanel(
       ns = ns,
       condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle'].includes(input.labelName)",
-      conditionalPanel(
-        ns = ns,
-        condition = "!input.useExpression",
-        textInput(ns("text"), label = "Text",
-                  value = initText[["plotTitle"]][["text"]],
-                  placeholder = "Custom title ...",
-                  width = "100%")
-      ),
-      conditionalPanel(
-        ns = ns,
-        condition = "input.useExpression",
-        fluidRow(
-          column(10,
-                 textInput(ns("expression"), label = "Expression",
-                  value = initText[["plotTitle"]][["text"]],
-                  placeholder = "Custom title ...",
-                  width = "100%")
-          ),
-          column(2,
-                 align = "right",
-                 style = "margin-top: 1.7em;",
-                 actionButton(ns("parseExpression"), "Parse", width = "100%"),
-                 )
-          )
-      ),
       checkboxInput(ns("useExpression"),
                     label = "Use mathematical annotation",
                     value = FALSE,
                     width = "100%"),
       conditionalPanel(
         ns = ns,
+        condition = "!input.useExpression",
+        textInput(ns("text"), label = "Text",
+                  value = initText[["plotTitle"]][["text"]],
+                  placeholder = "Custom title ...")
+      ),
+      conditionalPanel(
+        ns = ns,
         condition = "input.useExpression",
-        helpText('Example:   "Bayesian Estimated" ~ delta^~13*C ~ ("‰" - ~ "VPDB") for "Bayesian Estimated δ¹³C (‰ - VPDB)"', width = "100%"),
-        helpText(HTML("Please note that the input 'Font type' is not available for 'Expression'. For more information, visit the <a href='https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html' target='_blank'>R Documentation</a>."), width = "100%")
+        fluidRow(
+          column(width = 8,
+                 textInput(ns("expression"), label = "Expression",
+                           value = initText[["plotTitle"]][["text"]],
+                           placeholder = "Custom title ...")),
+          column(width = 4,
+                 style = "margin-top: 1.7em;",
+                 actionButton(ns("parseExpression"), "Parse", width = "100%"))
+        )
+      ),
+      conditionalPanel(
+        ns = ns,
+        condition = "input.useExpression",
+        helpText('Example: "Bayesian Estimated" ~ delta^~13*C ~ ("‰" - ~ "VPDB") for "Bayesian Estimated δ¹³C (‰ - VPDB)"', width = "100%"),
+        helpText(HTML("Note: 'Font type' input is not available for 'Expression'. For more information, visit the <a href='https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html' target='_blank'>R Documentation</a>."), width = "100%")
       ),
     ),
     colourInput(ns("color"),
@@ -216,20 +210,25 @@ plotTitlesServer <- function(id,
 observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText) {
   # set up all observers for text elements
   # we cannot loop over the elements. When looping reactivity gets lost.
+
+  # keep input useExpression for "updateUserInputs()"
   observe({
-    req(input[["labelName"]], isFALSE(input[["useExpression"]]))
+    req(input[["labelName"]])
     plotText[[input[["labelName"]]]][["text"]] <- input[["text"]]
   }) %>%
-    bindEvent(input[["text"]], input[["useExpression"]])
+    bindEvent(input[["text"]])
 
   observe({
-    req(input[["labelName"]], isTRUE(input[["useExpression"]]))
-      plotText[[input[["labelName"]]]][["text"]] <- input[["expression"]] %>%
-        convertToExpression() %>%
-        shinyTryCatch(errorTitle = "Error during conversion into expression",
-                      alertStyle = "shinyalert")
+    req(input[["labelName"]])
+    plotText[[input[["labelName"]]]][["useExpression"]] <- input[["useExpression"]]
   }) %>%
-    bindEvent(input[["parseExpression"]], input[["useExpression"]])
+    bindEvent(input[["useExpression"]])
+
+  observe({
+    req(input[["labelName"]], input[["parseExpression"]])
+    plotText[[input[["labelName"]]]][["expression"]] <- input[["expression"]]
+  }) %>%
+    bindEvent(input[["parseExpression"]])
 
   observe({
     req(input[["labelName"]])
@@ -465,7 +464,8 @@ keep_deepest_names <- function(x) {
 #
 #     output$plot <- renderPlot({
 #       testPlotFun() %>%
-#         formatTitlesOfGGplot(text = thisTitles)
+#         formatTitlesOfGGplot(text = thisTitles) %>%
+#         shinyTools::shinyTryCatch(errorTitle = "Plotting failed", alertStyle = "shinyalert")
 #     })
 #
 #     thisTitles <- plotTitlesServer(

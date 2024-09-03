@@ -23,9 +23,9 @@ formatTitlesOfGGplot <- function(plot, text) {
   # AXES ----
   if (any(grepl("Axis", names(text)))) {
     plot <- plot %>%
-      setCustomTitle(labFun = xlab, label = text[["xAxisTitle"]][["text"]])
+      setCustomTitle(labFun = xlab, label = extractTitle(text[["xAxisTitle"]]))
     plot <- plot %>%
-      setCustomTitle(labFun = ylab, label = text[["yAxisTitle"]][["text"]])
+      setCustomTitle(labFun = ylab, label = extractTitle(text[["yAxisTitle"]]))
 
     # apply text formatting (theme)
     plot <- plot +
@@ -40,7 +40,7 @@ formatTitlesOfGGplot <- function(plot, text) {
   # PLOT TITLE ----
   if (any(grepl("plot", names(text)))) {
     plot <- plot %>%
-      setCustomTitle(labFun = ggtitle, label = text[["plotTitle"]][["text"]])
+      setCustomTitle(labFun = ggtitle, label = extractTitle(text[["plotTitle"]]))
 
     # apply text formatting (theme)
     plot <- plot + theme(plot.title = getElementText(text[["plotTitle"]]))
@@ -50,10 +50,10 @@ formatTitlesOfGGplot <- function(plot, text) {
   if (any(grepl("legend", names(text)))) {
     plot <- plot %>%
       setCustomTitle(labFun = labs,
-                     color = text[["legendTitle"]][["text"]],
-                     size = text[["legendTitle"]][["text"]],
-                     fill = text[["legendTitle"]][["text"]],
-                     shape = text[["legendTitle"]][["text"]])
+                     color = extractTitle(text[["legendTitle"]]),
+                     size = extractTitle(text[["legendTitle"]]),
+                     fill = extractTitle(text[["legendTitle"]]),
+                     shape = extractTitle(text[["legendTitle"]]))
     # apply text formatting (theme)
     plot <- plot +
       theme(legend.title = getElementText(text[["legendTitle"]]),
@@ -79,6 +79,24 @@ setCustomTitle <- function(plot, labFun, ...) {
 
   # apply custom title
   plot + labFun(...)
+}
+
+#' Extract Title
+#'
+#' Extract title from list of title definitions
+#'
+#' @param titleList (list) named list with title definitions, output of \code{plotTitlesServer}
+#'
+#' @return (character) title
+extractTitle <- function(titleList) {
+  if (!is.null(titleList[["useExpression"]]) && isTRUE(titleList[["useExpression"]])) {
+    return(convertToExpression(titleList[["expression"]]))
+  } else {
+    res <- ""
+    if (!is.null(titleList[["text"]])) res <- titleList[["text"]]
+
+    return(res)
+  }
 }
 
 #' Get Element Text

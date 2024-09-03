@@ -6,6 +6,11 @@
 #'
 #' @return expression
 convertToExpression <- function(string) {
+  if (is.null(string)) {
+    return("")
+    # ggplot fails for empty expressions like: expression()
+  }
+
   # Trim any leading or trailing whitespace
   trimmed_string <- trimws(string)
 
@@ -18,7 +23,11 @@ convertToExpression <- function(string) {
   # Convert the string to an expression
   expression_string <- paste0("expression(", trimmed_string, ")")
   # parse the expression
-  parsed_expression <- eval(parse(text = expression_string))
+  tryCatch({
+    parsed_expression <- eval(parse(text = expression_string))
+  }, error = function(e) {
+    stop(sprintf("Error in parsing expression: %s", e))
+  })
 
   return(parsed_expression)
 }

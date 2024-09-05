@@ -4,7 +4,13 @@
 \alias{observeAndUpdateTextElementsOfLabel}
 \title{Observe Text Elements Of Label}
 \usage{
-observeAndUpdateTextElementsOfLabel(input, output, session, plotText)
+observeAndUpdateTextElementsOfLabel(
+  input,
+  output,
+  session,
+  plotText,
+  showParseButton
+)
 }
 \arguments{
 \item{input}{input object from server function}
@@ -14,6 +20,8 @@ observeAndUpdateTextElementsOfLabel(input, output, session, plotText)
 \item{session}{session from server function}
 
 \item{plotText}{(reactiveValue) contains text elements}
+
+\item{showParseButton}{(logical) Show parse button for parsing mathematical expressions.}
 }
 \description{
 Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.

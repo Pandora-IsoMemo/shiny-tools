@@ -2,7 +2,7 @@
 
 ## New Features
 - _plotTitles_ module: optionally, use notation for sub- and superscripts in titles of a plots, axis
-  or the legend
+  or the legend (#27)
 
 # shinyTools 24.08.0
 

@@ -47,8 +47,8 @@ plotTitlesUI <- function(id,
         ns = ns,
         condition = "input.useExpression",
         uiOutput(ns("expressionInput")),
-        helpText('Example: "Bayesian Estimated" ~ delta^~13*C ~ ("‰" - ~ "VPDB") for "Bayesian Estimated δ¹³C (‰ - VPDB)"', width = "100%"),
-        helpText(HTML("Note: 'Font type' input is not available for 'Expression'. For more information, visit the <a href='https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html' target='_blank'>R Documentation</a>."), width = "100%")
+        helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13*C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
+        helpText(HTML('Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'), width = "100%")
       ),
       conditionalPanel(
         ns = ns,

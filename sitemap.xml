@@ -5,6 +5,7 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/index.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/news/index.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/availableFonts.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/convertToExpression.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/dataExportButton.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/dataExportServer.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/defaultInitText.html</loc></url>
@@ -15,6 +16,7 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportJSON.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportXLSX.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractSingleTryCatch.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractTitle.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractType.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/fontChoicesSelect.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatLegendOfGGplot.html</loc></url>

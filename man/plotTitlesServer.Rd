@@ -17,6 +17,7 @@ plotTitlesServer(
   id,
   type = c("none", "ggplot", "base"),
   availableElements = c("title", "axis"),
+  showParseButton = TRUE,
   initText = NULL
 )
 }
@@ -34,6 +35,8 @@ plotTitlesServer(
 
 \item{availableElements}{(character) set of available labels for specifying the format of text.
 May contain elements from \code{c("title", "axis", "legend")}.}
+
+\item{showParseButton}{(logical) Show parse button for parsing mathematical expressions.}
 }
 \value{
 tagList

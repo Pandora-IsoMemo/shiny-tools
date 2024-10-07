@@ -141,14 +141,34 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'
 #' @param plot (ggplot)
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
+#' @param xlabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
+#' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #'
 #' @export
-formatRangesOfGGplot <- function(plot, ranges) {
-  plot <- plot %>%
-    formatAxisOfGGplot(axisFormat = ranges[["xAxis"]], axis = "x")
+formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL) {
+  if (is.null(xlabels) || is.null(xlabels[["breaks"]]) || is.null(xlabels[["labels"]])) {
+    # default breaks and labels for x axis
+    plot <- plot %>%
+      formatAxisOfGGplot(axisFormat = ranges[["xAxis"]], axis = "x")
+  } else {
+    # update breaks and labels of the x axis
+    plot <- plot %>%
+      formatAxisOfGGplot(axisFormat = ranges[["xAxis"]], axis = "x",
+                         breaks = xlabels[["breaks"]],
+                         labels = xlabels[["labels"]])
+  }
 
-  plot <- plot %>%
-    formatAxisOfGGplot(axisFormat = ranges[["yAxis"]], axis = "y")
+  if (is.null(yLabels) || is.null(yLabels[["breaks"]]) || is.null(yLabels[["labels"]])) {
+    # default breaks and labels for y axis
+    plot <- plot %>%
+      formatAxisOfGGplot(axisFormat = ranges[["yAxis"]], axis = "y")
+  } else {
+    # update breaks and labels of the y axis
+    plot <- plot %>%
+      formatAxisOfGGplot(axisFormat = ranges[["yAxis"]], axis = "y",
+                         breaks = yLabels[["breaks"]],
+                         labels = yLabels[["labels"]])
+  }
 
   plot
 }
@@ -158,22 +178,27 @@ formatRangesOfGGplot <- function(plot, ranges) {
 #' @param plot (ggplot)
 #' @param axisFormat (list) named list with axis format definitions for a specific axis
 #' @param axis (character) axis to format, one of "xAxis", "yAxis"
-formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y")) {
+#' @param ... additional arguments for \code{scale_x_continuous} or \code{scale_y_continuous}
+formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y"), ...) {
   axis <- match.arg(axis)
 
-  if (!axisFormat[["fromData"]]) {
-    limFUN <- switch(axis,
-                     x = ggplot2::xlim,
-                     y = ggplot2::ylim)
-    plot <- plot + limFUN(axisFormat[["min"]], axisFormat[["max"]])
+  scaleFUN <- switch(axis,
+                     x = ggplot2::scale_x_continuous,
+                     y = ggplot2::scale_y_continuous)
+
+  if (is.null(axisFormat[["trans"]])) {
+    transform <- "identity"
+  } else {
+    transform <- axisFormat[["trans"]]
   }
 
-  if (!is.null(axisFormat[["trans"]]) && axisFormat[["trans"]] != "identity") {
-    scaleFUN <- switch(axis,
-                       x = ggplot2::scale_x_continuous,
-                       y = ggplot2::scale_y_continuous)
-    plot <- plot + scaleFUN(trans = axisFormat[["trans"]])
+  if (axisFormat[["fromData"]]) {
+    limits <- NULL
+  } else {
+    limits <- c(axisFormat[["min"]], axisFormat[["max"]])
   }
+
+  plot <- plot + scaleFUN(trans = transform, limits = limits, ...)
 
   plot
 }

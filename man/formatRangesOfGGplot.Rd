@@ -4,12 +4,16 @@
 \alias{formatRangesOfGGplot}
 \title{Axes Ranges Of GGplot}
 \usage{
-formatRangesOfGGplot(plot, ranges)
+formatRangesOfGGplot(plot, ranges, xlabels = NULL, yLabels = NULL)
 }
 \arguments{
 \item{plot}{(ggplot)}
 
 \item{ranges}{(list) named list with range definitions, output of \code{plotRangesServer}}
+
+\item{xlabels}{(list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
+
+\item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 }
 \description{
 Axes Ranges Of GGplot

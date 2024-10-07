@@ -4,7 +4,7 @@
 \alias{formatAxisOfGGplot}
 \title{Format an axis Of a ggplot}
 \usage{
-formatAxisOfGGplot(plot, axisFormat, axis = c("x", "y"))
+formatAxisOfGGplot(plot, axisFormat, axis = c("x", "y"), ...)
 }
 \arguments{
 \item{plot}{(ggplot)}
@@ -12,6 +12,8 @@ formatAxisOfGGplot(plot, axisFormat, axis = c("x", "y"))
 \item{axisFormat}{(list) named list with axis format definitions for a specific axis}
 
 \item{axis}{(character) axis to format, one of "xAxis", "yAxis"}
+
+\item{...}{additional arguments for \code{scale_x_continuous} or \code{scale_y_continuous}}
 }
 \description{
 Format an axis Of a ggplot

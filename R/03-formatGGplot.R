@@ -7,6 +7,12 @@
 #'
 #' @export
 formatTitlesOfGGplot <- function(plot, text) {
+  # check if 2nd axis elements are present
+  if (any(c("yAxisTitle2", "yAxisText2") %in% names(text))) {
+    message("'formatTitlesOfGGplot()' does not support elements of a 2nd y axis yet! Please consider to add formatting of a second y axis with a custom function.")
+  }
+
+  # check if all elements are present
   if (!all(
     names(text) %in% c(
       "plotTitle",
@@ -15,7 +21,9 @@ formatTitlesOfGGplot <- function(plot, text) {
       "yAxisTitle",
       "yAxisText",
       "legendTitle",
-      "legendText"
+      "legendText",
+      "yAxisTitle2",
+      "yAxisText2"
     )
   ))
     stop("New element found, please add the new case to 'formatTitlesOfGGplot()' first!")
@@ -70,6 +78,8 @@ formatTitlesOfGGplot <- function(plot, text) {
 #' @param plot (ggplot)
 #' @param labFun (function) function to set label, e.g. \code{xlab}
 #' @param ... (list) arguments for \code{labFun}
+#'
+#' @export
 setCustomTitle <- function(plot, labFun, ...) {
   args <- list(...)
   if (length(args) == 0 || is.null(args[[1]]) || args[[1]] == "") {
@@ -88,6 +98,8 @@ setCustomTitle <- function(plot, labFun, ...) {
 #' @param titleList (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
 #' @return (character) title
+#'
+#' @export
 extractTitle <- function(titleList) {
   if (!is.null(titleList[["useExpression"]]) && isTRUE(titleList[["useExpression"]])) {
     return(convertToExpression(titleList[["expression"]]))

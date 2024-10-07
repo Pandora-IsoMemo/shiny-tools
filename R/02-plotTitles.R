@@ -38,7 +38,7 @@ plotTitlesUI <- function(id,
     ),
     conditionalPanel(
       ns = ns,
-      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle'].includes(input.labelName)",
+      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle', 'yAxisTitle2'].includes(input.labelName)",
       checkboxInput(ns("useExpression"),
                     label = "Use mathematical annotation",
                     value = FALSE,
@@ -47,7 +47,7 @@ plotTitlesUI <- function(id,
         ns = ns,
         condition = "input.useExpression",
         uiOutput(ns("expressionInput")),
-        helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13*C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
+        helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13~C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
         helpText(HTML('Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'), width = "100%")
       ),
       conditionalPanel(
@@ -90,7 +90,7 @@ plotTitlesUI <- function(id,
     ),
     conditionalPanel(
       ns = ns,
-      condition = "['xAxisText', 'yAxisText'].includes(input.labelName)",
+      condition = "['xAxisText', 'yAxisText', 'yAxisText2'].includes(input.labelName)",
       sliderInput(
         ns("angle"),
         label = "Text angle",
@@ -126,7 +126,7 @@ plotTitlesUI <- function(id,
 #' @param id namespace id
 #' @param type (character) Type of the plot to add titles to, one of "none", "ggplot", "base".
 #' @param availableElements (character) set of available labels for specifying the format of text.
-#'  May contain elements from \code{c("title", "axis", "legend")}.
+#'  May contain elements from \code{c("title", "axis", "yaxis2", "legend")}.
 #' @param showParseButton (logical) Show parse button for parsing mathematical expressions.
 #' @inheritParams plotExportServer
 #'
@@ -428,9 +428,11 @@ availableLabels <- function(availableElements = c("title", "axis")) {
 }
 
 checkElements <- function(availableElements) {
-  if (!all(availableElements %in% c("title", "axis", "legend")))
+  configElements <- names(config()[["availableElements"]])
+
+  if (!all(availableElements %in% configElements))
     stop(sprintf("Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
-                 paste0(c("title", "axis", "legend"), collapse = "', '")))
+                 paste0(configElements, collapse = "', '")))
 
   availableElements
 }
@@ -490,7 +492,7 @@ keep_deepest_names <- function(x) {
 #     thisTitles <- plotTitlesServer(
 #       "testMod",
 #       type = "ggplot",
-#       availableElements = c("title", "axis", "legend"),
+#       availableElements = c("title", "axis", "yaxis2", "legend"),
 #       initText = list(
 #         plotTitle = list(
 #           text = "testHeader",

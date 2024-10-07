@@ -33,16 +33,20 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
       label = "Transformation",
       choices = list(
         `No transformation` = c(
-        "identity" = "identity"),
+          "identity" = "identity"
+        ),
         `Logarithmic transformation` = c(
           "log10" = "log10",
           "log2" = "log2",
-          "log" = "log"),
+          "log" = "log"
+        ),
         `Power transformation` = c(
-          "sqrt" = "sqrt",
-          "reciprocal" = "reciprocal"),
-        `Reverse transformation` = c(
-        "reverse" = "reverse")
+          "sqrt" = "sqrt"#,
+          #"reciprocal" = "reciprocal" # transformation leads to issues with axis labels in OsteoBioR
+        ),
+        # `Reverse transformation` = c(
+        # "reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
+        # )
       )
     ),
     checkboxInput(

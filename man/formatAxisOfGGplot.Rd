@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{formatAxisOfGGplot}
 \alias{formatAxisOfGGplot}
-\title{Format an axis Of a ggplot}
+\title{Format an axis of a ggplot}
 \usage{
 formatAxisOfGGplot(plot, axisFormat, axis = c("x", "y"), ...)
 }
@@ -16,5 +16,5 @@ formatAxisOfGGplot(plot, axisFormat, axis = c("x", "y"), ...)
 \item{...}{additional arguments for \code{scale_x_continuous} or \code{scale_y_continuous}}
 }
 \description{
-Format an axis Of a ggplot
+Format an axis of a ggplot
 }

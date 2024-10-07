@@ -173,7 +173,7 @@ formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL) {
   plot
 }
 
-#' Format an axis Of a ggplot
+#' Format an axis of a ggplot
 #'
 #' @param plot (ggplot)
 #' @param axisFormat (list) named list with axis format definitions for a specific axis

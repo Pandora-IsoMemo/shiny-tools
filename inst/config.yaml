@@ -59,6 +59,7 @@ defaultRange:
   min: 0
   max: 1
   fromData: true
+  trans: "identity"
 
 # default point style
 defaultPointStyle:

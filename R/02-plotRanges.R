@@ -28,6 +28,23 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
       ),
       selected = "xAxis"
     ),
+    selectInput(
+      inputId = ns("trans"),
+      label = "Transformation",
+      choices = list(
+        `No transformation` = c(
+        "identity" = "identity"),
+        `Logarithmic transformation` = c(
+          "log10" = "log10",
+          "log2" = "log2",
+          "log" = "log"),
+        `Power transformation` = c(
+          "sqrt" = "sqrt",
+          "reciprocal" = "reciprocal"),
+        `Reverse transformation` = c(
+        "reverse" = "reverse")
+      )
+    ),
     checkboxInput(
       inputId = ns("fromData"),
       label = "Range detected from data",
@@ -130,6 +147,12 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
   }) %>%
     bindEvent(input[["fromData"]])
 
+  observe({
+    req(input[["labelName"]])
+    ranges[[input[["labelName"]]]][["trans"]] <- input[["trans"]]
+  }) %>%
+    bindEvent(input[["trans"]])
+
   return(ranges)
 }
 
@@ -166,15 +189,21 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 #       ggplot2::geom_point()
 #   }
 #
+#   thisRanges <- plotRangesServer("testMod",
+#                                  type = "ggplot",
+#                                  initRanges = list(xAxis = list(min = 0,
+#                                                                 max = 10,
+#                                                                 fromData = FALSE,
+#                                                                 trans = "identity"),
+#                                                  yAxis = list(min = 0,
+#                                                               max = 10,
+#                                                               fromData = TRUE,
+#                                                               trans = "identity")))
+#
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%
 #       formatRangesOfGGplot(ranges = thisRanges)
 #   })
-#
-#   thisRanges <- plotRangesServer("testMod",
-#                                  type = "ggplot",
-#                                  initRanges = list(xAxis = list(min = 0, max = 10, fromData = FALSE),
-#                                                  yAxis = list(min = 0, max = 10, fromData = TRUE)))
 # }
 #
 # shinyApp(ui = ui, server = server)

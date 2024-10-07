@@ -144,14 +144,36 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'
 #' @export
 formatRangesOfGGplot <- function(plot, ranges) {
-  axisRangeX <- ranges[["xAxis"]]
-  axisRangeY <- ranges[["yAxis"]]
+  plot <- plot %>%
+    formatAxisOfGGplot(axisFormat = ranges[["xAxis"]], axis = "x")
 
-  if (!axisRangeX[["fromData"]])
-    plot <- plot + xlim(axisRangeX[["min"]], axisRangeX[["max"]])
+  plot <- plot %>%
+    formatAxisOfGGplot(axisFormat = ranges[["yAxis"]], axis = "y")
 
-  if (!axisRangeY[["fromData"]])
-    plot <- plot + ylim(axisRangeY[["min"]], axisRangeY[["max"]])
+  plot
+}
+
+#' Format an axis Of a ggplot
+#'
+#' @param plot (ggplot)
+#' @param axisFormat (list) named list with axis format definitions for a specific axis
+#' @param axis (character) axis to format, one of "xAxis", "yAxis"
+formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y")) {
+  axis <- match.arg(axis)
+
+  if (!axisFormat[["fromData"]]) {
+    limFUN <- switch(axis,
+                     x = ggplot2::xlim,
+                     y = ggplot2::ylim)
+    plot <- plot + limFUN(axisFormat[["min"]], axisFormat[["max"]])
+  }
+
+  if (!is.null(axisFormat[["trans"]]) && axisFormat[["trans"]] != "identity") {
+    scaleFUN <- switch(axis,
+                       x = ggplot2::scale_x_continuous,
+                       y = ggplot2::scale_y_continuous)
+    plot <- plot + scaleFUN(trans = axisFormat[["trans"]])
+  }
 
   plot
 }

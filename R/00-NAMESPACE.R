@@ -1,7 +1,8 @@
 #' @rawNamespace import(shiny)
 
 #' @importFrom colourpicker colourInput
-#' @importFrom ggplot2 element_blank element_text geom_point ggtitle labs theme xlab xlim ylab ylim
+#' @importFrom ggplot2 element_blank element_text geom_point ggtitle labs
+#'  scale_x_continuous scale_y_continuous theme xlab xlim ylab ylim
 #' @importFrom grDevices dev.off pdf png svg tiff
 #' @importFrom magrittr %>%
 #' @importFrom openxlsx addWorksheet createWorkbook saveWorkbook writeData write.xlsx

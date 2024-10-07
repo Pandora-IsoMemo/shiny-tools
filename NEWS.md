@@ -1,7 +1,9 @@
 # shinyTools 24.10.0
 
 ## New Features
-- _plotTitles_ module: option to format a second y-axis (#28)
+- _plotTitles_ module (#28): 
+  - option to format a second y-axis
+  - option to use transformations for the x or y axis in order to handle extreme values
 
 # shinyTools 24.08.1
 

@@ -16,13 +16,13 @@ test_that("Test module plotRangesServer", {
                      min = 10,
                      max = 20,
                      fromData = FALSE,
-                     trans = "identity"
+                     transform = "identity"
                    ),
                    yAxis = list(
                      min = 0L,
                      max = 1L,
                      fromData = TRUE,
-                     trans = "identity"
+                     transform = "identity"
                    )
                  ))
 
@@ -31,7 +31,7 @@ test_that("Test module plotRangesServer", {
       min = 10,
       max = 20,
       fromData = TRUE,
-      trans = "log10"
+      transform = "log10"
     )
 
     expect_equal(session$returned %>% reactiveValuesToList(),
@@ -40,13 +40,13 @@ test_that("Test module plotRangesServer", {
                      min = 10,
                      max = 20,
                      fromData = TRUE,
-                     trans = "log10"
+                     transform = "log10"
                    ),
                    yAxis = list(
                      min = 0L,
                      max = 1L,
                      fromData = TRUE,
-                     trans = "identity"
+                     transform = "identity"
                    )
                  ))
   })

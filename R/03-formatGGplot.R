@@ -186,10 +186,10 @@ formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y"), ...) {
                      x = ggplot2::scale_x_continuous,
                      y = ggplot2::scale_y_continuous)
 
-  if (is.null(axisFormat[["trans"]])) {
+  if (is.null(axisFormat[["transform"]])) {
     transform <- "identity"
   } else {
-    transform <- axisFormat[["trans"]]
+    transform <- axisFormat[["transform"]]
   }
 
   if (axisFormat[["fromData"]]) {
@@ -198,7 +198,7 @@ formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y"), ...) {
     limits <- c(axisFormat[["min"]], axisFormat[["max"]])
   }
 
-  plot <- plot + scaleFUN(trans = transform, limits = limits, ...)
+  plot <- plot + scaleFUN(transform = transform, limits = limits, ...)
 
   plot
 }

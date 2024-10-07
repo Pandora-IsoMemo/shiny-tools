@@ -29,7 +29,7 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
       selected = "xAxis"
     ),
     selectInput(
-      inputId = ns("trans"),
+      inputId = ns("transform"),
       label = "Transformation",
       choices = list(
         `No transformation` = c(
@@ -43,7 +43,7 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
         `Power transformation` = c(
           "sqrt" = "sqrt"#,
           #"reciprocal" = "reciprocal" # transformation leads to issues with axis labels in OsteoBioR
-        ),
+        )#,
         # `Reverse transformation` = c(
         # "reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
         # )
@@ -153,9 +153,9 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 
   observe({
     req(input[["labelName"]])
-    ranges[[input[["labelName"]]]][["trans"]] <- input[["trans"]]
+    ranges[[input[["labelName"]]]][["transform"]] <- input[["transform"]]
   }) %>%
-    bindEvent(input[["trans"]])
+    bindEvent(input[["transform"]])
 
   return(ranges)
 }
@@ -198,11 +198,11 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 #                                  initRanges = list(xAxis = list(min = 0,
 #                                                                 max = 10,
 #                                                                 fromData = FALSE,
-#                                                                 trans = "identity"),
+#                                                                 transform = "identity"),
 #                                                  yAxis = list(min = 0,
 #                                                               max = 10,
 #                                                               fromData = TRUE,
-#                                                               trans = "identity")))
+#                                                               transform = "identity")))
 #
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%

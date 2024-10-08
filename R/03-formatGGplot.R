@@ -198,7 +198,7 @@ formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y"), ...) {
     limits <- c(axisFormat[["min"]], axisFormat[["max"]])
   }
 
-  plot <- plot + scaleFUN(transform = transform, limits = limits, ...)
+  plot <- plot + scaleFUN(trans = transform, limits = limits, ...)
 
   plot
 }

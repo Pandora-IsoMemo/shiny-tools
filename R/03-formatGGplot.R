@@ -145,53 +145,51 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #' @export
 formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL) {
   # format x axis ----
-  if (is.null(xlabels) || is.null(xlabels[["breaks"]]) || is.null(xlabels[["labels"]])) {
-    # default breaks and labels for x axis
-    plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
-                                      limits = getLimits(ranges[["xAxis"]]))
-  } else {
-    # update breaks and labels of the x axis
-    plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
-                                      limits = getLimits(ranges[["xAxis"]]),
-                                      breaks = xlabels[["breaks"]],
-                                      labels = xlabels[["labels"]])
-  }
+  plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
+                                    limits = getLimits(ranges[["xAxis"]]),
+                                    breaks = getBreaks(xlabels[["breaks"]]),
+                                    labels = getLabels(xlabels[["labels"]]))
 
   # format y axis ----
   # we need to integrate the second axis here ....
-  if (is.null(yLabels) || is.null(yLabels[["breaks"]]) || is.null(yLabels[["labels"]])) {
-    # default breaks and labels for y axis
-    plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
-                                      limits = getLimits(ranges[["yAxis"]]))
-  } else {
-    # update breaks and labels of the y axis
-    plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
-                                      limits = getLimits(ranges[["yAxis"]]),
-                                      breaks = yLabels[["breaks"]],
-                                      labels = yLabels[["labels"]])
-  }
+  plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
+                                    limits = getLimits(ranges[["yAxis"]]),
+                                    breaks = getBreaks(yLabels[["breaks"]]),
+                                    labels = getLabels(yLabels[["labels"]]))
 
   plot
 }
 
 getTransform <- function(axisFormat) {
   if (is.null(axisFormat[["transform"]])) {
-    transform <- "identity"
+    return("identity")
   } else {
-    transform <- axisFormat[["transform"]]
+    axisFormat[["transform"]]
   }
-
-  transform
 }
 
 getLimits <- function(axisFormat) {
-  if (axisFormat[["fromData"]]) {
-    limits <- NULL
+  if (is.null(axisFormat[["transform"]]) || axisFormat[["fromData"]]) {
+    return(NULL)
   } else {
-    limits <- c(axisFormat[["min"]], axisFormat[["max"]])
+    c(axisFormat[["min"]], axisFormat[["max"]])
   }
+}
 
-  limits
+getBreaks <- function(labels) {
+  if (is.null(labels) || is.null(labels[["breaks"]])) {
+    ggplot2::waiver()
+  } else {
+    labels[["breaks"]]
+  }
+}
+
+getLabels <- function(labels) {
+  if (is.null(labels) || is.null(labels[["labels"]])) {
+    ggplot2::waiver()
+  } else {
+    labels[["labels"]]
+  }
 }
 
 #' Point Style Of GGplot

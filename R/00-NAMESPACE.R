@@ -2,7 +2,7 @@
 
 #' @importFrom colourpicker colourInput
 #' @importFrom ggplot2 element_blank element_text geom_point ggtitle labs
-#'  scale_x_continuous scale_y_continuous theme xlab ylab
+#'  scale_x_continuous scale_y_continuous theme waiver xlab ylab
 #' @importFrom grDevices dev.off pdf png svg tiff
 #' @importFrom magrittr %>%
 #' @importFrom openxlsx addWorksheet createWorkbook saveWorkbook writeData write.xlsx

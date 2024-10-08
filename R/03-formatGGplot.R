@@ -132,7 +132,7 @@ getElementText <- function(textDef = list(fontFamily = "sans",
   }
 }
 
-#' Axes Ranges Of GGplot
+#' Specify Scales of a GGplot
 #'
 #' @param plot (ggplot)
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
@@ -142,7 +142,7 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'  e.g. \code{list(title = "title 2nd y axis", center = 0, scale = 1)}
 #'
 #' @export
-formatRangesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxis = NULL) {
+formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxis = NULL) {
   plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
                                     limits = getLimits(ranges[["xAxis"]]),
                                     breaks = getBreaks(xLabels),
@@ -155,6 +155,16 @@ formatRangesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
                                     sec.axis = getSecAxis(ySecAxis))
 
   plot
+}
+
+#' Axes Ranges Of GGplot (deprecated)
+#'
+#' @param ... arguments of \code{formatScalesOfGGplot}
+#'
+#' @export
+formatRangesOfGGplot <- function(...) {
+  deprecate_warn("24.10.0", "formatRangesOfGGplot()", "formatScalesOfGGplot()")
+  formatScalesOfGGplot(...)
 }
 
 getTransform <- function(axisFormat) {

@@ -2,28 +2,13 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{formatRangesOfGGplot}
 \alias{formatRangesOfGGplot}
-\title{Axes Ranges Of GGplot}
+\title{Axes Ranges Of GGplot (deprecated)}
 \usage{
-formatRangesOfGGplot(
-  plot,
-  ranges,
-  xLabels = NULL,
-  yLabels = NULL,
-  ySecAxis = NULL
-)
+formatRangesOfGGplot(...)
 }
 \arguments{
-\item{plot}{(ggplot)}
-
-\item{ranges}{(list) named list with range definitions, output of \code{plotRangesServer}}
-
-\item{xLabels}{(list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
-
-\item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
-
-\item{ySecAxis}{(list) named list with specifications for the second y axis,
-e.g. \code{list(title = "title 2nd y axis", center = 0, scale = 1)}}
+\item{...}{arguments of \code{formatScalesOfGGplot}}
 }
 \description{
-Axes Ranges Of GGplot
+Axes Ranges Of GGplot (deprecated)
 }

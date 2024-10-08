@@ -10,5 +10,8 @@ formatRangesOfGGplot(...)
 \item{...}{arguments of \code{formatScalesOfGGplot}}
 }
 \description{
-Axes Ranges Of GGplot (deprecated)
+This function is deprecated. Please use `formatScalesOfGGplot` instead.
+}
+\seealso{
+\link[shinyTools]{formatScalesOfGGplot}
 }

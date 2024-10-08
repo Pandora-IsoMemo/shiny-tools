@@ -159,7 +159,10 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
 
 #' Axes Ranges Of GGplot (deprecated)
 #'
+#' This function is deprecated. Please use `formatScalesOfGGplot` instead.
+#'
 #' @param ... arguments of \code{formatScalesOfGGplot}
+#' @seealso \link[shinyTools]{formatScalesOfGGplot}
 #'
 #' @export
 formatRangesOfGGplot <- function(...) {

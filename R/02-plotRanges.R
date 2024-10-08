@@ -25,25 +25,29 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
       choices = c("x axis" = "xAxis", "y axis" = "yAxis"),
       selected = "xAxis"
     ),
-    selectInput(
-      inputId = ns("transform"),
-      label = "Transformation",
-      choices = list(
-        `No transformation` = c(
-          "identity" = "identity"
-        ),
-        `Logarithmic transformation` = c(
-          "log10" = "log10",
-          "log2" = "log2",
-          "log" = "log"
-        ),
-        `Power transformation` = c(
-          "sqrt" = "sqrt"#,
-          #"reciprocal" = "reciprocal" # transformation leads to issues with axis labels in OsteoBioR
-        )#,
-        # `Reverse transformation` = c(
-        # "reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
-        # )
+    conditionalPanel(
+      ns = ns,
+      condition = "input.labelName != 'yAxis2'",
+      selectInput(
+        inputId = ns("transform"),
+        label = "Transformation",
+        choices = list(
+          `No transformation` = c(
+            "identity" = "identity"
+          ),
+          `Logarithmic transformation` = c(
+            "log10" = "log10",
+            "log2" = "log2",
+            "log" = "log"
+          ),
+          `Power transformation` = c(
+            "sqrt" = "sqrt"#,
+            #"reciprocal" = "reciprocal" # transformation leads to issues with axis labels in OsteoBioR
+          )#,
+          # `Reverse transformation` = c(
+          # "reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
+          # )
+        )
       )
     ),
     checkboxInput(

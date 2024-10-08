@@ -22,10 +22,7 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
     selectInput(
       inputId = ns("labelName"),
       label = "Axis",
-      choices = c(
-        "x axis" = "xAxis",
-        "y axis" = "yAxis"
-      ),
+      choices = c("x axis" = "xAxis", "y axis" = "yAxis"),
       selected = "xAxis"
     ),
     selectInput(
@@ -78,31 +75,50 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
 #'
 #' @param id namespace id
 #' @param type (character) Type of the plot to add ranges to, one of "ggplot", "base".
+#' @param axes (character) Named vector of axes to add ranges to, e.g.
+#'  \code{c("x axis" = "xAxis", "y axis" = "yAxis", "2nd y axis" = "yAxis2")}.
 #' @inheritParams plotExportServer
 #'
 #' @export
-plotRangesServer <- function(id, type = c("none", "ggplot", "base"), initRanges = NULL) {
+plotRangesServer <- function(id,
+                             type = c("none", "ggplot", "base"),
+                             initRanges = NULL,
+                             axes = c("x axis" = "xAxis",
+                                      "y axis" = "yAxis")) {
+
   type <- match.arg(type)
 
   moduleServer(id,
                function(input, output, session) {
+                 ranges <- reactiveValues()
+
                  if (is.null(initRanges)) {
                    # if null: take values from config
-                   ranges <- reactiveValues(
-                     xAxis = config()$defaultRange,
-                     yAxis = config()$defaultRange
-                   )
+                   for (axis in axes) {
+                     ranges[[axis]] <- config()$defaultRange
+                   }
                  } else if (inherits(initRanges, "list")) {
                    # if list: use values to set default values
-                   ranges <- reactiveValues(
-                     xAxis = initRanges[["xAxis"]],
-                     yAxis = initRanges[["yAxis"]]
-                   )
+                   if (!all(axes %in% names(initRanges))) {
+                     stop("parameter 'initRanges' must contain values for all 'axes'")
+                   }
+
+                   for (axis in axes) {
+                     ranges[[axis]] <- initRanges[[axis]]
+                   }
                  } else {
+                   # if not list: assume it is output of plotRangesServer() (a reactiveValues object) and use as is
+                   if (!all(axes %in% names(initRanges))) {
+                     stop("parameter 'initRanges' must contain values for all 'axes'")
+                   }
+
                    ranges <- initRanges
                  }
 
+                 # return reactiveValues object "ranges" if no type is specified
                  if (type == "none") return(ranges)
+
+                 updateSelectInput(session, "labelName", choices = axes)
 
                  observe({
                    # load range element inputs of the selected label
@@ -117,15 +133,15 @@ plotRangesServer <- function(id, type = c("none", "ggplot", "base"), initRanges 
                })
 }
 
-#' Observe Range Elements Of Label
-#'
-#' Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
-#' plot title, axis text, ...) and store values in the reactiveValues list 'text'.
-#'
-#' @param input input object from server function
-#' @param output output object from server function
-#' @param session session from server function
-#' @param ranges (reactiveValue) contains range elements
+# Observe Range Elements Of Label (no docu for 'man' because it is a helper function)
+#
+# Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
+# plot title, axis text, ...) and store values in the reactiveValues list 'text'.
+#
+# @param input input object from server function
+# @param output output object from server function
+# @param session session from server function
+# @param ranges (reactiveValue) contains range elements
 observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges) {
   observe({
     req(input[["labelName"]])
@@ -199,10 +215,17 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 #                                                                 max = 10,
 #                                                                 fromData = FALSE,
 #                                                                 transform = "identity"),
-#                                                  yAxis = list(min = 0,
-#                                                               max = 10,
-#                                                               fromData = TRUE,
-#                                                               transform = "identity")))
+#                                                    yAxis = list(min = 0,
+#                                                                 max = 10,
+#                                                                 fromData = TRUE,
+#                                                                 transform = "identity"),
+#                                                    yAxis2 = list(min = 0,
+#                                                                 max = 10,
+#                                                                 fromData = TRUE,
+#                                                                 transform = "identity")),
+#                                  axes = c("x axis" = "xAxis",
+#                                           "y axis" = "yAxis",
+#                                           "2nd y axis" = "yAxis2"))
 #
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%

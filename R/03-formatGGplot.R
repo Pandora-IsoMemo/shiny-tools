@@ -7,11 +7,6 @@
 #'
 #' @export
 formatTitlesOfGGplot <- function(plot, text) {
-  # check if 2nd axis elements are present
-  if (any(c("yAxisTitle2", "yAxisText2") %in% names(text))) {
-    message("'formatTitlesOfGGplot()' does not support elements of a 2nd y axis yet! Please consider to add formatting of a second y axis with a custom function.")
-  }
-
   # check if all elements are present
   if (!all(
     names(text) %in% c(
@@ -40,8 +35,10 @@ formatTitlesOfGGplot <- function(plot, text) {
       theme(
         axis.title.x = getElementText(text[["xAxisTitle"]]),
         axis.title.y = getElementText(text[["yAxisTitle"]]),
+        axis.title.y.right = getElementText(text[["yAxisTitle2"]]),
         axis.text.x = getElementText(text[["xAxisText"]]),
-        axis.text.y = getElementText(text[["yAxisText"]])
+        axis.text.y = getElementText(text[["yAxisText"]]),
+        axis.text.y.right = getElementText(text[["yAxisText2"]])
       )
   }
 
@@ -122,7 +119,7 @@ getElementText <- function(textDef = list(fontFamily = "sans",
                                           hjust = 0.5,
                                           vjust = 0.5
                                           )) {
-  if (textDef[["hide"]]) {
+  if (is.null(textDef) || textDef[["hide"]]) {
     element_blank()
   } else {
     element_text(family = textDef[["fontFamily"]],
@@ -139,24 +136,22 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'
 #' @param plot (ggplot)
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
-#' @param xlabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
+#' @param xLabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param ySecAxis (list) named list with specifications for the second y axis,
 #'  e.g. \code{list(title = "title 2nd y axis", center = 0, scale = 1)}
 #'
 #' @export
-formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL, ySecAxis = NULL) {
-  # format x axis ----
+formatRangesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxis = NULL) {
   plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
                                     limits = getLimits(ranges[["xAxis"]]),
-                                    breaks = getBreaks(xlabels[["breaks"]]),
-                                    labels = getLabels(xlabels[["labels"]]))
+                                    breaks = getBreaks(xLabels),
+                                    labels = getLabels(xLabels))
 
-  # format y axis ----
   plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
                                     limits = getLimits(ranges[["yAxis"]]),
-                                    breaks = getBreaks(yLabels[["breaks"]]),
-                                    labels = getLabels(yLabels[["labels"]]),
+                                    breaks = getBreaks(yLabels),
+                                    labels = getLabels(yLabels),
                                     sec.axis = getSecAxis(ySecAxis))
 
   plot

@@ -7,7 +7,7 @@
 formatRangesOfGGplot(
   plot,
   ranges,
-  xlabels = NULL,
+  xLabels = NULL,
   yLabels = NULL,
   ySecAxis = NULL
 )
@@ -17,7 +17,7 @@ formatRangesOfGGplot(
 
 \item{ranges}{(list) named list with range definitions, output of \code{plotRangesServer}}
 
-\item{xlabels}{(list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
+\item{xLabels}{(list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 
 \item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 

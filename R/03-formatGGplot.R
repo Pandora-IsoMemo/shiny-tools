@@ -111,10 +111,10 @@ extractTitle <- function(titleList) {
   }
 }
 
-#' Get Element Text
-#'
-#' @param textDef (list) named list with specs for text formatting, see e.g.
-#' \code{config()$defaultGGTitle}
+# Get Element Text (no docu for 'man' because it is a helper function)
+#
+# @param textDef (list) named list with specs for text formatting, see e.g.
+# \code{config()$defaultGGTitle}
 getElementText <- function(textDef = list(fontFamily = "sans",
                                           hide = FALSE,
                                           size = 12L,
@@ -173,12 +173,12 @@ formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL) {
   plot
 }
 
-#' Format an axis of a ggplot
-#'
-#' @param plot (ggplot)
-#' @param axisFormat (list) named list with axis format definitions for a specific axis
-#' @param axis (character) axis to format, one of "xAxis", "yAxis"
-#' @param ... additional arguments for \code{scale_x_continuous} or \code{scale_y_continuous}
+# Format an axis of a ggplot (no docu for 'man' because it is a helper function)
+#
+# @param plot (ggplot)
+# @param axisFormat (list) named list with axis format definitions for a specific axis
+# @param axis (character) axis to format, one of "xAxis", "yAxis"
+# @param ... additional arguments for \code{scale_x_continuous} or \code{scale_y_continuous}
 formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y"), ...) {
   axis <- match.arg(axis)
 

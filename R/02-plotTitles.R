@@ -208,16 +208,16 @@ plotTitlesServer <- function(id,
                })
 }
 
-#' Observe Text Elements Of Label
-#'
-#' Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
-#' plot title, axis text, ...) and store values in the reactiveValues list 'text'.
-#'
-#' @param input input object from server function
-#' @param output output object from server function
-#' @param session session from server function
-#' @param plotText (reactiveValue) contains text elements
-#' @inheritParams plotTitlesServer
+# Observe Text Elements Of Label (no docu for 'man' because it is a helper function)
+#
+# Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
+# plot title, axis text, ...) and store values in the reactiveValues list 'text'.
+#
+# @param input input object from server function
+# @param output output object from server function
+# @param session session from server function
+# @param plotText (reactiveValue) contains text elements
+# @inheritParams plotTitlesServer
 observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText, showParseButton) {
   # set up all observers for text elements
   # we cannot loop over the elements. When looping reactivity gets lost.
@@ -300,7 +300,7 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
   return(plotText)
 }
 
-#' Available Fonts
+# Available Fonts (no docu for 'man' because it is a helper function)
 availableFonts <- function() {
   c("sans", "serif", "mono")
 }
@@ -327,11 +327,11 @@ fontChoicesSelect <- function(type = c("ggplot", "base")) {
   )
 }
 
-#' Size Values Slider
-#'
-#' Initial values for sliderInput title 'size' dependent on the plot type
-#'
-#' @param type (character) plot type, one of "ggplot" or "base"
+# Size Values Slider (no docu for 'man' because it is a helper function)
+#
+# Initial values for sliderInput title 'size' dependent on the plot type
+#
+# @param type (character) plot type, one of "ggplot" or "base"
 sizeValuesSlider  <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
@@ -347,12 +347,12 @@ sizeValuesSlider  <- function(type = c("ggplot", "base")) {
   )
 }
 
-#' Validate Init Text
-#'
-#' If elements are missing in initText, add those with default values
-#'
-#' @inheritParams plotTitlesServer
-#' @inheritParams plotExportServer
+# Validate Init Text (no docu for 'man' because it is a helper function)
+#
+# If elements are missing in initText, add those with default values
+#
+# @inheritParams plotTitlesServer
+# @inheritParams plotExportServer
 validateInitText <- function(initText,
                              type = c("none", "ggplot", "base"),
                              availableElements = c("title", "axis")) {
@@ -372,11 +372,11 @@ validateInitText <- function(initText,
   return(initText)
 }
 
-#' Default Init Text
-#'
-#' Initial list with default text elements
-#'
-#' @inheritParams plotTitlesServer
+# Default Init Text (no docu for 'man' because it is a helper function)
+#
+# Initial list with default text elements
+#
+# @inheritParams plotTitlesServer
 defaultInitText <- function(type = c("none", "ggplot", "base"),
                             availableElements = c("title", "axis")) {
   type <- match.arg(type)
@@ -394,11 +394,11 @@ defaultInitText <- function(type = c("none", "ggplot", "base"),
   res
 }
 
-#' Default Title Format
-#'
-#' Initial values for title dependent on the plot type
-#'
-#' @inheritParams plotTitlesServer
+# Default Title Format (no docu for 'man' because it is a helper function)
+#
+# Initial values for title dependent on the plot type
+#
+# @inheritParams plotTitlesServer
 defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
   type <- match.arg(type)
 
@@ -437,13 +437,13 @@ checkElements <- function(availableElements) {
   availableElements
 }
 
-#' Keep Deepest Names
-#'
-#' Extracts the names of the deepest level elements from nested names.
-#'
-#' @param x (vector)  A named vector with named elements and nested names separated by '.'
-#'
-#' @return A character vector containing the names of the deepest level elements.
+# Keep Deepest Names (no docu for 'man' because it is a helper function)
+#
+# Extracts the names of the deepest level elements from nested names.
+#
+# @param x (vector)  A named vector with named elements and nested names separated by '.'
+#
+# @return A character vector containing the names of the deepest level elements.
 keep_deepest_names <- function(x) {
   deepestNames <- names(x) %>%
     sapply(FUN = function(x) gsub(pattern = ".*\\.", replacement = "", x = x), USE.NAMES = FALSE)

@@ -141,9 +141,11 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
 #' @param xlabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
+#' @param ySecAxis (list) named list with specifications for the second y axis,
+#'  e.g. \code{list(title = "title 2nd y axis", center = 0, scale = 1)}
 #'
 #' @export
-formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL) {
+formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL, ySecAxis = NULL) {
   # format x axis ----
   plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
                                     limits = getLimits(ranges[["xAxis"]]),
@@ -151,11 +153,11 @@ formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL) {
                                     labels = getLabels(xlabels[["labels"]]))
 
   # format y axis ----
-  # we need to integrate the second axis here ....
   plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
                                     limits = getLimits(ranges[["yAxis"]]),
                                     breaks = getBreaks(yLabels[["breaks"]]),
-                                    labels = getLabels(yLabels[["labels"]]))
+                                    labels = getLabels(yLabels[["labels"]]),
+                                    sec.axis = getSecAxis(ySecAxis))
 
   plot
 }
@@ -189,6 +191,17 @@ getLabels <- function(labels) {
     ggplot2::waiver()
   } else {
     labels[["labels"]]
+  }
+}
+
+getSecAxis <- function(ySecAxis) {
+  if (is.null(ySecAxis) || is.null(ySecAxis[["title"]]) || is.null(ySecAxis[["center"]]) || is.null(ySecAxis[["scale"]])) {
+    ggplot2::waiver()
+  } else {
+    title <- ySecAxis[["title"]]
+    center <- ySecAxis[["center"]]
+    scale <- ySecAxis[["scale"]]
+    ggplot2::sec_axis(~(.* scale) + center, name = title)
   }
 }
 

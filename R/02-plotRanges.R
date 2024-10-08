@@ -229,7 +229,8 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 #
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%
-#       formatRangesOfGGplot(ranges = thisRanges)
+#       formatRangesOfGGplot(ranges = thisRanges,
+#                            ySecAxis = list(title = "title 2nd y axis", center = 0, scale = 1))
 #   })
 # }
 #

@@ -4,7 +4,13 @@
 \alias{formatRangesOfGGplot}
 \title{Axes Ranges Of GGplot}
 \usage{
-formatRangesOfGGplot(plot, ranges, xlabels = NULL, yLabels = NULL)
+formatRangesOfGGplot(
+  plot,
+  ranges,
+  xlabels = NULL,
+  yLabels = NULL,
+  ySecAxis = NULL
+)
 }
 \arguments{
 \item{plot}{(ggplot)}
@@ -14,6 +20,9 @@ formatRangesOfGGplot(plot, ranges, xlabels = NULL, yLabels = NULL)
 \item{xlabels}{(list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 
 \item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
+
+\item{ySecAxis}{(list) named list with specifications for the second y axis,
+e.g. \code{list(title = "title 2nd y axis", center = 0, scale = 1)}}
 }
 \description{
 Axes Ranges Of GGplot

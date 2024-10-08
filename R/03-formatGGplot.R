@@ -71,15 +71,13 @@ formatTitlesOfGGplot <- function(plot, text) {
   plot
 }
 
-#' Set Custom Title
-#'
-#' Set label of a ggplot object
-#'
-#' @param plot (ggplot)
-#' @param labFun (function) function to set label, e.g. \code{xlab}
-#' @param ... (list) arguments for \code{labFun}
-#'
-#' @export
+# Set Custom Title (no docu for 'man' because it is a helper function)
+#
+# Set label of a ggplot object
+#
+# @param plot (ggplot)
+# @param labFun (function) function to set label, e.g. \code{xlab}
+# @param ... (list) arguments for \code{labFun}
 setCustomTitle <- function(plot, labFun, ...) {
   args <- list(...)
   if (length(args) == 0 || is.null(args[[1]]) || args[[1]] == "") {
@@ -146,61 +144,54 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'
 #' @export
 formatRangesOfGGplot <- function(plot, ranges, xlabels = NULL, yLabels = NULL) {
+  # format x axis ----
   if (is.null(xlabels) || is.null(xlabels[["breaks"]]) || is.null(xlabels[["labels"]])) {
     # default breaks and labels for x axis
-    plot <- plot %>%
-      formatAxisOfGGplot(axisFormat = ranges[["xAxis"]], axis = "x")
+    plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
+                                      limits = getLimits(ranges[["xAxis"]]))
   } else {
     # update breaks and labels of the x axis
-    plot <- plot %>%
-      formatAxisOfGGplot(axisFormat = ranges[["xAxis"]], axis = "x",
-                         breaks = xlabels[["breaks"]],
-                         labels = xlabels[["labels"]])
+    plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
+                                      limits = getLimits(ranges[["xAxis"]]),
+                                      breaks = xlabels[["breaks"]],
+                                      labels = xlabels[["labels"]])
   }
 
+  # format y axis ----
+  # we need to integrate the second axis here ....
   if (is.null(yLabels) || is.null(yLabels[["breaks"]]) || is.null(yLabels[["labels"]])) {
     # default breaks and labels for y axis
-    plot <- plot %>%
-      formatAxisOfGGplot(axisFormat = ranges[["yAxis"]], axis = "y")
+    plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
+                                      limits = getLimits(ranges[["yAxis"]]))
   } else {
     # update breaks and labels of the y axis
-    plot <- plot %>%
-      formatAxisOfGGplot(axisFormat = ranges[["yAxis"]], axis = "y",
-                         breaks = yLabels[["breaks"]],
-                         labels = yLabels[["labels"]])
+    plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
+                                      limits = getLimits(ranges[["yAxis"]]),
+                                      breaks = yLabels[["breaks"]],
+                                      labels = yLabels[["labels"]])
   }
 
   plot
 }
 
-# Format an axis of a ggplot (no docu for 'man' because it is a helper function)
-#
-# @param plot (ggplot)
-# @param axisFormat (list) named list with axis format definitions for a specific axis
-# @param axis (character) axis to format, one of "xAxis", "yAxis"
-# @param ... additional arguments for \code{scale_x_continuous} or \code{scale_y_continuous}
-formatAxisOfGGplot <- function(plot, axisFormat, axis = c("x", "y"), ...) {
-  axis <- match.arg(axis)
-
-  scaleFUN <- switch(axis,
-                     x = ggplot2::scale_x_continuous,
-                     y = ggplot2::scale_y_continuous)
-
+getTransform <- function(axisFormat) {
   if (is.null(axisFormat[["transform"]])) {
     transform <- "identity"
   } else {
     transform <- axisFormat[["transform"]]
   }
 
+  transform
+}
+
+getLimits <- function(axisFormat) {
   if (axisFormat[["fromData"]]) {
     limits <- NULL
   } else {
     limits <- c(axisFormat[["min"]], axisFormat[["max"]])
   }
 
-  plot <- plot + scaleFUN(trans = transform, limits = limits, ...)
-
-  plot
+  limits
 }
 
 #' Point Style Of GGplot

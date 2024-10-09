@@ -9,7 +9,7 @@ formatScalesOfGGplot(
   ranges,
   xLabels = NULL,
   yLabels = NULL,
-  ySecAxis = NULL
+  ySecAxisTitle = NULL
 )
 }
 \arguments{
@@ -21,8 +21,7 @@ formatScalesOfGGplot(
 
 \item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 
-\item{ySecAxis}{(list) named list with specifications for the second y axis,
-e.g. \code{list(title = "title 2nd y axis", center = 0, scale = 1)}}
+\item{ySecAxisTitle}{(character) title of secondary y axis}
 }
 \description{
 Specify Scales of a GGplot

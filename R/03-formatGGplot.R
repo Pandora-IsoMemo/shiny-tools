@@ -138,21 +138,26 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
 #' @param xLabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
-#' @param ySecAxis (list) named list with specifications for the second y axis,
-#'  e.g. \code{list(title = "title 2nd y axis", center = 0, scale = 1)}
+#' @param ySecAxisTitle (character) title of secondary y axis
 #'
 #' @export
-formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxis = NULL) {
+formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
   plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
                                     limits = getLimits(ranges[["xAxis"]]),
                                     breaks = getBreaks(xLabels),
                                     labels = getLabels(xLabels))
 
+  plotData <- ggplot_build(plot)
+  rescalingFactors <- calculateRescalingFactors(
+    oldLimits = range(plotData[["data"]][[1]][["y"]]),
+    newLimits = getLimits(ranges[["yAxis2"]])
+  )
+
   plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
                                     limits = getLimits(ranges[["yAxis"]]),
                                     breaks = getBreaks(yLabels),
                                     labels = getLabels(yLabels),
-                                    sec.axis = getSecAxis(ySecAxis))
+                                    sec.axis = getSecAxis(rescalingFactors, ySecAxisTitle))
 
   plot
 }
@@ -168,6 +173,25 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
 formatRangesOfGGplot <- function(...) {
   deprecate_warn("24.10.0", "formatRangesOfGGplot()", "formatScalesOfGGplot()")
   formatScalesOfGGplot(...)
+}
+
+#' Calculate Rescaling Factors
+#'
+#' @param oldLimits (numeric) old limits
+#' @param newLimits (numeric) new limits
+#'
+#' @return (list) with scale and center
+#'
+#' @export
+calculateRescalingFactors <- function(oldLimits, newLimits = NULL) {
+  if (length(oldLimits) < 2 || length(newLimits) < 2) return(list(scale = 1, center = 0))
+
+  b <- seq(min(newLimits), max(newLimits), length.out = 100)
+  a <- seq(min(oldLimits), max(oldLimits), length.out = 100)
+  res <- lm(b ~ a)
+
+  list(scale = res$coefficients[2],
+       center = res$coefficients[1])
 }
 
 getTransform <- function(axisFormat) {
@@ -202,13 +226,12 @@ getLabels <- function(labels) {
   }
 }
 
-getSecAxis <- function(ySecAxis) {
-  if (is.null(ySecAxis) || is.null(ySecAxis[["title"]]) || is.null(ySecAxis[["center"]]) || is.null(ySecAxis[["scale"]])) {
+getSecAxis <- function(rescaleFactors, title) {
+  if (is.null(rescaleFactors) || is.null(title) || is.null(rescaleFactors[["center"]]) || is.null(rescaleFactors[["scale"]])) {
     ggplot2::waiver()
   } else {
-    title <- ySecAxis[["title"]]
-    center <- ySecAxis[["center"]]
-    scale <- ySecAxis[["scale"]]
+    center <- rescaleFactors[["center"]]
+    scale <- rescaleFactors[["scale"]]
     ggplot2::sec_axis(~(.* scale) + center, name = title)
   }
 }

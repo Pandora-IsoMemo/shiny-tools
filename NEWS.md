@@ -5,6 +5,9 @@
   - option to format a second y-axis
   - option to use transformations for the x or y axis in order to handle extreme values
 
+## Updates
+- removing documentation from `man` folder for helper functions to clean up the reference page (https://pandora-isomemo.github.io/shiny-tools/reference/index.html)
+
 # shinyTools 24.08.1
 
 ## New Features

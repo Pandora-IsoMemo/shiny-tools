@@ -69,10 +69,10 @@ dataExportServer <- function(id, dataFun, filename = "data") {
                })
 }
 
-#' Filename of Export
-#'
-#' @param fileending character csv or xlsx
-#' @param filename name of file
+# Filename of Export
+#
+# @param fileending character csv or xlsx
+# @param filename name of file
 exportFilename <- function(filename, fileending){
   paste(filename, fileending, sep = ".")
 }

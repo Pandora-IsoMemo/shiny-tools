@@ -120,16 +120,16 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL, h
 }
 
 
-#' Observe Point Elements
-#'
-#' Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
-#' plot title, axis text, ...) and store values in the reactiveValues list 'text'.
-#'
-#' @param input input object from server function
-#' @param output output object from server function
-#' @param session session from server function
-#' @param style (reactiveValue) contains point elements
-#' @inheritParams plotPointsServer
+# Observe Point Elements
+#
+# Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
+# plot title, axis text, ...) and store values in the reactiveValues list 'text'.
+#
+# @param input input object from server function
+# @param output output object from server function
+# @param session session from server function
+# @param style (reactiveValue) contains point elements
+# @inheritParams plotPointsServer
 observeAndUpdatePointElements <- function(input, output, session, style, type) {
   observe({
     style[["dataPoints"]][["symbol"]] <- as.numeric(input[["symbol"]])

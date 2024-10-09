@@ -300,7 +300,7 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
   return(plotText)
 }
 
-# Available Fonts (no docu for 'man' because it is a helper function)
+#' Available Fonts
 availableFonts <- function() {
   c("sans", "serif", "mono")
 }

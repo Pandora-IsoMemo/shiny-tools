@@ -7,12 +7,17 @@ availableElements:
     x axis text: "xAxisText"
     y axis title: "yAxisTitle"
     y axis text: "yAxisText"
+  yaxis2:
+    2nd y axis title: "yAxisTitle2"
+    2nd y axis text: "yAxisText2"
   legend:
     legend title: "legendTitle"
     legend text: "legendText"
 
 defaultGGTitle:
   text: ""
+  useExpression: false
+  expression: ""
   fontFamily: "sans"
   fontType: "plain"
   color: "#000000"
@@ -21,6 +26,8 @@ defaultGGTitle:
 
 defaultBaseTitle:
   text: ""
+  useExpression: false
+  expression: ""
   fontFamily: "sans"
   fontType: 1
   color: "#000000"
@@ -52,6 +59,7 @@ defaultRange:
   min: 0
   max: 1
   fromData: true
+  transform: "identity"
 
 # default point style
 defaultPointStyle:

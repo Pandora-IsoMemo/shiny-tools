@@ -24,7 +24,7 @@ plotExportServer(
 \item{plotType}{(character) one of "none", "ggplot", "ggplot_only_titles". Adds the option to
 format titles and ranges of a plot within the export UI (currently only for ggplots). For
 \code{plotType == "ggplot_only_titles"} only titles can be adjusted. This prevents that custom
-formatting of axis ranges might be overwritten by \code{formatRangesOfGGplot()}.}
+formatting of axis ranges might be overwritten by \code{formatScalesOfGGplot()}.}
 
 \item{filename}{(character) name of file without file extension}
 

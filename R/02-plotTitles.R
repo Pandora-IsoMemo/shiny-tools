@@ -38,7 +38,7 @@ plotTitlesUI <- function(id,
     ),
     conditionalPanel(
       ns = ns,
-      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle'].includes(input.labelName)",
+      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle', 'yAxisTitle2'].includes(input.labelName)",
       checkboxInput(ns("useExpression"),
                     label = "Use mathematical annotation",
                     value = FALSE,
@@ -47,7 +47,7 @@ plotTitlesUI <- function(id,
         ns = ns,
         condition = "input.useExpression",
         uiOutput(ns("expressionInput")),
-        helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13*C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
+        helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13~C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
         helpText(HTML('Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'), width = "100%")
       ),
       conditionalPanel(
@@ -90,7 +90,7 @@ plotTitlesUI <- function(id,
     ),
     conditionalPanel(
       ns = ns,
-      condition = "['xAxisText', 'yAxisText'].includes(input.labelName)",
+      condition = "['xAxisText', 'yAxisText', 'yAxisText2'].includes(input.labelName)",
       sliderInput(
         ns("angle"),
         label = "Text angle",
@@ -126,7 +126,7 @@ plotTitlesUI <- function(id,
 #' @param id namespace id
 #' @param type (character) Type of the plot to add titles to, one of "none", "ggplot", "base".
 #' @param availableElements (character) set of available labels for specifying the format of text.
-#'  May contain elements from \code{c("title", "axis", "legend")}.
+#'  May contain elements from \code{c("title", "axis", "yaxis2", "legend")}.
 #' @param showParseButton (logical) Show parse button for parsing mathematical expressions.
 #' @inheritParams plotExportServer
 #'
@@ -188,6 +188,8 @@ plotTitlesServer <- function(id,
                  })
 
                  observe({
+                   logDebug("%s: Update choices for labelName", id)
+
                    updateSelectInput(session,
                                      "labelName",
                                      choices = availableLabels(availableElements = availableElements),
@@ -196,41 +198,47 @@ plotTitlesServer <- function(id,
 
                  observe({
                    req(input[["labelName"]])
+                   logDebug("%s: Entering observe 'labelName'", id)
+
                    # load plotText element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
                                     userInputs = plotText[[input[["labelName"]]]])
                  }) %>%
                    bindEvent(input[["labelName"]])
 
-                 plotText <- observeAndUpdateTextElementsOfLabel(input, output, session, plotText, showParseButton)
+                 plotText <- observeAndUpdateTextElementsOfLabel(input, output, session, id, plotText, showParseButton)
 
                  return(plotText)
                })
 }
 
-#' Observe Text Elements Of Label
-#'
-#' Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
-#' plot title, axis text, ...) and store values in the reactiveValues list 'text'.
-#'
-#' @param input input object from server function
-#' @param output output object from server function
-#' @param session session from server function
-#' @param plotText (reactiveValue) contains text elements
-#' @inheritParams plotTitlesServer
-observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText, showParseButton) {
+# Observe Text Elements Of Label (no docu for 'man' because it is a helper function)
+#
+# Observe inputs for different text elements (e.g. color, size, ...) of a selected label (e.g.
+# plot title, axis text, ...) and store values in the reactiveValues list 'text'.
+#
+# @param input input object from server function
+# @param output output object from server function
+# @param session session from server function
+# @param plotText (reactiveValue) contains text elements
+# @inheritParams plotTitlesServer
+observeAndUpdateTextElementsOfLabel <- function(input, output, session, id, plotText, showParseButton) {
   # set up all observers for text elements
   # we cannot loop over the elements. When looping reactivity gets lost.
 
   # keep input useExpression for "updateUserInputs()"
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'text'", id)
+
     plotText[[input[["labelName"]]]][["text"]] <- input[["text"]]
   }) %>%
     bindEvent(input[["text"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'useExpression'", id)
+
     plotText[[input[["labelName"]]]][["useExpression"]] <- input[["useExpression"]]
   }) %>%
     bindEvent(input[["useExpression"]])
@@ -238,12 +246,16 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
   if (showParseButton) {
     observe({
       req(input[["labelName"]], input[["parseExpression"]])
+      logDebug("%s: Entering observe 'parseExpression'", id)
+
       plotText[[input[["labelName"]]]][["expression"]] <- input[["expression"]]
     }) %>%
       bindEvent(input[["parseExpression"]])
   } else {
     observe({
       req(input[["labelName"]])
+      logDebug("%s: Entering observe 'expression'", id)
+
       plotText[[input[["labelName"]]]][["expression"]] <- input[["expression"]]
     }) %>%
       bindEvent(input[["expression"]])
@@ -251,48 +263,64 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'fontFamily'", id)
+
     plotText[[input[["labelName"]]]][["fontFamily"]] <- input[["fontFamily"]]
   }) %>%
     bindEvent(input[["fontFamily"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'fontType'", id)
+
     plotText[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
   }) %>%
     bindEvent(input[["fontType"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'color'", id)
+
     plotText[[input[["labelName"]]]][["color"]] <- input[["color"]]
   }) %>%
     bindEvent(input[["color"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'size'", id)
+
     plotText[[input[["labelName"]]]][["size"]] <- input[["size"]]
   }) %>%
     bindEvent(input[["size"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'hide'", id)
+
     plotText[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
   }) %>%
     bindEvent(input[["hide"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'angle'", id)
+
     plotText[[input[["labelName"]]]][["angle"]] <- input[["angle"]]
   }) %>%
     bindEvent(input[["angle"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'hjust'", id)
+
     plotText[[input[["labelName"]]]][["hjust"]] <- input[["hjust"]]
   }) %>%
     bindEvent(input[["hjust"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'vjust'", id)
+
     plotText[[input[["labelName"]]]][["vjust"]] <- input[["vjust"]]
   }) %>%
     bindEvent(input[["vjust"]])
@@ -327,11 +355,11 @@ fontChoicesSelect <- function(type = c("ggplot", "base")) {
   )
 }
 
-#' Size Values Slider
-#'
-#' Initial values for sliderInput title 'size' dependent on the plot type
-#'
-#' @param type (character) plot type, one of "ggplot" or "base"
+# Size Values Slider (no docu for 'man' because it is a helper function)
+#
+# Initial values for sliderInput title 'size' dependent on the plot type
+#
+# @param type (character) plot type, one of "ggplot" or "base"
 sizeValuesSlider  <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
@@ -347,12 +375,12 @@ sizeValuesSlider  <- function(type = c("ggplot", "base")) {
   )
 }
 
-#' Validate Init Text
-#'
-#' If elements are missing in initText, add those with default values
-#'
-#' @inheritParams plotTitlesServer
-#' @inheritParams plotExportServer
+# Validate Init Text (no docu for 'man' because it is a helper function)
+#
+# If elements are missing in initText, add those with default values
+#
+# @inheritParams plotTitlesServer
+# @inheritParams plotExportServer
 validateInitText <- function(initText,
                              type = c("none", "ggplot", "base"),
                              availableElements = c("title", "axis")) {
@@ -372,11 +400,11 @@ validateInitText <- function(initText,
   return(initText)
 }
 
-#' Default Init Text
-#'
-#' Initial list with default text elements
-#'
-#' @inheritParams plotTitlesServer
+# Default Init Text (no docu for 'man' because it is a helper function)
+#
+# Initial list with default text elements
+#
+# @inheritParams plotTitlesServer
 defaultInitText <- function(type = c("none", "ggplot", "base"),
                             availableElements = c("title", "axis")) {
   type <- match.arg(type)
@@ -394,11 +422,11 @@ defaultInitText <- function(type = c("none", "ggplot", "base"),
   res
 }
 
-#' Default Title Format
-#'
-#' Initial values for title dependent on the plot type
-#'
-#' @inheritParams plotTitlesServer
+# Default Title Format (no docu for 'man' because it is a helper function)
+#
+# Initial values for title dependent on the plot type
+#
+# @inheritParams plotTitlesServer
 defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
   type <- match.arg(type)
 
@@ -428,20 +456,22 @@ availableLabels <- function(availableElements = c("title", "axis")) {
 }
 
 checkElements <- function(availableElements) {
-  if (!all(availableElements %in% c("title", "axis", "legend")))
+  configElements <- names(config()[["availableElements"]])
+
+  if (!all(availableElements %in% configElements))
     stop(sprintf("Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
-                 paste0(c("title", "axis", "legend"), collapse = "', '")))
+                 paste0(configElements, collapse = "', '")))
 
   availableElements
 }
 
-#' Keep Deepest Names
-#'
-#' Extracts the names of the deepest level elements from nested names.
-#'
-#' @param x (vector)  A named vector with named elements and nested names separated by '.'
-#'
-#' @return A character vector containing the names of the deepest level elements.
+# Keep Deepest Names (no docu for 'man' because it is a helper function)
+#
+# Extracts the names of the deepest level elements from nested names.
+#
+# @param x (vector)  A named vector with named elements and nested names separated by '.'
+#
+# @return A character vector containing the names of the deepest level elements.
 keep_deepest_names <- function(x) {
   deepestNames <- names(x) %>%
     sapply(FUN = function(x) gsub(pattern = ".*\\.", replacement = "", x = x), USE.NAMES = FALSE)
@@ -490,7 +520,7 @@ keep_deepest_names <- function(x) {
 #     thisTitles <- plotTitlesServer(
 #       "testMod",
 #       type = "ggplot",
-#       availableElements = c("title", "axis", "legend"),
+#       availableElements = c("title", "axis", "yaxis2", "legend"),
 #       initText = list(
 #         plotTitle = list(
 #           text = "testHeader",

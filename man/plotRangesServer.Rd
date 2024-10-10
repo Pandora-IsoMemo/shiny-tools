@@ -4,7 +4,12 @@
 \alias{plotRangesServer}
 \title{Server function for plot ranges}
 \usage{
-plotRangesServer(id, type = c("none", "ggplot", "base"), initRanges = NULL)
+plotRangesServer(
+  id,
+  type = c("none", "ggplot", "base"),
+  initRanges = NULL,
+  axes = c(`x axis` = "xAxis", `y axis` = "yAxis")
+)
 }
 \arguments{
 \item{id}{namespace id}
@@ -12,6 +17,9 @@ plotRangesServer(id, type = c("none", "ggplot", "base"), initRanges = NULL)
 \item{type}{(character) Type of the plot to add ranges to, one of "ggplot", "base".}
 
 \item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
+
+\item{axes}{(character) Named vector of axes to add ranges to, e.g.
+\code{c("x axis" = "xAxis", "y axis" = "yAxis", "2nd y axis" = "yAxis2")}.}
 }
 \description{
 Backend for plot ranges module

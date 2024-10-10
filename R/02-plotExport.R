@@ -55,6 +55,8 @@ plotExportServer <- function(id,
                  ns <- session$ns
 
                  observe({
+                   logDebug("%s: Entering observe button 'export'", id)
+
                    if (inherits(initText, "reactivevalues"))
                      initText <- reactiveValuesToList(initText)
 
@@ -102,6 +104,8 @@ plotExportServer <- function(id,
                    bindEvent(input$export)
 
                  observe({
+                   logDebug("%s: Entering enable/disable button 'export'", id)
+
                    res <- try(plotFun()())
                    if (inherits(res, "try-error") || length(res) == 0)
                      shinyjs::disable(ns("export"), asis = TRUE) else

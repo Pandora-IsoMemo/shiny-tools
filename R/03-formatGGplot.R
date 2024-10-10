@@ -143,18 +143,15 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #' @export
 formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
   plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
-                                    limits = getLimits(ranges[["xAxis"]]),
+                                    limits = getUserLimits(ranges[["xAxis"]]),
                                     breaks = getBreaks(xLabels),
                                     labels = getLabels(xLabels))
 
-  plotData <- ggplot_build(plot)
-  rescalingFactors <- calculateRescalingFactors(
-    oldLimits = range(plotData[["data"]][[1]][["y"]]),
-    newLimits = getLimits(ranges[["yAxis2"]])
-  )
+  rescalingFactors <- calculateRescalingFactors(oldLimits = getGGPlotLimits(plot, axis = "y"),
+                                                newLimits = getUserLimits(ranges[["yAxis2"]]))
 
   plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
-                                    limits = getLimits(ranges[["yAxis"]]),
+                                    limits = getUserLimits(ranges[["yAxis"]]),
                                     breaks = getBreaks(yLabels),
                                     labels = getLabels(yLabels),
                                     sec.axis = getSecAxis(rescalingFactors, ySecAxisTitle))
@@ -194,19 +191,31 @@ calculateRescalingFactors <- function(oldLimits, newLimits = NULL) {
        center = res$coefficients[1])
 }
 
+getGGPlotLimits <- function(plot, axis = c("x", "y")) {
+  axis <- match.arg(axis)
+
+  if (!is.null(plot$coordinates$limits[[axis]])) return(range(plot$coordinates$limits[[axis]]))
+
+  plotData <- ggplot_build(plot)
+  if (!is.null(plotData[["data"]][[1]][[axis]])) return(range(plotData[["data"]][[1]][[axis]]))
+
+  # plot limits not found: return NULL
+  return(NULL)
+}
+
+getUserLimits <- function(axisFormat) {
+  if (is.null(axisFormat[["fromData"]]) || axisFormat[["fromData"]]) {
+    return(NULL)
+  } else {
+    c(axisFormat[["min"]], axisFormat[["max"]])
+  }
+}
+
 getTransform <- function(axisFormat) {
   if (is.null(axisFormat[["transform"]])) {
     return("identity")
   } else {
     axisFormat[["transform"]]
-  }
-}
-
-getLimits <- function(axisFormat) {
-  if (is.null(axisFormat[["transform"]]) || axisFormat[["fromData"]]) {
-    return(NULL)
-  } else {
-    c(axisFormat[["min"]], axisFormat[["max"]])
   }
 }
 

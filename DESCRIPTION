@@ -13,6 +13,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     colourpicker,
+    futile.logger,
     ggplot2,
     grDevices,
     lifecycle,
@@ -24,6 +25,7 @@ Imports:
     shinyalert,
     shinyjs,
     shinyWidgets,
+    stats,
     utils,
     yaml
 RoxygenNote: 7.3.1

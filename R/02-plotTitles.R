@@ -188,6 +188,8 @@ plotTitlesServer <- function(id,
                  })
 
                  observe({
+                   logDebug("%s: Update choices for labelName", id)
+
                    updateSelectInput(session,
                                      "labelName",
                                      choices = availableLabels(availableElements = availableElements),
@@ -196,13 +198,15 @@ plotTitlesServer <- function(id,
 
                  observe({
                    req(input[["labelName"]])
+                   logDebug("%s: Entering observe 'labelName'", id)
+
                    # load plotText element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
                                     userInputs = plotText[[input[["labelName"]]]])
                  }) %>%
                    bindEvent(input[["labelName"]])
 
-                 plotText <- observeAndUpdateTextElementsOfLabel(input, output, session, plotText, showParseButton)
+                 plotText <- observeAndUpdateTextElementsOfLabel(input, output, session, id, plotText, showParseButton)
 
                  return(plotText)
                })
@@ -218,19 +222,23 @@ plotTitlesServer <- function(id,
 # @param session session from server function
 # @param plotText (reactiveValue) contains text elements
 # @inheritParams plotTitlesServer
-observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText, showParseButton) {
+observeAndUpdateTextElementsOfLabel <- function(input, output, session, id, plotText, showParseButton) {
   # set up all observers for text elements
   # we cannot loop over the elements. When looping reactivity gets lost.
 
   # keep input useExpression for "updateUserInputs()"
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'text'", id)
+
     plotText[[input[["labelName"]]]][["text"]] <- input[["text"]]
   }) %>%
     bindEvent(input[["text"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'useExpression'", id)
+
     plotText[[input[["labelName"]]]][["useExpression"]] <- input[["useExpression"]]
   }) %>%
     bindEvent(input[["useExpression"]])
@@ -238,12 +246,16 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
   if (showParseButton) {
     observe({
       req(input[["labelName"]], input[["parseExpression"]])
+      logDebug("%s: Entering observe 'parseExpression'", id)
+
       plotText[[input[["labelName"]]]][["expression"]] <- input[["expression"]]
     }) %>%
       bindEvent(input[["parseExpression"]])
   } else {
     observe({
       req(input[["labelName"]])
+      logDebug("%s: Entering observe 'expression'", id)
+
       plotText[[input[["labelName"]]]][["expression"]] <- input[["expression"]]
     }) %>%
       bindEvent(input[["expression"]])
@@ -251,48 +263,64 @@ observeAndUpdateTextElementsOfLabel <- function(input, output, session, plotText
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'fontFamily'", id)
+
     plotText[[input[["labelName"]]]][["fontFamily"]] <- input[["fontFamily"]]
   }) %>%
     bindEvent(input[["fontFamily"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'fontType'", id)
+
     plotText[[input[["labelName"]]]][["fontType"]] <- input[["fontType"]]
   }) %>%
     bindEvent(input[["fontType"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'color'", id)
+
     plotText[[input[["labelName"]]]][["color"]] <- input[["color"]]
   }) %>%
     bindEvent(input[["color"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'size'", id)
+
     plotText[[input[["labelName"]]]][["size"]] <- input[["size"]]
   }) %>%
     bindEvent(input[["size"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'hide'", id)
+
     plotText[[input[["labelName"]]]][["hide"]] <- input[["hide"]]
   }) %>%
     bindEvent(input[["hide"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'angle'", id)
+
     plotText[[input[["labelName"]]]][["angle"]] <- input[["angle"]]
   }) %>%
     bindEvent(input[["angle"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'hjust'", id)
+
     plotText[[input[["labelName"]]]][["hjust"]] <- input[["hjust"]]
   }) %>%
     bindEvent(input[["hjust"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'vjust'", id)
+
     plotText[[input[["labelName"]]]][["vjust"]] <- input[["vjust"]]
   }) %>%
     bindEvent(input[["vjust"]])

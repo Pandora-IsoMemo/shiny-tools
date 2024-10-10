@@ -24,6 +24,8 @@ dataExportServer <- function(id, dataFun, filename = "data") {
                  ns <- session$ns
 
                  observeEvent(input$export, {
+                   logDebug("%s: Entering observe button 'export'", id)
+
                    showModal(modalDialog(
                      "Export Data",
                      easyClose = TRUE,
@@ -48,6 +50,8 @@ dataExportServer <- function(id, dataFun, filename = "data") {
                  })
 
                  observe({
+                   logDebug("%s: Entering enable/disable button 'export'", id)
+
                    if (length(dataFun()()) == 0)
                      shinyjs::disable(ns("export"), asis = TRUE) else
                        shinyjs::enable(ns("export"), asis = TRUE)

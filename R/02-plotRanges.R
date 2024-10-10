@@ -122,16 +122,19 @@ plotRangesServer <- function(id,
                  # return reactiveValues object "ranges" if no type is specified
                  if (type == "none") return(ranges)
 
+                 # set choices for labels
                  updateSelectInput(session, "labelName", choices = axes)
 
                  observe({
+                   logDebug("%s: Entering observe 'labelName'", id)
+
                    # load range element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
                                     userInputs = ranges[[input[["labelName"]]]])
                  }) %>%
                    bindEvent(input[["labelName"]])
 
-                 ranges <- observeAndUpdateRangeElementsOfLabel(input, output, session, ranges)
+                 ranges <- observeAndUpdateRangeElementsOfLabel(input, output, session, id, ranges)
 
                  return(ranges)
                })
@@ -146,9 +149,11 @@ plotRangesServer <- function(id,
 # @param output output object from server function
 # @param session session from server function
 # @param ranges (reactiveValue) contains range elements
-observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges) {
+observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ranges) {
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'min'", id)
+
     ranges[[input[["labelName"]]]][["min"]] <- input[["min"]]
     # ensure that min <= max
     maxValue <- max(input[["min"]], input[["max"]], na.rm = TRUE)
@@ -158,6 +163,8 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'max'", id)
+
     ranges[[input[["labelName"]]]][["max"]] <- input[["max"]]
     # ensure that min <= max
     minValue <- min(input[["min"]], input[["max"]], na.rm = TRUE)
@@ -167,12 +174,16 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, ranges)
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'fromData'", id)
+
     ranges[[input[["labelName"]]]][["fromData"]] <- input[["fromData"]]
   }) %>%
     bindEvent(input[["fromData"]])
 
   observe({
     req(input[["labelName"]])
+    logDebug("%s: Entering observe 'transform'", id)
+
     ranges[[input[["labelName"]]]][["transform"]] <- input[["transform"]]
   }) %>%
     bindEvent(input[["transform"]])

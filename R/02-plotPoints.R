@@ -105,13 +105,15 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL, h
 
                  observe({
                    req(length(hideInput) > 0)
+                   logDebug("%s: Entering observe 'hideInput'", id)
+
                    # hide inputs
                    for (i in hideInput) {
                      shinyjs::hide(ns(i), asis = TRUE)
                    }
                  })
 
-                 style <- observeAndUpdatePointElements(input, output, session,
+                 style <- observeAndUpdatePointElements(input, output, session, id,
                                                         style = style,
                                                         type = type)
 
@@ -130,39 +132,53 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL, h
 # @param session session from server function
 # @param style (reactiveValue) contains point elements
 # @inheritParams plotPointsServer
-observeAndUpdatePointElements <- function(input, output, session, style, type) {
+observeAndUpdatePointElements <- function(input, output, session, id, style, type) {
   observe({
+    logDebug("%s: Entering observe 'symbol'", id)
+
     style[["dataPoints"]][["symbol"]] <- as.numeric(input[["symbol"]])
   }) %>%
     bindEvent(input[["symbol"]])
 
   observe({
+    logDebug("%s: Entering observe 'color'", id)
+
     style[["dataPoints"]][["color"]] <- input[["color"]]
   }) %>%
     bindEvent(input[["color"]])
 
   observe({
+    logDebug("%s: Entering observe 'colorBg'", id)
+
     style[["dataPoints"]][["colorBg"]] <- input[["colorBg"]]
   }) %>%
     bindEvent(input[["colorBg"]])
 
   observe({
+    logDebug("%s: Entering observe 'size'", id)
+
     style[["dataPoints"]][["size"]] <- input[["size"]]
   }) %>%
     bindEvent(input[["size"]])
 
   observe({
+    logDebug("%s: Entering observe 'alpha'", id)
+
     style[["dataPoints"]][["alpha"]] <- input[["alpha"]]
   }) %>%
     bindEvent(input[["alpha"]])
 
   observe({
+    logDebug("%s: Entering observe 'hide'", id)
+
     style[["dataPoints"]][["hide"]] <- input[["hide"]]
   }) %>%
     bindEvent(input[["hide"]])
 
   if (type == "base") {
     observe({
+      logDebug("%s: Entering observe 'lineWidthBg'", id)
+
       style[["dataPoints"]][["lineWidthBg"]] <- input[["lineWidthBg"]]
     }) %>%
       bindEvent(input[["lineWidthBg"]])

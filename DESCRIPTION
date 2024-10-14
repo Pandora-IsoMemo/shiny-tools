@@ -21,6 +21,7 @@ Imports:
     openxlsx,
     plotly,
     rjson,
+    scales,
     shiny,
     shinyalert,
     shinyjs,

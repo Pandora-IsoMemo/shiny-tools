@@ -10,6 +10,7 @@
 #' @importFrom openxlsx addWorksheet createWorkbook saveWorkbook writeData write.xlsx
 #' @importFrom plotly renderPlotly plotlyOutput save_image
 #' @importFrom rjson toJSON
+#' @importFrom scales pseudo_log_trans sqrt_trans
 #' @importFrom shinyalert shinyalert
 #' @importFrom shinyjs alert disable enable hide
 #' @importFrom shinyWidgets pickerInput updatePickerInput

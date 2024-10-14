@@ -26,22 +26,12 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
       selectInput(
         inputId = ns("transform"),
         label = "Transformation",
-        choices = list(
-          `No transformation` = c(
-            "identity" = "identity"
-          ),
-          `Logarithmic transformation` = c(
-            "log10" = "log10",
-            "log2" = "log2",
-            "log" = "log"
-          ),
-          `Power transformation` = c(
-            "sqrt" = "sqrt"#,
-            #"reciprocal" = "reciprocal" # transformation leads to issues with axis labels in OsteoBioR
-          )#,
-          # `Reverse transformation` = c(
-          # "reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
-          # )
+        choices = c(
+          "None" = "identity",
+          "Logarithmic" = "pseudo-log",
+          "Square Root" = "sqrt"#,
+          #"reciprocal" = "reciprocal", # transformation leads to issues with axis labels in OsteoBioR
+          #"reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
         )
       )
     ),
@@ -195,21 +185,6 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 
   observe({
     req(input[["labelName"]])
-    logDebug("%s: Check if conflict with 'transform'", id)
-
-    if (!is.null(input[["min"]]) && !is.null(input[["max"]]) &&
-        !is.null(input[["fromData"]]) && (!input[["fromData"]]) &&
-        input[["transform"]] %in% c("log10", "log2", "log", "sqrt") &&
-        (input[["min"]] <= 0 || input[["max"]] <= 0)) {
-
-      stop("Only positive 'Minimum' or 'Maximum' values are allowed for logarithmic and square root transformations. Please, update your inputs!")
-    } %>%
-      shinyTools::shinyTryCatch(errorTitle = "Conflict with inputs", alertStyle = "shinyalert")
-  }) %>%
-    bindEvent(input[["transform"]], input[["fromData"]], input[["min"]], input[["max"]])
-
-  observe({
-    req(input[["labelName"]])
     logDebug("%s: Entering observe 'transform'", id)
 
     ranges[[input[["labelName"]]]][["transform"]] <- input[["transform"]]
@@ -234,7 +209,7 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 #       collapsible = TRUE,
 #       id = "test"
 #     ),
-#     plotOutput("plot"),
+#     plotOutput("plot", height = "800px"),
 #     plotRangesUI(id = "testMod",
 #                  titleTag = "h1")
 #   )
@@ -244,7 +219,7 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 #   testPlotFun <- function() {
 #     data <- data.frame(
 #       x = c(1, 2, 3, 4, 5),
-#       y = c(2, 4, 1, 7, 3)
+#       y = c(1, 2, 3, 4, 50)
 #     )
 #
 #     ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +

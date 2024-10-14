@@ -147,6 +147,7 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
                                     breaks = getBreaks(xLabels),
                                     labels = getLabels(xLabels))
 
+  # ensure valid y limits
   limitsY <- getUserLimits(ranges[["yAxis"]])
   if (is.null(limitsY)) {
     limitsY <- getGGPlotLimits(plot, axis = "y")
@@ -156,7 +157,7 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
                                                 newLimits = getUserLimits(ranges[["yAxis2"]]))
 
   plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
-                                    limits = getUserLimits(ranges[["yAxis"]]),
+                                    limits = limitsY,
                                     breaks = getBreaks(yLabels),
                                     labels = getLabels(yLabels),
                                     sec.axis = getSecAxis(rescalingFactors, ySecAxisTitle))
@@ -220,7 +221,10 @@ getTransform <- function(axisFormat) {
   if (is.null(axisFormat[["transform"]])) {
     return("identity")
   } else {
-    axisFormat[["transform"]]
+    switch(axisFormat[["transform"]],
+           "pseudo-log" = pseudo_log_trans(),
+           "sqrt" = sqrt_trans(),
+           axisFormat[["transform"]])
   }
 }
 

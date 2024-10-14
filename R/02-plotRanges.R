@@ -7,13 +7,9 @@
 #'
 #' @return tagList
 #' @export
-plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NULL) {
-  if (is.null(initRanges)) {
-    # if null: take values from config
-    initRanges <- list(
-      xAxis = config()$defaultRange,
-      yAxis = config()$defaultRange
-    )
+plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = deprecated()) {
+  if (lifecycle::is_present(initRanges)) {
+    deprecate_warn("24.10.0", "plotRangesUI(initRanges)", details = "This parameter is no longer needed.")
   }
 
   ns <- NS(id)
@@ -22,8 +18,7 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
     selectInput(
       inputId = ns("labelName"),
       label = "Axis",
-      choices = c("x axis" = "xAxis", "y axis" = "yAxis"),
-      selected = "xAxis"
+      choices = c("x axis" = "xAxis", "y axis" = "yAxis")
     ),
     conditionalPanel(
       ns = ns,
@@ -50,26 +45,8 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = NUL
         )
       )
     ),
-    checkboxInput(
-      inputId = ns("fromData"),
-      label = "Range detected from data",
-      value = initRanges[["xAxis"]][["fromData"]],
-      width = "100%"
-    ),
-    conditionalPanel(
-      ns = ns,
-      condition = "!input.fromData",
-      numericInput(
-        ns("min"),
-        label = "Minimum",
-        value = initRanges[["xAxis"]][["min"]]
-      ),
-      numericInput(
-        ns("max"),
-        label = "Maximum",
-        value = initRanges[["xAxis"]][["max"]]
-      )
-    )
+    # use initRanges from server to setup inputs
+    uiOutput(ns("rangesInputs"))
   )
 }
 
@@ -94,6 +71,7 @@ plotRangesServer <- function(id,
 
   moduleServer(id,
                function(input, output, session) {
+                 ns <- session$ns
                  ranges <- reactiveValues()
 
                  if (is.null(initRanges)) {
@@ -125,12 +103,47 @@ plotRangesServer <- function(id,
                  # set choices for labels
                  updateSelectInput(session, "labelName", choices = axes)
 
+                 # setup range inputs based on initRanges
+                 output$rangesInputs <- renderUI({
+                   tagList(
+                     checkboxInput(
+                       inputId = ns("fromData"),
+                       label = "Range detected from data",
+                       value = ranges[["xAxis"]][["fromData"]],
+                       width = "100%"
+                     ),
+                     conditionalPanel(
+                       ns = ns,
+                       condition = "!input.fromData",
+                       numericInput(
+                         ns("min"),
+                         label = "Minimum",
+                         value = ranges[["xAxis"]][["min"]]
+                       ),
+                       numericInput(
+                         ns("max"),
+                         label = "Maximum",
+                         value = ranges[["xAxis"]][["max"]]
+                       )
+                     )
+                   )
+                 }) %>%
+                   bindEvent(input[["labelName"]], once = TRUE)
+
                  observe({
                    logDebug("%s: Reloading inputs for 'Axis': %s", id, input[["labelName"]])
 
                    # load range element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
                                     userInputs = ranges[[input[["labelName"]]]])
+
+                   # update label 'fromData' for 2nd y axis
+                   if (input[["labelName"]] == "yAxis2") {
+                     fromDataLabel <- "Range detected from data (of 1st y axis)"
+                   } else {
+                     fromDataLabel <- "Range detected from data"
+                   }
+                   updateCheckboxInput(session, "fromData", label = fromDataLabel)
                  }) %>%
                    bindEvent(input[["labelName"]])
 
@@ -182,12 +195,23 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 
   observe({
     req(input[["labelName"]])
-    logDebug("%s: Entering observe 'transform'", id)
+    logDebug("%s: Check if conflict with 'transform'", id)
 
-    if (input[["transform"]] %in% c("log10", "log2", "log", "sqrt") && (input[["min"]] <= 0) || input[["max"]] <= 0) {
+    if (!is.null(input[["min"]]) && !is.null(input[["max"]]) &&
+        !is.null(input[["fromData"]]) && (!input[["fromData"]]) &&
+        input[["transform"]] %in% c("log10", "log2", "log", "sqrt") &&
+        (input[["min"]] <= 0 || input[["max"]] <= 0)) {
+
       stop("Only positive 'Minimum' or 'Maximum' values are allowed for logarithmic and square root transformations. Please, update your inputs!")
     } %>%
       shinyTools::shinyTryCatch(errorTitle = "Conflict with inputs")
+  }) %>%
+    bindEvent(input[["transform"]], input[["fromData"]], input[["min"]], input[["max"]])
+
+  observe({
+    req(input[["labelName"]])
+    logDebug("%s: Entering observe 'transform'", id)
+
     ranges[[input[["labelName"]]]][["transform"]] <- input[["transform"]]
   }) %>%
     bindEvent(input[["transform"]])

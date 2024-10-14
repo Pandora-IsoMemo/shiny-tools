@@ -5,7 +5,7 @@
 #' @importFrom ggplot2 element_blank element_text geom_point ggplot_build ggtitle labs
 #'  scale_x_continuous scale_y_continuous sec_axis theme waiver xlab ylab
 #' @importFrom grDevices dev.off pdf png svg tiff
-#' @importFrom lifecycle deprecate_warn
+#' @importFrom lifecycle deprecate_warn deprecated is_present
 #' @importFrom magrittr %>%
 #' @importFrom openxlsx addWorksheet createWorkbook saveWorkbook writeData write.xlsx
 #' @importFrom plotly renderPlotly plotlyOutput save_image

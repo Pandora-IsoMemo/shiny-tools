@@ -4,7 +4,7 @@
 \alias{plotRangesUI}
 \title{Plot Ranges UI}
 \usage{
-plotRangesUI(id, title = "Ranges", titleTag = "h4", initRanges = NULL)
+plotRangesUI(id, title = "Ranges", titleTag = "h4", initRanges = deprecated())
 }
 \arguments{
 \item{id}{module id}

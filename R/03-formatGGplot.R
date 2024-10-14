@@ -147,7 +147,12 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
                                     breaks = getBreaks(xLabels),
                                     labels = getLabels(xLabels))
 
-  rescalingFactors <- calculateRescalingFactors(oldLimits = getGGPlotLimits(plot, axis = "y"),
+  limitsY <- getUserLimits(ranges[["yAxis"]])
+  if (is.null(limitsY)) {
+    limitsY <- getGGPlotLimits(plot, axis = "y")
+  }
+
+  rescalingFactors <- calculateRescalingFactors(oldLimits = limitsY,
                                                 newLimits = getUserLimits(ranges[["yAxis2"]]))
 
   plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),

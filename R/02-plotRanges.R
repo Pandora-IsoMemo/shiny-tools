@@ -209,7 +209,7 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 #       collapsible = TRUE,
 #       id = "test"
 #     ),
-#     plotOutput("plot", height = "800px"),
+#     plotOutput("plot", height = "600px"),
 #     plotRangesUI(id = "testMod",
 #                  titleTag = "h1")
 #   )
@@ -218,7 +218,7 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 # server <- function(input, output, session) {
 #   testPlotFun <- function() {
 #     data <- data.frame(
-#       x = c(1, 2, 3, 4, 5),
+#       x = c(-10, 2, 3, 4, 5),
 #       y = c(1, 2, 3, 4, 50)
 #     )
 #

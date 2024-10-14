@@ -126,7 +126,7 @@ plotRangesServer <- function(id,
                  updateSelectInput(session, "labelName", choices = axes)
 
                  observe({
-                   logDebug("%s: Entering observe 'labelName'", id)
+                   logDebug("%s: Reloading inputs for 'Axis': %s", id, input[["labelName"]])
 
                    # load range element inputs of the selected label
                    updateUserInputs(id, input = input, output = output, session = session,
@@ -184,6 +184,10 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
     req(input[["labelName"]])
     logDebug("%s: Entering observe 'transform'", id)
 
+    if (input[["transform"]] %in% c("log10", "log2", "log", "sqrt") && (input[["min"]] <= 0) || input[["max"]] <= 0) {
+      stop("Only positive 'Minimum' or 'Maximum' values are allowed for logarithmic and square root transformations. Please, update your inputs!")
+    } %>%
+      shinyTools::shinyTryCatch(errorTitle = "Conflict with inputs")
     ranges[[input[["labelName"]]]][["transform"]] <- input[["transform"]]
   }) %>%
     bindEvent(input[["transform"]])
@@ -197,6 +201,7 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 
 # ui <- fluidPage(
 #   tagList(
+#     shinyjs::useShinyjs(),
 #     navbarPage(
 #       header = includeShinyToolsCSS(),
 #       title = "test app",
@@ -207,9 +212,7 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 #     ),
 #     plotOutput("plot"),
 #     plotRangesUI(id = "testMod",
-#                  titleTag = "h1",
-#                  initRanges = list(xAxis = list(min = 0, max = 10, fromData = FALSE),
-#                                    yAxis = list(min = 0, max = 10, fromData = TRUE)))
+#                  titleTag = "h1")
 #   )
 # )
 #

@@ -8,6 +8,9 @@
 ## Updates
 - removing documentation from `man` folder for helper functions to clean up the reference page (https://pandora-isomemo.github.io/shiny-tools/reference/index.html)
 
+## Bug Fixes
+- fix typo in example for 'mathematical annotation' in the plotTitles module
+
 # shinyTools 24.08.1
 
 ## New Features

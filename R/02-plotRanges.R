@@ -204,7 +204,7 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 
       stop("Only positive 'Minimum' or 'Maximum' values are allowed for logarithmic and square root transformations. Please, update your inputs!")
     } %>%
-      shinyTools::shinyTryCatch(errorTitle = "Conflict with inputs")
+      shinyTools::shinyTryCatch(errorTitle = "Conflict with inputs", alertStyle = "shinyalert")
   }) %>%
     bindEvent(input[["transform"]], input[["fromData"]], input[["min"]], input[["max"]])
 

@@ -27,6 +27,7 @@ shinyalert::shinyalert is used.}
 displayed. Use this when not applied within a Shiny session.}
 }
 \description{
-Catch multiple errors and warnings and forward them as an alert. If an error occurs, NULL is
+Catch multiple errors and warnings, and forward them as an alert. If an error occurs, NULL is
 returned. If a warning occurs, the result is returned.
+Please, add \code{shinyjs::useShinyjs()} to the UI to enable the alerts.
 }

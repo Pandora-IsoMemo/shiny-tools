@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.09.0
+Version: 24.10.0
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut")),
             person("Antonia", "Runge", email = "antonia.runge@inwt-statistics.de", role = c("aut"))
@@ -13,16 +13,20 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     colourpicker,
+    futile.logger,
     ggplot2,
     grDevices,
+    lifecycle,
     magrittr,
     openxlsx,
     plotly,
     rjson,
+    scales,
     shiny,
     shinyalert,
     shinyjs,
     shinyWidgets,
+    stats,
     utils,
     yaml
 RoxygenNote: 7.3.1

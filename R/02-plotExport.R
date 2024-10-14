@@ -19,7 +19,7 @@ plotExportButton <- function(id, label = "Export Plot") {
 #' @param plotType (character) one of "none", "ggplot", "ggplot_only_titles". Adds the option to
 #'  format titles and ranges of a plot within the export UI (currently only for ggplots). For
 #'  \code{plotType == "ggplot_only_titles"} only titles can be adjusted. This prevents that custom
-#'  formatting of axis ranges might be overwritten by \code{formatRangesOfGGplot()}.
+#'  formatting of axis ranges might be overwritten by \code{formatScalesOfGGplot()}.
 #' @param filename (character) name of file without file extension
 #' @param plotly (logical) set TRUE if plotFun returns a plotly output
 #' @param plotWidth (reactive) default plot width
@@ -55,6 +55,8 @@ plotExportServer <- function(id,
                  ns <- session$ns
 
                  observe({
+                   logDebug("%s: Entering observe button 'export'", id)
+
                    if (inherits(initText, "reactivevalues"))
                      initText <- reactiveValuesToList(initText)
 
@@ -102,6 +104,8 @@ plotExportServer <- function(id,
                    bindEvent(input$export)
 
                  observe({
+                   logDebug("%s: Entering enable/disable button 'export'", id)
+
                    res <- try(plotFun()())
                    if (inherits(res, "try-error") || length(res) == 0)
                      shinyjs::disable(ns("export"), asis = TRUE) else
@@ -178,7 +182,7 @@ formatWrapperGGplot <- function(plot, text, ranges, what = c("titles", "ranges")
 
   if ("ranges" %in% what) {
     plot <- plot %>%
-      formatRangesOfGGplot(ranges = ranges)
+      formatScalesOfGGplot(ranges = ranges)
   }
 
   plot
@@ -251,7 +255,7 @@ extractType <- function(plotType) {
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%
 #       formatTitlesOfGGplot(text = testTitles) %>%
-#       formatRangesOfGGplot(ranges = testRanges) %>%
+#       formatScalesOfGGplot(ranges = testRanges) %>%
 #       print() %>%
 #       shinyTryCatch(errorTitle = "Plot failed", alertStyle = "shinyalert")
 #   })

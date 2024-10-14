@@ -34,7 +34,7 @@ plotTitlesServer(
 \item{initText}{(list) optional, named list with title definitions, or output of \code{plotTitlesServer}}
 
 \item{availableElements}{(character) set of available labels for specifying the format of text.
-May contain elements from \code{c("title", "axis", "legend")}.}
+May contain elements from \code{c("title", "axis", "yaxis2", "legend")}.}
 
 \item{showParseButton}{(logical) Show parse button for parsing mathematical expressions.}
 }

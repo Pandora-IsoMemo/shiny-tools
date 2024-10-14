@@ -2,15 +2,16 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{formatRangesOfGGplot}
 \alias{formatRangesOfGGplot}
-\title{Axes Ranges Of GGplot}
+\title{Axes Ranges Of GGplot (deprecated)}
 \usage{
-formatRangesOfGGplot(plot, ranges)
+formatRangesOfGGplot(...)
 }
 \arguments{
-\item{plot}{(ggplot)}
-
-\item{ranges}{(list) named list with range definitions, output of \code{plotRangesServer}}
+\item{...}{arguments of \code{formatScalesOfGGplot}}
 }
 \description{
-Axes Ranges Of GGplot
+This function is deprecated. Please use `formatScalesOfGGplot` instead.
+}
+\seealso{
+\link[shinyTools]{formatScalesOfGGplot}
 }

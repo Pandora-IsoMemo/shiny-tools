@@ -7,6 +7,7 @@
 #'
 #' @export
 formatTitlesOfGGplot <- function(plot, text) {
+  # check if all elements are present
   if (!all(
     names(text) %in% c(
       "plotTitle",
@@ -15,7 +16,9 @@ formatTitlesOfGGplot <- function(plot, text) {
       "yAxisTitle",
       "yAxisText",
       "legendTitle",
-      "legendText"
+      "legendText",
+      "yAxisTitle2",
+      "yAxisText2"
     )
   ))
     stop("New element found, please add the new case to 'formatTitlesOfGGplot()' first!")
@@ -32,8 +35,10 @@ formatTitlesOfGGplot <- function(plot, text) {
       theme(
         axis.title.x = getElementText(text[["xAxisTitle"]]),
         axis.title.y = getElementText(text[["yAxisTitle"]]),
+        axis.title.y.right = getElementText(text[["yAxisTitle2"]]),
         axis.text.x = getElementText(text[["xAxisText"]]),
-        axis.text.y = getElementText(text[["yAxisText"]])
+        axis.text.y = getElementText(text[["yAxisText"]]),
+        axis.text.y.right = getElementText(text[["yAxisText2"]])
       )
   }
 
@@ -63,13 +68,13 @@ formatTitlesOfGGplot <- function(plot, text) {
   plot
 }
 
-#' Set Custom Title
-#'
-#' Set label of a ggplot object
-#'
-#' @param plot (ggplot)
-#' @param labFun (function) function to set label, e.g. \code{xlab}
-#' @param ... (list) arguments for \code{labFun}
+# Set Custom Title (no docu for 'man' because it is a helper function)
+#
+# Set label of a ggplot object
+#
+# @param plot (ggplot)
+# @param labFun (function) function to set label, e.g. \code{xlab}
+# @param ... (list) arguments for \code{labFun}
 setCustomTitle <- function(plot, labFun, ...) {
   args <- list(...)
   if (length(args) == 0 || is.null(args[[1]]) || args[[1]] == "") {
@@ -88,6 +93,8 @@ setCustomTitle <- function(plot, labFun, ...) {
 #' @param titleList (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
 #' @return (character) title
+#'
+#' @export
 extractTitle <- function(titleList) {
   if (!is.null(titleList[["useExpression"]]) && isTRUE(titleList[["useExpression"]])) {
     return(convertToExpression(titleList[["expression"]]))
@@ -99,10 +106,10 @@ extractTitle <- function(titleList) {
   }
 }
 
-#' Get Element Text
-#'
-#' @param textDef (list) named list with specs for text formatting, see e.g.
-#' \code{config()$defaultGGTitle}
+# Get Element Text (no docu for 'man' because it is a helper function)
+#
+# @param textDef (list) named list with specs for text formatting, see e.g.
+# \code{config()$defaultGGTitle}
 getElementText <- function(textDef = list(fontFamily = "sans",
                                           hide = FALSE,
                                           size = 12L,
@@ -112,7 +119,7 @@ getElementText <- function(textDef = list(fontFamily = "sans",
                                           hjust = 0.5,
                                           vjust = 0.5
                                           )) {
-  if (textDef[["hide"]]) {
+  if (is.null(textDef) || textDef[["hide"]]) {
     element_blank()
   } else {
     element_text(family = textDef[["fontFamily"]],
@@ -125,23 +132,126 @@ getElementText <- function(textDef = list(fontFamily = "sans",
   }
 }
 
-#' Axes Ranges Of GGplot
+#' Specify Scales of a GGplot
 #'
 #' @param plot (ggplot)
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
+#' @param xLabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
+#' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
+#' @param ySecAxisTitle (character) title of secondary y axis
 #'
 #' @export
-formatRangesOfGGplot <- function(plot, ranges) {
-  axisRangeX <- ranges[["xAxis"]]
-  axisRangeY <- ranges[["yAxis"]]
+formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
+  plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
+                                    limits = getUserLimits(ranges[["xAxis"]]),
+                                    breaks = getBreaks(xLabels),
+                                    labels = getLabels(xLabels))
 
-  if (!axisRangeX[["fromData"]])
-    plot <- plot + xlim(axisRangeX[["min"]], axisRangeX[["max"]])
+  # ensure valid y limits
+  limitsY <- getUserLimits(ranges[["yAxis"]])
+  if (is.null(limitsY)) {
+    limitsY <- getGGPlotLimits(plot, axis = "y")
+  }
 
-  if (!axisRangeY[["fromData"]])
-    plot <- plot + ylim(axisRangeY[["min"]], axisRangeY[["max"]])
+  rescalingFactors <- calculateRescalingFactors(oldLimits = limitsY,
+                                                newLimits = getUserLimits(ranges[["yAxis2"]]))
+
+  plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
+                                    limits = limitsY,
+                                    breaks = getBreaks(yLabels),
+                                    labels = getLabels(yLabels),
+                                    sec.axis = getSecAxis(rescalingFactors, ySecAxisTitle))
 
   plot
+}
+
+#' Axes Ranges Of GGplot (deprecated)
+#'
+#' This function is deprecated. Please use `formatScalesOfGGplot` instead.
+#'
+#' @param ... arguments of \code{formatScalesOfGGplot}
+#' @seealso \link[shinyTools]{formatScalesOfGGplot}
+#'
+#' @export
+formatRangesOfGGplot <- function(...) {
+  deprecate_warn("24.10.0", "formatRangesOfGGplot()", "formatScalesOfGGplot()")
+  formatScalesOfGGplot(...)
+}
+
+#' Calculate Rescaling Factors
+#'
+#' @param oldLimits (numeric) old limits
+#' @param newLimits (numeric) new limits
+#'
+#' @return (list) with scale and center
+#'
+#' @export
+calculateRescalingFactors <- function(oldLimits, newLimits = NULL) {
+  if (length(oldLimits) < 2 || length(newLimits) < 2) return(list(scale = 1, center = 0))
+
+  b <- seq(min(newLimits), max(newLimits), length.out = 100)
+  a <- seq(min(oldLimits), max(oldLimits), length.out = 100)
+  res <- lm(b ~ a)
+
+  list(scale = res$coefficients[2],
+       center = res$coefficients[1])
+}
+
+getGGPlotLimits <- function(plot, axis = c("x", "y")) {
+  axis <- match.arg(axis)
+
+  if (!is.null(plot$coordinates$limits[[axis]])) return(range(plot$coordinates$limits[[axis]]))
+
+  plotData <- ggplot_build(plot)
+  if (!is.null(plotData[["data"]][[1]][[axis]])) return(range(plotData[["data"]][[1]][[axis]]))
+
+  # plot limits not found: return NULL
+  return(NULL)
+}
+
+getUserLimits <- function(axisFormat) {
+  if (is.null(axisFormat[["fromData"]]) || axisFormat[["fromData"]]) {
+    return(NULL)
+  } else {
+    c(axisFormat[["min"]], axisFormat[["max"]])
+  }
+}
+
+getTransform <- function(axisFormat) {
+  if (is.null(axisFormat[["transform"]])) {
+    return("identity")
+  } else {
+    switch(axisFormat[["transform"]],
+           "pseudo-log" = pseudo_log_trans(),
+           "sqrt" = sqrt_trans(),
+           axisFormat[["transform"]])
+  }
+}
+
+getBreaks <- function(labels) {
+  if (is.null(labels) || is.null(labels[["breaks"]])) {
+    ggplot2::waiver()
+  } else {
+    labels[["breaks"]]
+  }
+}
+
+getLabels <- function(labels) {
+  if (is.null(labels) || is.null(labels[["labels"]])) {
+    ggplot2::waiver()
+  } else {
+    labels[["labels"]]
+  }
+}
+
+getSecAxis <- function(rescaleFactors, title) {
+  if (is.null(rescaleFactors) || is.null(title) || is.null(rescaleFactors[["center"]]) || is.null(rescaleFactors[["scale"]])) {
+    ggplot2::waiver()
+  } else {
+    center <- rescaleFactors[["center"]]
+    scale <- rescaleFactors[["scale"]]
+    ggplot2::sec_axis(~(.* scale) + center, name = title)
+  }
 }
 
 #' Point Style Of GGplot

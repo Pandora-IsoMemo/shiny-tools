@@ -3,7 +3,7 @@
 #'
 #' @param id module id
 #' @inheritParams setModuleTitle
-#' @inheritParams plotExportServer
+#' @param initRanges (Deprecated) This parameter is no longer needed and has no effect.
 #'
 #' @return tagList
 #' @export

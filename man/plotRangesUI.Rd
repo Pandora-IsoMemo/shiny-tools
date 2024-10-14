@@ -14,7 +14,7 @@ plotRangesUI(id, title = "Ranges", titleTag = "h4", initRanges = deprecated())
 \item{titleTag}{(character) HTML tag to put around the title, e.g. "h4" for \code{h4} from
 \code{htmltools}}
 
-\item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
+\item{initRanges}{(Deprecated) This parameter is no longer needed and has no effect.}
 }
 \value{
 tagList

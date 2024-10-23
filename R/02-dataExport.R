@@ -52,14 +52,15 @@ dataExportServer <- function(id, dataFun, filename = "data") {
                  observe({
                    logDebug("%s: Entering enable/disable button 'export'", id)
 
-                   if (length(dataFun()()) == 0)
+                   res <- try(dataFun()())
+                   if (inherits(res, "try-error") || length(res) == 0)
                      shinyjs::disable(ns("export"), asis = TRUE) else
                        shinyjs::enable(ns("export"), asis = TRUE)
                  })
 
                  output$exportExecute <- downloadHandler(
                    filename = function(){
-                     exportFilename(filename, input$exportType)
+                     paste(resolveValue(filename), input$exportType, sep = ".")
                    },
                    content = function(file){
                      switch(
@@ -71,14 +72,6 @@ dataExportServer <- function(id, dataFun, filename = "data") {
                    }
                  )
                })
-}
-
-# Filename of Export
-#
-# @param fileending character csv or xlsx
-# @param filename name of file
-exportFilename <- function(filename, fileending){
-  paste(filename, fileending, sep = ".")
 }
 
 #' Export to csv

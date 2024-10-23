@@ -138,7 +138,7 @@ plotExportServer <- function(id,
 
                  output$exportExecute <- downloadHandler(
                    filename = function() {
-                     paste0(filename, ".", input$exportType)
+                     paste0(resolveValue(filename), ".", input$exportType)
                    },
                    content = function(file) {
                      if (plotly) {

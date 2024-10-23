@@ -201,7 +201,7 @@ plotTitlesServer <- function(id,
                    logDebug("%s: Entering observe 'labelName'", id)
 
                    # load plotText element inputs of the selected label
-                   updateUserInputs(id, input = input, output = output, session = session,
+                   updateUserInputs(input = input, output = output, session = session,
                                     userInputs = plotText[[input[["labelName"]]]])
                  }) %>%
                    bindEvent(input[["labelName"]])
@@ -387,17 +387,24 @@ validateInitText <- function(initText,
   type <- match.arg(type)
 
   defaultText <- defaultInitText(type, availableElements = availableElements)
-  if (!setequal(names(initText), names(defaultText))) {
+
+  initText <- initText %>% addMissingElements(defaultText)
+
+  return(initText)
+}
+
+addMissingElements <- function(plot_text, default_text) {
+  if (!setequal(names(plot_text), names(default_text))) {
     # add missing
-    for (i in names(defaultText)[!(names(defaultText) %in% names(initText))]) {
-      initText[[i]] <- defaultText[[i]]
+    for (i in names(default_text)[!(names(default_text) %in% names(plot_text))]) {
+      plot_text[[i]] <- default_text[[i]]
     }
 
     # order list
-    initText <- initText[names(defaultText)]
+    plot_text <- plot_text[names(default_text)]
   }
 
-  return(initText)
+  plot_text
 }
 
 # Default Init Text (no docu for 'man' because it is a helper function)

@@ -124,7 +124,7 @@ plotRangesServer <- function(id,
                    logDebug("%s: Reloading inputs for 'Axis': %s", id, input[["labelName"]])
 
                    # load range element inputs of the selected label
-                   updateUserInputs(id, input = input, output = output, session = session,
+                   updateUserInputs(input = input, output = output, session = session,
                                     userInputs = ranges[[input[["labelName"]]]])
 
                    # update label 'fromData' for 2nd y axis

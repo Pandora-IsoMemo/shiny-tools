@@ -4,11 +4,9 @@
 \alias{updateUserInputs}
 \title{Update User Inputs}
 \usage{
-updateUserInputs(id, input, output, session, userInputs)
+updateUserInputs(input, output, session, userInputs)
 }
 \arguments{
-\item{id}{module id}
-
 \item{input}{input object from server function}
 
 \item{output}{output object from server function}

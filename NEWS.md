@@ -1,3 +1,11 @@
+# shinyTools 24.10.1
+
+## New Features
+- new module _textExport_ for exporting output from print, capture.output or other text as a text file
+
+## Updates
+- enable filename input to be reactive in the modules _dataExport_ and _plotExport_
+
 # shinyTools 24.10.0
 
 ## New Features

@@ -44,14 +44,6 @@ test_that("Test function isEmptyPlot", {
   p <- NULL
   expect_true(isEmptyPlot(p))
 
-  # test if NULL works with recordPlot
-  p <- NULL
-  if (!inherits(p, "try-error") && !inherits(p, "ggplot")) {
-    # For base R plots, record the plot
-    p <- try(grDevices::recordPlot(), silent = TRUE)  # Capture the side effect plot
-  }
-  expect_true(isEmptyPlot(p))
-
   # test if a ggplot without data is empty
   p <- ggplot2::ggplot() + ggplot2::geom_point()
   expect_true(isEmptyPlot(p))

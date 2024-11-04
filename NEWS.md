@@ -1,3 +1,8 @@
+# shinyTools 24.11.0
+
+## Bug Fixes
+- fix issue with permanently disabled button in the _plotExport_ module for base plot objects
+
 # shinyTools 24.10.1
 
 ## New Features

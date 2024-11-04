@@ -146,10 +146,13 @@ plotTitlesServer <- function(id,
 
                  plotText <- reactiveValues()
 
+                 updateSelectInput(session,
+                                   "labelName",
+                                   choices = availableLabels(availableElements = availableElements))
+
                  # initialize plotText
                  if (is.null(initText)) {
                    # if null: take values from config
-
                    for (i in availableLabels(availableElements = availableElements)) {
                      plotText[[i]] <- defaultInitText(type = type,
                                                       availableElements = availableElements)[[i]]
@@ -185,15 +188,6 @@ plotTitlesServer <- function(id,
                                value = initText[["plotTitle"]][["text"]],
                                placeholder = "Custom title ...")
                    }
-                 })
-
-                 observe({
-                   logDebug("%s: Update choices for labelName", id)
-
-                   updateSelectInput(session,
-                                     "labelName",
-                                     choices = availableLabels(availableElements = availableElements),
-                                     selected = availableLabels(availableElements = availableElements)[1])
                  })
 
                  observe({
@@ -457,19 +451,38 @@ availableLabels <- function(availableElements = c("title", "axis")) {
   availableElements <- availableElements %>%
     checkElements()
 
-  config()[["availableElements"]][availableElements] %>%
+  labelGroups <- defaultLabelGroups()
+  labelGroups[availableElements] %>%
   unlist() %>%
   keep_deepest_names()
 }
 
 checkElements <- function(availableElements) {
-  configElements <- names(config()[["availableElements"]])
+  labelGroups <- defaultLabelGroups()
+  configElements <- labelGroups %>% names()
 
   if (!all(availableElements %in% configElements))
     stop(sprintf("Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
                  paste0(configElements, collapse = "', '")))
 
   availableElements
+}
+
+# Get default groups of labels that are available in plotTitlesUI under "Label"
+#
+# @return A list with the default groups of labels
+defaultLabelGroups <- function() {
+  list(
+    title = list(`plot title` = "plotTitle"),
+    axis = list(
+      `x axis title` = "xAxisTitle",
+      `x axis text` = "xAxisText",
+      `y axis title` = "yAxisTitle",
+      `y axis text` = "yAxisText"
+    ),
+    yaxis2 = list(`2nd y axis title` = "yAxisTitle2", `2nd y axis text` = "yAxisText2"),
+    legend = list(`legend title` = "legendTitle", `legend text` = "legendText")
+  )
 }
 
 # Keep Deepest Names (no docu for 'man' because it is a helper function)

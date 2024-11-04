@@ -106,8 +106,15 @@ plotExportServer <- function(id,
                  observe({
                    logDebug("%s: Entering enable/disable button 'export'", id)
 
-                   res <- try(plotFun()())
-                   if (inherits(res, "try-error") || length(res) == 0)
+                   res <- try(plotFun()(), silent = TRUE)
+
+                   if (!inherits(res, "try-error") && !inherits(res, "ggplot")) {
+                     # Assume base R plot. For base R plots, record the plot
+                     # use try because plot device might be empty
+                     res <- try(recordPlot(), silent = TRUE)  # Capture the side effect plot
+                   }
+
+                   if (isEmptyPlot(res))
                      shinyjs::disable(ns("export"), asis = TRUE) else
                        shinyjs::enable(ns("export"), asis = TRUE)
                  })
@@ -188,13 +195,36 @@ formatWrapperGGplot <- function(plot, text, ranges, what = c("titles", "ranges")
   plot
 }
 
-#' Extract Type
-#'
-#' @inheritParams plotExportServer
-#'
-#' @return (character) type required for \code{plotTitlesServer} or \code{plotRangesServer}
+# Extract Type
+#
+# @inheritParams plotExportServer
+#
+# @return (character) type required for \code{plotTitlesServer} or \code{plotRangesServer},
+#  currently one of c("ggplot", "none")
 extractType <- function(plotType) {
   unlist(strsplit(plotType, split = "_"))[1]
+}
+
+# Is the plot output empty
+#
+# The function \code{plot()} returns NULL although there is a plot output. This function
+# distinguishes between an empty result and a result the returns a plot.
+#
+# @param plot plot output
+#
+# @return (logical) TRUE if plot output is empty, FALSE otherwise
+isEmptyPlot <- function(plot) {
+  # Check if it's NULL, which means it's empty
+  if (inherits(plot, "try-error") || is.null(plot) || length(plot) == 0) {
+    return(TRUE)
+  }
+
+  # Check if it's a ggplot object with no data (empty ggplot)
+  if (inherits(plot, "ggplot") && (length(plot$data) == 0)) {
+    return(TRUE)
+  }
+
+  return(FALSE)
 }
 
 # TEST MODULE -------------------------------------------------------------
@@ -237,8 +267,8 @@ extractType <- function(plotType) {
 #   )
 #
 #   testRanges <- reactiveValues(
-#     xAxis = list(min = 0L, max = 20, fromData = TRUE),
-#     yAxis = list(min = 0L, max = 10L, fromData = FALSE)
+#     xAxis = list(min = 0L, max = 20, fromData = TRUE, transform = "identity"),
+#     yAxis = list(min = 0L, max = 10L, fromData = FALSE, transform = "identity")
 #   )
 #
 #   testPlotFun <- function() {
@@ -255,17 +285,18 @@ extractType <- function(plotType) {
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%
 #       formatTitlesOfGGplot(text = testTitles) %>%
-#       formatScalesOfGGplot(ranges = testRanges) %>%
+#       #formatScalesOfGGplot(ranges = testRanges) %>%
 #       print() %>%
-#       shinyTryCatch(errorTitle = "Plot failed", alertStyle = "shinyalert")
+#       shinyTryCatch(errorTitle = "GGPlot failed", alertStyle = "shinyalert")
 #   })
 #
 #   plotExportServer("expPlot",
 #                    plotFun = reactive({ testPlotFun }),
 #                    plotType = "ggplot",
 #                    filename = "plot",
-#                    initText = testTitles,
-#                    initRanges = testRanges)
+#                    initText = testTitles#,
+#                    #initRanges = testRanges
+#                    )
 #
 #   testPlotlyFun <- function() {
 #     p <- plotly::plot_ly(mtcars, x = ~factor(cyl),
@@ -282,7 +313,7 @@ extractType <- function(plotType) {
 #   output$plotly <- renderPlotly({
 #     testPlotlyFun() %>%
 #       print() %>%
-#       shinyTryCatch(errorTitle = "Plot failed", alertStyle = "shinyalert")
+#       shinyTryCatch(errorTitle = "Plotly failed", alertStyle = "shinyalert")
 #   })
 #
 #   plotExportServer("expPlotly",
@@ -290,8 +321,9 @@ extractType <- function(plotType) {
 #                    plotType = "ggplot",
 #                    plotly = TRUE,
 #                    filename = "plot",
-#                    initText = testTitles,
-#                    initRanges = testRanges)
+#                    initText = testTitles#,
+#                    #initRanges = testRanges
+#                    )
 # }
 #
 # shinyApp(ui = ui, server = server)

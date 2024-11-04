@@ -38,3 +38,32 @@ test_that("Test module plotExportServer", {
                #expect_true(length(output$exportPlot$coordmap$panels[[1]]$mapping) == 2)
              })
 })
+
+test_that("Test function isEmptyPlot", {
+  # test if NULL works
+  p <- NULL
+  expect_true(isEmptyPlot(p))
+
+  # test if a ggplot without data is empty
+  p <- ggplot2::ggplot() + ggplot2::geom_point()
+  expect_true(isEmptyPlot(p))
+
+  # test if a ggplot with data is not empty
+  p <- ggplot2::ggplot(data.frame(x = 1:10, y = 1:10), ggplot2::aes(x = .data$x, y = .data$y)) + ggplot2::geom_point()
+  expect_false(isEmptyPlot(p))
+
+  # test if a boxplot with data is not empty
+  p <- boxplot(1:10)
+  expect_false(isEmptyPlot(p))
+
+  # test if a base plot with data is not empty
+  p <- base::plot(1:10, 1:10)
+  if (!inherits(p, "try-error") && !inherits(p, "ggplot")) {
+    # For base R plots, record the plot
+    p <- try(recordPlot())  # Capture the side effect plot
+  }
+  expect_false(isEmptyPlot(p))
+
+  # clean device
+  dev.off()
+})

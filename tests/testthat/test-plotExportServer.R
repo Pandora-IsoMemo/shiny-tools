@@ -48,7 +48,7 @@ test_that("Test function isEmptyPlot", {
   p <- NULL
   if (!inherits(p, "try-error") && !inherits(p, "ggplot")) {
     # For base R plots, record the plot
-    p <- try(recordPlot(), silent = TRUE)  # Capture the side effect plot
+    p <- try(grDevices::recordPlot(), silent = TRUE)  # Capture the side effect plot
   }
   expect_true(isEmptyPlot(p))
 

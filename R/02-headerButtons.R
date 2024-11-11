@@ -9,13 +9,17 @@
 headerButtonsUI <- function(id, help_link, further_help_link = NULL) {
   ns <- NS(id)
   tagList(
+    tags$head(
+      # add favicon for the browser tab
+      tags$link(rel = "icon", type = "image/x-icon", href = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/pandora-isomemo_favicon.ico?raw=true"),
+    ),
     div(
       id = "header-right",
       div(
         id = "logo-mpi",
         tags$a(
           href = "https://www.mpg.de/en",
-          img(src = "app_files/MPIlogo.png", alt = "Supported by the Max Planck society"),
+          img(src = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/mpi-minerva-logo.png?raw=true", alt = "Max Planck society"),
           target = "_blank"
         )
       ),
@@ -23,7 +27,7 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL) {
         id = "logo-isomemo",
         tags$a(
           href = "https://isomemo.com/",
-          img(src = "app_files/IsoMemoLogo.png", alt = "IsoMemo"),
+          img(src = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/isomemo-logo.png?raw=true", alt = "IsoMemo"),
           target = "_blank"
         )
       ),

@@ -1,3 +1,10 @@
+# shinyTools 24.11.1
+
+## Updates
+- _headerButtons_:
+  - replacing path to logos with a URL
+  - adding URL to a favicon for the browser tab
+
 # shinyTools 24.11.0
 
 ## Bug Fixes

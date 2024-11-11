@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-11-04T08:30Z
+last_built: 2024-11-11T11:22Z
 urls:
   reference: https://pandora-isomemo.github.io/shiny-tools/reference
   article: https://pandora-isomemo.github.io/shiny-tools/articles

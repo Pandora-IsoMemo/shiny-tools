@@ -46,7 +46,6 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
 #'
 #' @param id namespace id
 #' @param type (character) type of the plot to add ranges to, one of "ggplot", "base".
-#' @param userRanges (reactiveValues) optional, reactiveValues object containing ranges for the axes.
 #' @param axes (character) named vector of axes to add ranges to, e.g.
 #'  \code{c("x axis" = "xAxis", "y axis" = "yAxis", "2nd y axis" = "yAxis2")}.
 #' @inheritParams plotExportServer
@@ -55,7 +54,6 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
 plotRangesServer <- function(id,
                              type = c("none", "ggplot", "base"),
                              initRanges = NULL,
-                             userRanges = NULL,
                              axes = c("x axis" = "xAxis",
                                       "y axis" = "yAxis")) {
 
@@ -65,7 +63,7 @@ plotRangesServer <- function(id,
                function(input, output, session) {
                  ns <- session$ns
 
-                 ranges <- initializeRanges(session, id, initRanges = initRanges, userRanges = userRanges, axes = axes)
+                 ranges <- initializeRanges(session, id, initRanges = initRanges, axes = axes)
 
                  # return reactiveValues object "ranges" if no type is specified
                  if (type == "none") return(ranges)
@@ -137,31 +135,17 @@ getDefaultRanges <- function() {
 # Initialize reactiveValues object 'ranges' that will store the user ranges for the axes for
 # the plotRanges module. The argument 'axes' specifies the (sub)set of axes to be initialized.
 # If 'initRanges' is set, the default ranges are updated with the values from 'initRanges'.
-# If 'userRanges' is set and a reactiveValues object, the default ranges are updated with the
-# values from 'userRanges'.
 #
 # @param session session object from server function
 # @param id module id
 # @param initRanges (list) optional, named list with range definitions
-# @param userRanges (reactiveValues) ReactiveValues object containing ranges for the axes.
 # @param axes (character) Named vector of axes to add ranges to, e.g. c("x axis" = "xAxis", "y axis" = "yAxis").
 #
 # @return reactiveValues
-initializeRanges <- function(session, id, initRanges, userRanges, axes) {
+initializeRanges <- function(session, id, initRanges, axes) {
   # set default ranges to initialize the "rangesInputs" UI
   # only axes specified in 'getDefaultRanges()' are allowed
   default_ranges <- getDefaultRanges()
-
-  if (!is.null(initRanges) && is.reactivevalues(initRanges)) {
-    logWarn("%s: ReactiveValues are deprecated for parameter 'initRanges' with shinyTools version 24.11.0 and will be ignored. Please use 'userRanges' instead.", id)
-  }
-
-  # update with custom initial ranges if set and if present in default_ranges
-  if (!is.null(initRanges) && is.list(initRanges) && !is.reactivevalues(initRanges)) {
-    for (name in intersect(names(initRanges), names(default_ranges))) {
-      default_ranges[[name]] <- initRanges[[name]]
-    }
-  }
 
   if (!all(axes %in% names(default_ranges))) {
     new_axis <- setdiff(axes, names(default_ranges))
@@ -172,23 +156,46 @@ initializeRanges <- function(session, id, initRanges, userRanges, axes) {
   }
 
   # define reactiveValues object 'ranges' to store ranges for set 'axes'
-  # use userRanges if set
-  if (!is.null(userRanges) && is.reactivevalues(userRanges)) {
-    ranges <- userRanges
+  ranges <- do.call(reactiveValues, default_ranges[axes])
+
+  # update with custom initial ranges if set and if present in default_ranges
+  if (!is.null(initRanges) && is.list(initRanges) && !is.reactivevalues(initRanges)) {
+
+    initRanges <- initRanges %>%
+      completeRanges(needed_entries = axes, default_ranges = default_ranges)
+
+    ranges <- do.call(reactiveValues, initRanges)
+  }
+
+  if (!is.null(initRanges) && is.list(initRanges) && is.reactivevalues(initRanges)) {
+    ranges <- initRanges
 
     # check (once!) if all axes are present, if not use default
     observe({
-      if (!all(axes %in% names(ranges))) {
-        logWarn("%s: User ranges do not contain all axes. Using default ranges.", id)
-        missingAxis <- setdiff(axes, names(ranges))
-        for (name in missingAxis) {
-          ranges[[name]] <- default_ranges[[name]]
-        }
+      logDebug("%s: Checking if all axes are present in user ranges", id)
+
+      new_ranges <- ranges %>%
+        completeRanges(needed_entries = axes, default_ranges = default_ranges)
+
+      for (name in names(new_ranges)) {
+        ranges[[name]] <- new_ranges[[name]]
       }
     }) %>%
-      bindEvent(userRanges$xAxis, once = TRUE)
-  } else {
-    ranges <- do.call(reactiveValues, default_ranges[axes])
+      bindEvent(initRanges$xAxis, once = TRUE)
+  }
+
+  return(ranges)
+}
+
+completeRanges <- function(ranges, needed_entries, default_ranges) {
+  # complete ranges with needed entries that are not present in ranges
+  missingEntries <- setdiff(needed_entries, names(ranges))
+
+  # only add default values for missing entries that are present in default_ranges
+  missingEntries <- intersect(missingEntries, names(default_ranges))
+
+  for (name in missingEntries) {
+    ranges[[name]] <- default_ranges[[name]]
   }
 
   return(ranges)

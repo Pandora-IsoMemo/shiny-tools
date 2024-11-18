@@ -12,13 +12,15 @@
 #'  shinyalert::shinyalert is used.
 #' @param inShiny (logical) if FALSE prevents an alert in shiny, but instead a warning will be
 #'  displayed. Use this when not applied within a Shiny session.
+#' @param suppressWarnings (logical) if TRUE, warnings are suppressed and not given out as an alert.
 #'
 #' @export
 shinyTryCatch <- function(expr,
                           errorTitle = "Modeling failed",
                           warningTitle = "",
                           alertStyle = "shinyjs",
-                          inShiny = TRUE) {
+                          inShiny = TRUE,
+                          suppressWarnings = FALSE) {
   tryCatchMessage <- list()
 
   w.handler <- function(w) {
@@ -59,7 +61,10 @@ shinyTryCatch <- function(expr,
     as.character() %>%
     paste0(collapse = "\n")
 
-  if (inShiny) {
+  # suppress warning if suppressWarnings is TRUE
+  suppressAlert <- messageType == "warning" && suppressWarnings
+
+  if (inShiny && !suppressAlert) {
     # give out alert within shiny app
     switch(
       alertStyle,

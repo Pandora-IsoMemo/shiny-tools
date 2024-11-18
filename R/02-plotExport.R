@@ -132,7 +132,8 @@ plotExportServer <- function(id,
                      print() %>%
                      shinyTryCatch(errorTitle = "Plot failed",
                                    alertStyle = "shinyalert",
-                                   inShiny = FALSE)
+                                   inShiny = FALSE,
+                                   suppressWarnings = TRUE)
                  })
 
                  output$exportPlotly <- renderPlotly({
@@ -140,7 +141,8 @@ plotExportServer <- function(id,
                      print() %>%
                      shinyTryCatch(errorTitle = "Plot failed",
                                    alertStyle = "shinyalert",
-                                   inShiny = FALSE)
+                                   inShiny = FALSE,
+                                   suppressWarnings = TRUE)
                  })
 
                  output$exportExecute <- downloadHandler(
@@ -154,7 +156,8 @@ plotExportServer <- function(id,
                          print() %>%
                          shinyTryCatch(errorTitle = "Plot failed",
                                        alertStyle = "shinyalert",
-                                       inShiny = FALSE)
+                                       inShiny = FALSE,
+                                       suppressWarnings = TRUE)
                        save_image(p, file = tmpfile)
                        file.copy(tmpfile, file)
                      } else {
@@ -169,7 +172,8 @@ plotExportServer <- function(id,
                          print() %>%
                          shinyTryCatch(errorTitle = "Plot failed",
                                        alertStyle = "shinyalert",
-                                       inShiny = FALSE)
+                                       inShiny = FALSE,
+                                       suppressWarnings = TRUE)
                        dev.off()
                      }
                    }
@@ -285,17 +289,17 @@ isEmptyPlot <- function(plot) {
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%
 #       formatTitlesOfGGplot(text = testTitles) %>%
-#       #formatScalesOfGGplot(ranges = testRanges) %>%
+#       formatScalesOfGGplot(ranges = testRanges) %>%
 #       print() %>%
-#       shinyTryCatch(errorTitle = "GGPlot failed", alertStyle = "shinyalert")
+#       shinyTryCatch(errorTitle = "GGPlot failed", alertStyle = "shinyalert", suppressWarnings = TRUE)
 #   })
 #
 #   plotExportServer("expPlot",
 #                    plotFun = reactive({ testPlotFun }),
 #                    plotType = "ggplot",
 #                    filename = "plot",
-#                    initText = testTitles#,
-#                    #initRanges = testRanges
+#                    initText = testTitles,
+#                    initRanges = testRanges
 #                    )
 #
 #   testPlotlyFun <- function() {
@@ -313,7 +317,7 @@ isEmptyPlot <- function(plot) {
 #   output$plotly <- renderPlotly({
 #     testPlotlyFun() %>%
 #       print() %>%
-#       shinyTryCatch(errorTitle = "Plotly failed", alertStyle = "shinyalert")
+#       shinyTryCatch(errorTitle = "Plotly failed", alertStyle = "shinyalert", suppressWarnings = TRUE)
 #   })
 #
 #   plotExportServer("expPlotly",
@@ -321,8 +325,8 @@ isEmptyPlot <- function(plot) {
 #                    plotType = "ggplot",
 #                    plotly = TRUE,
 #                    filename = "plot",
-#                    initText = testTitles#,
-#                    #initRanges = testRanges
+#                    initText = testTitles,
+#                    initRanges = testRanges
 #                    )
 # }
 #

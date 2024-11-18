@@ -142,10 +142,17 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'
 #' @export
 formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
-  plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
-                                    limits = getUserLimits(ranges[["xAxis"]]),
-                                    breaks = getBreaks(xLabels),
+  if (isContinuousAxis(plot, axis = "x")) {
+    plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
+                                      limits = getUserLimits(ranges[["xAxis"]]),
+                                      breaks = getBreaks(xLabels),
+                                      labels = getLabels(xLabels))
+  }
+
+  if (isDiscreteAxis(plot, axis = "x")) {
+    plot <- plot + scale_x_discrete(breaks = getBreaks(xLabels),
                                     labels = getLabels(xLabels))
+  }
 
   # ensure valid y limits
   limitsY <- getUserLimits(ranges[["yAxis"]])
@@ -156,13 +163,33 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
   rescalingFactors <- calculateRescalingFactors(oldLimits = limitsY,
                                                 newLimits = getUserLimits(ranges[["yAxis2"]]))
 
-  plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
-                                    limits = limitsY,
-                                    breaks = getBreaks(yLabels),
+  if (isContinuousAxis(plot, axis = "y")) {
+    plot <- plot + scale_y_continuous(trans = getTransform(ranges[["yAxis"]]),
+                                      limits = limitsY,
+                                      breaks = getBreaks(yLabels),
+                                      labels = getLabels(yLabels),
+                                      sec.axis = getSecAxis(rescalingFactors, ySecAxisTitle))
+  }
+
+  if (isDiscreteAxis(plot, axis = "y")) {
+    plot <- plot + scale_y_discrete(breaks = getBreaks(yLabels),
                                     labels = getLabels(yLabels),
                                     sec.axis = getSecAxis(rescalingFactors, ySecAxisTitle))
+  }
 
   plot
+}
+
+isContinuousAxis <- function(plot, axis = c("x", "y")) {
+  axis <- match.arg(axis)
+  axis_data <- eval_tidy(plot$mapping[[axis]], plot$data)
+  is.numeric(axis_data)
+}
+
+isDiscreteAxis <- function(plot, axis = c("x", "y")) {
+  axis <- match.arg(axis)
+  axis_data <- eval_tidy(plot$mapping[[axis]], plot$data)
+  is.factor(axis_data) || is.character(axis_data)
 }
 
 #' Axes Ranges Of GGplot (deprecated)

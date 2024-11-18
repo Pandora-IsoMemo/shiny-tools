@@ -9,7 +9,8 @@ shinyTryCatch(
   errorTitle = "Modeling failed",
   warningTitle = "",
   alertStyle = "shinyjs",
-  inShiny = TRUE
+  inShiny = TRUE,
+  suppressWarnings = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ shinyalert::shinyalert is used.}
 
 \item{inShiny}{(logical) if FALSE prevents an alert in shiny, but instead a warning will be
 displayed. Use this when not applied within a Shiny session.}
+
+\item{suppressWarnings}{(logical) if TRUE, warnings are suppressed and not given out as an alert.}
 }
 \description{
 Catch multiple errors and warnings, and forward them as an alert. If an error occurs, NULL is

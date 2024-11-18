@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 24.11.1
+Version: 24.11.2
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut")),
             person("Antonia", "Runge", email = "antonia.runge@inwt-statistics.de", role = c("aut"))
@@ -21,6 +21,7 @@ Imports:
     openxlsx,
     plotly,
     rjson,
+    rlang,
     scales,
     shiny,
     shinyalert,

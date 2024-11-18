@@ -14,7 +14,7 @@ updateUserInputs <- function(input, output, session, userInputs) {
   inputIDs <- inputIDs[inputIDs %in% names(input)]
 
   # update values
-  for (i in 1:length(inputIDs)) {
+  for (i in seq_along(inputIDs)) {
     session$sendInputMessage(inputIDs[i], list(value = userInputs[[inputIDs[i]]]))
   }
 }

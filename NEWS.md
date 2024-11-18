@@ -1,3 +1,13 @@
+# shinyTools 24.11.2
+
+## Updates
+- _shinyTryCatch_: option to suppress alerts for warnings
+
+## Bug Fixes
+- _plotExport_:
+  - fix issue with the assignment of the _InitRanges_ argument to reactive values
+  - fix error when plotting axis with discrete data
+
 # shinyTools 24.11.1
 
 ## Updates

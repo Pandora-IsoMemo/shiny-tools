@@ -1,4 +1,21 @@
 test_that("Test module plotRangesServer", {
+  # check if error for undefined plot axis ('testAxis')
+  expect_error(
+    testServer(plotRangesServer, args = list(type = "ggplot", axes = c("xAxis", "testAxis")), {
+      # Arrange
+      print("test plot ranges")
+      # Act
+      session$setInputs(
+        labelName = "xAxis",
+        min = 10,
+        max = 20,
+        fromData = FALSE
+      )
+    })
+  )
+})
+
+test_that("Test module plotRangesServer", {
   testServer(plotRangesServer, args = list(type = "ggplot"), {
     # Arrange
     print("test plot ranges")
@@ -34,6 +51,7 @@ test_that("Test module plotRangesServer", {
       transform = "log10"
     )
 
+    expect_true(is.reactivevalues(session$returned))
     expect_equal(session$returned %>% reactiveValuesToList(),
                  list(
                    xAxis = list(

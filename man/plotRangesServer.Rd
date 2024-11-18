@@ -8,17 +8,20 @@ plotRangesServer(
   id,
   type = c("none", "ggplot", "base"),
   initRanges = NULL,
+  userRanges = NULL,
   axes = c(`x axis` = "xAxis", `y axis` = "yAxis")
 )
 }
 \arguments{
 \item{id}{namespace id}
 
-\item{type}{(character) Type of the plot to add ranges to, one of "ggplot", "base".}
+\item{type}{(character) type of the plot to add ranges to, one of "ggplot", "base".}
 
-\item{initRanges}{(list) optional, named list with range definitions, or output of \code{plotRangesServer}}
+\item{initRanges}{(list) optional, named list with range definitions}
 
-\item{axes}{(character) Named vector of axes to add ranges to, e.g.
+\item{userRanges}{(reactiveValues) optional, reactiveValues object containing ranges for the axes.}
+
+\item{axes}{(character) named vector of axes to add ranges to, e.g.
 \code{c("x axis" = "xAxis", "y axis" = "yAxis", "2nd y axis" = "yAxis2")}.}
 }
 \description{

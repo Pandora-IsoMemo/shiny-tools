@@ -45,8 +45,9 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
 #' Backend for plot ranges module
 #'
 #' @param id namespace id
-#' @param type (character) Type of the plot to add ranges to, one of "ggplot", "base".
-#' @param axes (character) Named vector of axes to add ranges to, e.g.
+#' @param type (character) type of the plot to add ranges to, one of "ggplot", "base".
+#' @param userRanges (reactiveValues) optional, reactiveValues object containing ranges for the axes.
+#' @param axes (character) named vector of axes to add ranges to, e.g.
 #'  \code{c("x axis" = "xAxis", "y axis" = "yAxis", "2nd y axis" = "yAxis2")}.
 #' @inheritParams plotExportServer
 #'
@@ -54,6 +55,7 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
 plotRangesServer <- function(id,
                              type = c("none", "ggplot", "base"),
                              initRanges = NULL,
+                             userRanges = NULL,
                              axes = c("x axis" = "xAxis",
                                       "y axis" = "yAxis")) {
 
@@ -62,30 +64,8 @@ plotRangesServer <- function(id,
   moduleServer(id,
                function(input, output, session) {
                  ns <- session$ns
-                 ranges <- reactiveValues()
 
-                 if (is.null(initRanges)) {
-                   # if null: take values from config
-                   for (axis in axes) {
-                     ranges[[axis]] <- config()$defaultRange
-                   }
-                 } else if (inherits(initRanges, "list")) {
-                   # if list: use values to set default values
-                   if (!all(axes %in% names(initRanges))) {
-                     stop("parameter 'initRanges' must contain values for all 'axes'")
-                   }
-
-                   for (axis in axes) {
-                     ranges[[axis]] <- initRanges[[axis]]
-                   }
-                 } else {
-                   # if not list: assume it is output of plotRangesServer() (a reactiveValues object) and use as is
-                   if (!all(axes %in% names(initRanges))) {
-                     stop("parameter 'initRanges' must contain values for all 'axes'")
-                   }
-
-                   ranges <- initRanges
-                 }
+                 ranges <- initializeRanges(session, id, initRanges = initRanges, userRanges = userRanges, axes = axes)
 
                  # return reactiveValues object "ranges" if no type is specified
                  if (type == "none") return(ranges)
@@ -141,6 +121,77 @@ plotRangesServer <- function(id,
 
                  return(ranges)
                })
+}
+
+#' Get default ranges
+#'
+#' @return list
+getDefaultRanges <- function() {
+  list(xAxis = list(min = 0, max = 1, fromData = TRUE, transform = "identity"),
+       yAxis = list(min = 0, max = 1, fromData = TRUE, transform = "identity"),
+       yAxis2 = list(min = 0, max = 1, fromData = TRUE, transform = "identity"))
+}
+
+# Initialize ranges
+#
+# Initialize reactiveValues object 'ranges' that will store the user ranges for the axes for
+# the plotRanges module. The argument 'axes' specifies the (sub)set of axes to be initialized.
+# If 'initRanges' is set, the default ranges are updated with the values from 'initRanges'.
+# If 'userRanges' is set and a reactiveValues object, the default ranges are updated with the
+# values from 'userRanges'.
+#
+# @param session session object from server function
+# @param id module id
+# @param initRanges (list) optional, named list with range definitions
+# @param userRanges (reactiveValues) ReactiveValues object containing ranges for the axes.
+# @param axes (character) Named vector of axes to add ranges to, e.g. c("x axis" = "xAxis", "y axis" = "yAxis").
+#
+# @return reactiveValues
+initializeRanges <- function(session, id, initRanges, userRanges, axes) {
+  # set default ranges to initialize the "rangesInputs" UI
+  # only axes specified in 'getDefaultRanges()' are allowed
+  default_ranges <- getDefaultRanges()
+
+  if (!is.null(initRanges) && is.reactivevalues(initRanges)) {
+    logWarn("%s: ReactiveValues are deprecated for parameter 'initRanges' with shinyTools version 24.11.0 and will be ignored. Please use 'userRanges' instead.", id)
+  }
+
+  # update with custom initial ranges if set and if present in default_ranges
+  if (!is.null(initRanges) && is.list(initRanges) && !is.reactivevalues(initRanges)) {
+    for (name in intersect(names(initRanges), names(default_ranges))) {
+      default_ranges[[name]] <- initRanges[[name]]
+    }
+  }
+
+  if (!all(axes %in% names(default_ranges))) {
+    new_axis <- setdiff(axes, names(default_ranges))
+    stop(sprintf("Logic for following axes does not exist yet: '%s'. Please check names of the axes! Following axes are available: '%s'",
+                 paste(setdiff(axes, new_axis), collapse = ", "),
+                 paste(names(default_ranges), collapse = ", ")
+    ))
+  }
+
+  # define reactiveValues object 'ranges' to store ranges for set 'axes'
+  # use userRanges if set
+  if (!is.null(userRanges) && is.reactivevalues(userRanges)) {
+    ranges <- userRanges
+
+    # check (once!) if all axes are present, if not use default
+    observe({
+      if (!all(axes %in% names(ranges))) {
+        logWarn("%s: User ranges do not contain all axes. Using default ranges.", id)
+        missingAxis <- setdiff(axes, names(ranges))
+        for (name in missingAxis) {
+          ranges[[name]] <- default_ranges[[name]]
+        }
+      }
+    }) %>%
+      bindEvent(userRanges$xAxis, once = TRUE)
+  } else {
+    ranges <- do.call(reactiveValues, default_ranges[axes])
+  }
+
+  return(ranges)
 }
 
 # Observe Range Elements Of Label (no docu for 'man' because it is a helper function)
@@ -239,10 +290,12 @@ observeAndUpdateRangeElementsOfLabel <- function(input, output, session, id, ran
 #                                                    yAxis2 = list(min = 0,
 #                                                                 max = 10,
 #                                                                 fromData = TRUE,
-#                                                                 transform = "identity")),
+#                                                                 transform = "identity")
+#                                                    ),
 #                                  axes = c("x axis" = "xAxis",
 #                                           "y axis" = "yAxis",
-#                                           "2nd y axis" = "yAxis2"))
+#                                           "2nd y axis" = "yAxis2")
+#                                  )
 #
 #   output$plot <- renderPlot({
 #     testPlotFun() %>%

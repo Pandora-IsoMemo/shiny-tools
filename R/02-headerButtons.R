@@ -26,9 +26,25 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL) {
       div(
         id = "logo-isomemo",
         tags$a(
-          href = "https://isomemo.com/",
-          img(src = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/isomemo-logo.png?raw=true", alt = "IsoMemo"),
+          href = "https://isomemo.gea.mpg.de/",
+          img(src = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/isomemo-logo-white.png?raw=true", alt = "IsoMemo"),
           target = "_blank"
+        )
+      ),
+      div(
+        id = "logo-pandora",
+        tags$a(
+          href = "https://pandoradata.earth/",
+          img(src = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/pandora-logo-white.png?raw=true", alt = "Pandora"),
+          target = "_blank"
+        )
+      ),
+      div(
+        id = "apps",
+        tags$button(
+          onclick = paste0("window.open('https://pandora-isomemo.github.io/docs/apps.html','_blank');"),
+          class = "btn btn-default",
+          "Apps"
         )
       ),
       # further help nur wenn nicht NULL argument

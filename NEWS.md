@@ -1,3 +1,8 @@
+# shinyTools 24.12.0
+
+## Updates
+- _headerUI_: integration of new links, and logos loaded from the https://github.com/Pandora-IsoMemo/docs/blob/main/img/ folder
+
 # shinyTools 24.11.2
 
 ## Updates

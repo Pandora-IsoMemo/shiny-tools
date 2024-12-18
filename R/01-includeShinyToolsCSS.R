@@ -3,5 +3,5 @@
 #' @return NULL
 #' @export
 includeShinyToolsCSS <- function(){
-  tags$link(href="app_files/custom.css", rel="stylesheet")
+  tags$link(href = "shinyTools_files/custom.css", rel = "stylesheet")
 }

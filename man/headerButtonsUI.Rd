@@ -4,7 +4,12 @@
 \alias{headerButtonsUI}
 \title{Add header buttons}
 \usage{
-headerButtonsUI(id, help_link, further_help_link = NULL)
+headerButtonsUI(
+  id,
+  help_link,
+  further_help_link = NULL,
+  loadShinyToolsCSS = TRUE
+)
 }
 \arguments{
 \item{id}{module id}
@@ -12,6 +17,8 @@ headerButtonsUI(id, help_link, further_help_link = NULL)
 \item{help_link}{link that is opened when help button is clicked}
 
 \item{further_help_link}{link that is opened when further help button is clicked; if set to NULL, no button is displayed}
+
+\item{loadShinyToolsCSS}{logical should shinyToolsCSS be loaded}
 }
 \value{
 tagList with divs

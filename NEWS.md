@@ -1,3 +1,11 @@
+# shinyTools 24.12.0
+
+## Updates
+- _headerUI_: integration of new links and logos (#1)
+
+## Bug Fixes
+- fix folder name of resource path
+
 # shinyTools 24.11.2
 
 ## Updates

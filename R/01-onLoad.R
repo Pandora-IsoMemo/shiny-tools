@@ -4,6 +4,6 @@
 #'
 #' @return NULL
 .onLoad <- function(...) {
-  addResourcePath(prefix = "app_files",
+  addResourcePath(prefix = "shinyTools_files",
                   directoryPath = system.file("dist", package = "shinyTools"))
 }

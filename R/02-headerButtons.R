@@ -3,15 +3,19 @@
 #' @param id module id
 #' @param help_link link that is opened when help button is clicked
 #' @param further_help_link link that is opened when further help button is clicked; if set to NULL, no button is displayed
+#' @param loadShinyToolsCSS logical should shinyToolsCSS be loaded
 #'
 #' @return tagList with divs
 #' @export
-headerButtonsUI <- function(id, help_link, further_help_link = NULL) {
+headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyToolsCSS = TRUE) {
   ns <- NS(id)
+
   tagList(
     tags$head(
       # add favicon for the browser tab
-      tags$link(rel = "icon", type = "image/x-icon", href = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/pandora-isomemo_favicon.ico?raw=true"),
+      tags$link(rel = "icon", type = "image/x-icon", href = "shinyTools_files/pandora-isomemo_favicon.ico"),
+      # add css
+      if (loadShinyToolsCSS) includeShinyToolsCSS() else NULL
     ),
     div(
       id = "header-right",
@@ -19,16 +23,32 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL) {
         id = "logo-mpi",
         tags$a(
           href = "https://www.mpg.de/en",
-          img(src = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/mpi-minerva-logo.png?raw=true", alt = "Max Planck society"),
+          img(src = "shinyTools_files/mpi-minerva-logo.png", alt = "Max Planck society"),
           target = "_blank"
         )
       ),
       div(
         id = "logo-isomemo",
         tags$a(
-          href = "https://isomemo.com/",
-          img(src = "https://github.com/Pandora-IsoMemo/docs/blob/main/img/isomemo-logo.png?raw=true", alt = "IsoMemo"),
+          href = "https://isomemo.gea.mpg.de/",
+          img(src = "shinyTools_files/isomemo-logo-white.png", alt = "IsoMemo"),
           target = "_blank"
+        )
+      ),
+      div(
+        id = "logo-pandora",
+        tags$a(
+          href = "https://pandoradata.earth/",
+          img(src = "shinyTools_files/pandora-logo-white.png", alt = "Pandora"),
+          target = "_blank"
+        )
+      ),
+      div(
+        id = "apps",
+        tags$button(
+          onclick = paste0("window.open('https://pandora-isomemo.github.io/docs/apps.html','_blank');"),
+          class = "btn btn-default",
+          "Apps"
         )
       ),
       # further help nur wenn nicht NULL argument
@@ -62,7 +82,6 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL) {
 # ui <- fluidPage(
 #   tagList(
 #     navbarPage(
-#       header = includeShinyToolsCSS(),
 #       title = "test app",
 #       theme = shinythemes::shinytheme("flatly"),
 #       position = "fixed-top",

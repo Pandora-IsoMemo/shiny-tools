@@ -53,6 +53,10 @@ h5 {
   margin-right: 20px;
 }
 
+.navbar-brand:hover {
+    color: white;
+}
+
 #header-right {
     position: fixed;
     top: 5px;
@@ -61,28 +65,56 @@ h5 {
     z-index: 9999;
     overflow: hidden;
     display: inline;
+    align-items: center; /* Vertically center child elements */
+}
+
+#logo-mpi {
+    display: inline;
+    width: 150px;
+    height: 130px;
+    margin-right: 15px;
+}
+
+#logo-isomemo {
+    display: inline;
+    height: 50px;
+    width: 150px;
+    margin-right: 1px;
+}
+
+#logo-pandora {
+    display: inline;
+    height: 35px;
+    width: 150px;
+    margin-right: 10px;
 }
 
 #help {
     display:inline;
 }
 
-#logo-isomemo, #logo-mpi {
-    display: inline;
-    width: 150px;
-    height: 130px;
-    margin-right: 10px;
-}
-
-#logo-isomemo img {
-    height: 50px;
-    width: 75px;
-    border-radius: 2px;
+#apps {
+    display:inline;
 }
 
 #logo-mpi img {
     height: 50px;
     width: 57px;
+    margin-top: -5px;
+    border-radius: 2px;
+}
+
+#logo-isomemo img {
+    height: 50px;
+    width: 150px;
+    margin-top: 5px;
+    border-radius: 2px;
+}
+
+#logo-pandora img {
+    height: 40px;
+    width: 170px;
+    margin-top: -5px;
     border-radius: 2px;
 }
 
@@ -90,28 +122,11 @@ h5 {
     display: inline;
 }
 
-#help button, #further-help button {
+#help button, #further-help button, #apps button {
     padding: 3px 10px;
     background-color: #18bc9c;
     border-color: #0f7864;
     color: white;
     border-radius: 4px;
     border-width: 2px;
-}
-
-.navbar-brand:hover {
-    color: white;
-}
-
-.matrix-input {
-    overflow-x: auto;
-}
-
-.matrix-input-table {
-    table-layout: fixed;
-    width: auto;
-}
-
-.matrix-input-table td {
-    min-width: 70px;
 }

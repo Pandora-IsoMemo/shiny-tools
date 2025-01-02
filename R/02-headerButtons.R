@@ -28,18 +28,18 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
         )
       ),
       div(
-        id = "logo-isomemo",
-        tags$a(
-          href = "https://isomemo.gea.mpg.de/",
-          img(src = "shinyTools_files/isomemo-logo-white.png", alt = "IsoMemo"),
-          target = "_blank"
-        )
-      ),
-      div(
         id = "logo-pandora",
         tags$a(
           href = "https://pandoradata.earth/",
           img(src = "shinyTools_files/pandora-logo-white.png", alt = "Pandora"),
+          target = "_blank"
+        )
+      ),
+      div(
+        id = "logo-isomemo",
+        tags$a(
+          href = "https://isomemo.gea.mpg.de/",
+          img(src = "shinyTools_files/isomemo-logo-white.png", alt = "IsoMemo"),
           target = "_blank"
         )
       ),

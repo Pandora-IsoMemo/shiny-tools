@@ -27,95 +27,102 @@ plotTitlesUI <- function(id,
     selectInput(
       inputId = ns("labelName"),
       label = "Label",
-      choices = c("No label available ..." = ""),
-      selected = "plotTitle"
+      choices = c("No label available ..." = "")
     ),
-    checkboxInput(
-      inputId = ns("hide"),
-      label = "Hide label",
-      value = initText[["plotTitle"]][["hide"]],
-      width = "100%"
-    ),
-    conditionalPanel(
-      ns = ns,
-      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle', 'yAxisTitle2'].includes(input.labelName)",
-      checkboxInput(ns("useExpression"),
-                    label = "Use mathematical annotation",
-                    value = FALSE,
-                    width = "100%"),
-      conditionalPanel(
-        ns = ns,
-        condition = "input.useExpression",
-        uiOutput(ns("expressionInput")),
-        helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13~C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
-        helpText(HTML('Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'), width = "100%")
-      ),
-      conditionalPanel(
-        ns = ns,
-        condition = "!input.useExpression",
-        textInput(ns("text"), label = "Text",
-                  value = initText[["plotTitle"]][["text"]],
-                  placeholder = "Custom title ...")
-      ),
-    ),
-    conditionalPanel(
-      ns = ns,
-      condition = "!input.useExpression",
-      selectInput(
-        ns("fontType"),
-        label = "Font type",
-        choices = fontChoicesSelect(type = type),
-        selected = initText[["plotTitle"]][["fontType"]],
-        width = "100%")
-    ),
-    colourInput(ns("color"),
-                label = "Text color",
-                value = initText[["plotTitle"]][["color"]],
-                width = "100%"),
-    selectInput(
-      inputId = ns("fontFamily"),
-      label = "Font family",
-      selected = initText[["plotTitle"]][["fontFamily"]],
-      choices = availableFonts(),
-      width = "100%"
-    ),
-    sliderInput(
-      ns("size"),
-      label = "Text size",
-      value = initText[["plotTitle"]][["size"]],
-      min = sizeValuesSlider(type = type)[["min"]],
-      max = sizeValuesSlider(type = type)[["max"]],
-      step = sizeValuesSlider(type = type)[["step"]],
-      width = "100%"
-    ),
-    conditionalPanel(
-      ns = ns,
-      condition = "['xAxisText', 'yAxisText', 'yAxisText2'].includes(input.labelName)",
-      sliderInput(
-        ns("angle"),
-        label = "Text angle",
-        value = initText[["xAxisText"]][["angle"]],
-        min = 0,
-        max = 360,
-        step = 5
-      ),
-      sliderInput(
-        ns("hjust"),
-        label = "Horizontal adjustment",
-        value = initText[["xAxisText"]][["hjust"]],
-        min = 0,
-        max = 1,
-        step = 0.1
-      ),
-      sliderInput(
-        ns("vjust"),
-        label = "Vertical adjustment",
-        value = initText[["xAxisText"]][["vjust"]],
-        min = 0,
-        max = 1,
-        step = 0.1
-      )
+
+    # extracting UI
+    formatTextUI(ns(""), # id must be the input$labelName??? Must id be rendered?? OR use parent id
+                 type = type,
+                 initTitle = initText[["plotTitle"]],
+                 initAxis = initText[["xAxisText"]]
     )
+
+    # checkboxInput(
+    #   inputId = ns("hide"),
+    #   label = "Hide label",
+    #   value = initText[["plotTitle"]][["hide"]],
+    #   width = "100%"
+    # ),
+    # conditionalPanel(
+    #   ns = ns,
+    #   condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle', 'yAxisTitle2'].includes(input.labelName)",
+    #   checkboxInput(ns("useExpression"),
+    #                 label = "Use mathematical annotation",
+    #                 value = FALSE,
+    #                 width = "100%"),
+    #   conditionalPanel(
+    #     ns = ns,
+    #     condition = "input.useExpression",
+    #     uiOutput(ns("expressionInput")),
+    #     helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13~C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
+    #     helpText(HTML('Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'), width = "100%")
+    #   ),
+    #   conditionalPanel(
+    #     ns = ns,
+    #     condition = "!input.useExpression",
+    #     textInput(ns("text"), label = "Text",
+    #               value = initText[["plotTitle"]][["text"]],
+    #               placeholder = "Custom title ...")
+    #   ),
+    # ),
+    # conditionalPanel(
+    #   ns = ns,
+    #   condition = "!input.useExpression",
+    #   selectInput(
+    #     ns("fontType"),
+    #     label = "Font type",
+    #     choices = fontChoicesSelect(type = type),
+    #     selected = initText[["plotTitle"]][["fontType"]],
+    #     width = "100%")
+    # ),
+    # colourInput(ns("color"),
+    #             label = "Text color",
+    #             value = initText[["plotTitle"]][["color"]],
+    #             width = "100%"),
+    # selectInput(
+    #   inputId = ns("fontFamily"),
+    #   label = "Font family",
+    #   selected = initText[["plotTitle"]][["fontFamily"]],
+    #   choices = availableFonts(),
+    #   width = "100%"
+    # ),
+    # sliderInput(
+    #   ns("size"),
+    #   label = "Text size",
+    #   value = initText[["plotTitle"]][["size"]],
+    #   min = sizeValuesSlider(type = type)[["min"]],
+    #   max = sizeValuesSlider(type = type)[["max"]],
+    #   step = sizeValuesSlider(type = type)[["step"]],
+    #   width = "100%"
+    # ),
+    # conditionalPanel(
+    #   ns = ns,
+    #   condition = "['xAxisText', 'yAxisText', 'yAxisText2'].includes(input.labelName)",
+    #   sliderInput(
+    #     ns("angle"),
+    #     label = "Text angle",
+    #     value = initText[["xAxisText"]][["angle"]],
+    #     min = 0,
+    #     max = 360,
+    #     step = 5
+    #   ),
+    #   sliderInput(
+    #     ns("hjust"),
+    #     label = "Horizontal adjustment",
+    #     value = initText[["xAxisText"]][["hjust"]],
+    #     min = 0,
+    #     max = 1,
+    #     step = 0.1
+    #   ),
+    #   sliderInput(
+    #     ns("vjust"),
+    #     label = "Vertical adjustment",
+    #     value = initText[["xAxisText"]][["vjust"]],
+    #     min = 0,
+    #     max = 1,
+    #     step = 0.1
+    #   )
+    # )
   )
 }
 
@@ -144,63 +151,100 @@ plotTitlesServer <- function(id,
                function(input, output, session) {
                  ns <- session$ns
 
-                 plotText <- reactiveValues()
+                 #plotText <- reactiveValues()
 
                  updateSelectInput(session,
                                    "labelName",
                                    choices = availableLabels(availableElements = availableElements))
 
                  # initialize plotText
-                 if (is.null(initText)) {
-                   # if null: take values from config
-                   for (i in availableLabels(availableElements = availableElements)) {
-                     plotText[[i]] <- defaultInitText(type = type,
-                                                      availableElements = availableElements)[[i]]
-                   }
-                 } else if (inherits(initText, "list")) {
-                   initText <- validateInitText(initText,
-                                                type = type,
-                                                availableElements = availableElements)
+                 # if (is.null(initText)) {
+                 #   # if null: take values from config
+                 #   for (i in availableLabels(availableElements = availableElements)) {
+                 #     plotText[[i]] <- defaultInitText(type = type,
+                 #                                      availableElements = availableElements)[[i]]
+                 #   }
+                 # } else if (inherits(initText, "list")) {
+                 #   initText <- validateInitText(initText,
+                 #                                type = type,
+                 #                                availableElements = availableElements)
+                 #
+                 #   for (i in names(initText)) {
+                 #     plotText[[i]] <- initText[[i]]
+                 #   }
+                 # } else {
+                 #   plotText <- initText
+                 # }
 
-                   for (i in names(initText)) {
-                     plotText[[i]] <- initText[[i]]
-                   }
-                 } else {
-                   plotText <- initText
-                 }
+                 plotText <- initializeReactiveObject(
+                   session,
+                   id,
+                   custom_values = initText,
+                   choices = availableLabels(availableElements = availableElements),
+                   default_fun = defaultInitText,
+                   default_fun_args = list(type = type, availableElements = availableElements)
+                 )
 
                  # if no type available, return plotText
                  if (type == "none") return(plotText)
 
-                 output$expressionInput <- renderUI({
-                   if (showParseButton) {
-                     fluidRow(
-                       column(width = 8,
-                              textInput(ns("expression"), label = "Expression",
-                                        value = initText[["plotTitle"]][["text"]],
-                                        placeholder = "Custom title ...")),
-                       column(width = 4,
-                              style = "margin-top: 1.7em;",
-                              actionButton(ns("parseExpression"), "Parse", width = "100%"))
-                     )
-                   } else {
-                     textInput(ns("expression"), label = "Expression",
-                               value = initText[["plotTitle"]][["text"]],
-                               placeholder = "Custom title ...")
-                   }
-                 })
+                 # output$expressionInput <- renderUI({
+                 #   if (showParseButton) {
+                 #     fluidRow(
+                 #       column(width = 8,
+                 #              textInput(ns("expression"), label = "Expression",
+                 #                        value = initText[["plotTitle"]][["text"]],
+                 #                        placeholder = "Custom title ...")),
+                 #       column(width = 4,
+                 #              style = "margin-top: 1.7em;",
+                 #              actionButton(ns("parseExpression"), "Parse", width = "100%"))
+                 #     )
+                 #   } else {
+                 #     textInput(ns("expression"), label = "Expression",
+                 #               value = initText[["plotTitle"]][["text"]],
+                 #               placeholder = "Custom title ...")
+                 #   }
+                 # })
 
+                 # observe({
+                 #   req(input[["labelName"]])
+                 #   logDebug("%s: Entering observe 'labelName'", id)
+                 #
+                 #   # load plotText element inputs of the selected label
+                 #   updateUserInputs(input = input, output = output, session = session,
+                 #                    userInputs = plotText[[input[["labelName"]]]])
+                 # }) %>%
+                 #   bindEvent(input[["labelName"]])
+
+                 #plotText <- observeAndUpdateTextElementsOfLabel(input, output, session, id, plotText, showParseButton)
+
+                 init_text <- reactiveVal()
                  observe({
-                   req(input[["labelName"]])
-                   logDebug("%s: Entering observe 'labelName'", id)
+                   logDebug("%s: Entering observe 'input$labelName'", id)
 
-                   # load plotText element inputs of the selected label
-                   updateUserInputs(input = input, output = output, session = session,
-                                    userInputs = plotText[[input[["labelName"]]]])
+                   if (is.null(input[["labelName"]]) || input[["labelName"]] == "") {
+                     init_text(plotText[[names(plotText)[1]]])
+                   } else {
+                     init_text(plotText[[input[["labelName"]]]])
+                   }
                  }) %>%
                    bindEvent(input[["labelName"]])
 
-                 plotText <- observeAndUpdateTextElementsOfLabel(input, output, session, id, plotText, showParseButton)
+                 updated_text <- formatTextServer("",
+                                                  init_text = init_text,
+                                                  plot_type = c("none", "ggplot", "base"),
+                                                  text_type = c("title", "axis"),
+                                                  show_parse_button = TRUE,
+                                                  label_name = reactive(input[["labelName"]]))
+
+                 observe({
+                   logDebug("%s: Entering update plotText", id)
+                   req(input[["labelName"]])
+                   browser()
+                   # values are falsely updated
+                   plotText[[input[["labelName"]]]] <- updated_text()
+                 }) %>%
+                   bindEvent(updated_text())
 
                  return(plotText)
                })
@@ -375,31 +419,31 @@ sizeValuesSlider  <- function(type = c("ggplot", "base")) {
 #
 # @inheritParams plotTitlesServer
 # @inheritParams plotExportServer
-validateInitText <- function(initText,
-                             type = c("none", "ggplot", "base"),
-                             availableElements = c("title", "axis")) {
-  type <- match.arg(type)
-
-  defaultText <- defaultInitText(type, availableElements = availableElements)
-
-  initText <- initText %>% addMissingElements(defaultText)
-
-  return(initText)
-}
-
-addMissingElements <- function(plot_text, default_text) {
-  if (!setequal(names(plot_text), names(default_text))) {
-    # add missing
-    for (i in names(default_text)[!(names(default_text) %in% names(plot_text))]) {
-      plot_text[[i]] <- default_text[[i]]
-    }
-
-    # order list
-    plot_text <- plot_text[names(default_text)]
-  }
-
-  plot_text
-}
+# validateInitText <- function(initText,
+#                              type = c("none", "ggplot", "base"),
+#                              availableElements = c("title", "axis")) {
+#   type <- match.arg(type)
+#
+#   defaultText <- defaultInitText(type, availableElements = availableElements)
+#
+#   initText <- initText %>% addMissingElements(defaultText)
+#
+#   return(initText)
+# }
+#
+# addMissingElements <- function(plot_text, default_text) {
+#   if (!setequal(names(plot_text), names(default_text))) {
+#     # add missing
+#     for (i in names(default_text)[!(names(default_text) %in% names(plot_text))]) {
+#       plot_text[[i]] <- default_text[[i]]
+#     }
+#
+#     # order list
+#     plot_text <- plot_text[names(default_text)]
+#   }
+#
+#   plot_text
+# }
 
 # Default Init Text (no docu for 'man' because it is a helper function)
 #
@@ -531,12 +575,6 @@ keep_deepest_names <- function(x) {
 #         ggplot2::geom_line()
 #     }
 #
-#     output$plot <- renderPlot({
-#       testPlotFun() %>%
-#         formatTitlesOfGGplot(text = thisTitles) %>%
-#         shinyTools::shinyTryCatch(errorTitle = "Plotting failed", alertStyle = "shinyalert")
-#     })
-#
 #     thisTitles <- plotTitlesServer(
 #       "testMod",
 #       type = "ggplot",
@@ -594,6 +632,12 @@ keep_deepest_names <- function(x) {
 #         )
 #       )
 #     )
+#
+#     output$plot <- renderPlot({
+#       testPlotFun() %>%
+#         formatTitlesOfGGplot(text = thisTitles) %>%
+#         shinyTools::shinyTryCatch(errorTitle = "Plotting failed", alertStyle = "shinyalert")
+#     })
 # }
 #
 # shinyApp(ui = ui, server = server)

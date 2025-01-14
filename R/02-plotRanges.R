@@ -162,7 +162,8 @@ initializeRanges <- function(session, id, initRanges, axes) {
   if (!is.null(initRanges) && is.list(initRanges) && !is.reactivevalues(initRanges)) {
 
     initRanges <- initRanges %>%
-      completeRanges(needed_entries = axes, default_ranges = default_ranges)
+      #completeRanges(needed_entries = axes, default_ranges = default_ranges)
+      completeValues(choices = axes, default_values = default_ranges)
 
     ranges <- do.call(reactiveValues, initRanges)
   }
@@ -175,7 +176,8 @@ initializeRanges <- function(session, id, initRanges, axes) {
       logDebug("%s: Checking if all axes are present in user ranges", id)
 
       new_ranges <- ranges %>%
-        completeRanges(needed_entries = axes, default_ranges = default_ranges)
+        #completeRanges(needed_entries = axes, default_ranges = default_ranges)
+        completeValues(choices = axes, default_values = default_ranges)
 
       for (name in names(new_ranges)) {
         ranges[[name]] <- new_ranges[[name]]
@@ -187,19 +189,19 @@ initializeRanges <- function(session, id, initRanges, axes) {
   return(ranges)
 }
 
-completeRanges <- function(ranges, needed_entries, default_ranges) {
-  # complete ranges with needed entries that are not present in ranges
-  missingEntries <- setdiff(needed_entries, names(ranges))
-
-  # only add default values for missing entries that are present in default_ranges
-  missingEntries <- intersect(missingEntries, names(default_ranges))
-
-  for (name in missingEntries) {
-    ranges[[name]] <- default_ranges[[name]]
-  }
-
-  return(ranges)
-}
+# completeRanges <- function(ranges, needed_entries, default_ranges) {
+#   # complete ranges with needed entries that are not present in ranges
+#   missingEntries <- setdiff(needed_entries, names(ranges))
+#
+#   # only add default values for missing entries that are present in default_ranges
+#   missingEntries <- intersect(missingEntries, names(default_ranges))
+#
+#   for (name in missingEntries) {
+#     ranges[[name]] <- default_ranges[[name]]
+#   }
+#
+#   return(ranges)
+# }
 
 # Observe Range Elements Of Label (no docu for 'man' because it is a helper function)
 #

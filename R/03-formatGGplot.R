@@ -1,3 +1,5 @@
+# TITLES ----
+
 #' Format Titles Of GGplot
 #'
 #' Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
@@ -131,6 +133,9 @@ getElementText <- function(textDef = list(fontFamily = "sans",
                  vjust = textDef[["vjust"]])
   }
 }
+
+
+# SCALES / RANGES ----
 
 #' Specify Scales of a GGplot
 #'
@@ -281,6 +286,8 @@ getSecAxis <- function(rescaleFactors, title) {
   }
 }
 
+# POINTS ----
+
 #' Point Style Of GGplot
 #'
 #' Style of points is defined with \code{pointStyle}. Overwrites previous definitions of \code{geom_point}
@@ -307,6 +314,8 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
                alpha = ifelse(dataPoints[["hide"]], 0, dataPoints[["alpha"]]),
                ...)
 }
+
+# LEGEND ----
 
 #' Legend Style Of GGplot
 #'

@@ -46,6 +46,7 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
       new_point <- reactiveVal()
 
       observe({
+        logDebug("%s: Update 'new_point'", id)
         if (length(names(input)) <= 1 ||
             any(is.na(sapply(c("x-value", "y-value"), function(name) input[[name]]))) ||
             input[["label"]] == "") {
@@ -56,10 +57,10 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
             id = input[["label"]],
             x = input[["x-value"]],
             y = input[["y-value"]],
-            x_min = input[["x-min"]],
-            x_max = input[["x-max"]],
-            y_min = input[["y-min"]],
-            y_max = input[["y-max"]]
+            xmin = input[["x-min"]],
+            xmax = input[["x-max"]],
+            ymin = input[["y-min"]],
+            ymax = input[["y-max"]]
           ))
         }
       })

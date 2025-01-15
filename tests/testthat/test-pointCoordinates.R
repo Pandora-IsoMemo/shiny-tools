@@ -14,12 +14,12 @@ test_that("pointCoordinatesServer returns correct values", {
       # Validate the returned values
       expect_equal(result$id, "Point 3")
       expect_equal(result$x, 10)
-      expect_equal(result$x_min, 5)
-      expect_equal(result$x_max, 15)
+      expect_equal(result$xmin, 5)
+      expect_equal(result$xmax, 15)
 
       expect_equal(result$y, 20)
-      expect_equal(result$y_min, 10)
-      expect_equal(result$y_max, 30)
+      expect_equal(result$ymin, 10)
+      expect_equal(result$ymax, 30)
     }
   )
 })

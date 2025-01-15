@@ -1,7 +1,7 @@
 test_that("pointCoordinatesServer returns correct values", {
   testServer(
     pointCoordinatesServer,
-    args = list(id = "test"),
+    args = list(id = "test", default_name = reactive("Point 1")),
     {
       # Simulate user inputs
       session$setInputs(`label` = "Point 3")

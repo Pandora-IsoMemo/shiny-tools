@@ -1,4 +1,4 @@
-pointCoordinatesUI <- function(id, title = "Coordinates", titleTag = "h4"){
+pointCoordinatesUI <- function(id, title = NULL, titleTag = "h4"){
   ns <- NS(id)
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
@@ -38,21 +38,33 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
 
       observe({
         req(default_name())
+        logDebug("%s: Update 'label'", id)
         updateTextInput(session, "label", value = default_name())
       }) %>%
         bindEvent(default_name())
 
-      reactive({
-        list(
-          id = input[["label"]],
-          x = input[["x-value"]],
-          x_min = input[["x-min"]],
-          x_max = input[["x-max"]],
-          y = input[["y-value"]],
-          y_min = input[["y-min"]],
-          y_max = input[["y-max"]]
-        )
+      new_point <- reactiveVal()
+
+      observe({
+        if (length(names(input)) <= 1 ||
+            any(is.na(sapply(c("x-value", "y-value"), function(name) input[[name]]))) ||
+            input[["label"]] == "") {
+          # if inputs are not yet initialized or missing
+          new_point(NULL)
+        } else {
+          new_point(list(
+            id = input[["label"]],
+            x = input[["x-value"]],
+            y = input[["y-value"]],
+            x_min = input[["x-min"]],
+            x_max = input[["x-max"]],
+            y_min = input[["y-min"]],
+            y_max = input[["y-max"]]
+          ))
+        }
       })
+
+      new_point
     })
 }
 
@@ -61,11 +73,16 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
 # Please comment this code before building the package
 
 # ui <- fluidPage(
-#   pointCoordinatesUI("points")
+#   pointCoordinatesUI("points"),
+#   verbatimTextOutput("point")
 # )
 #
 # server <- function(input, output, session) {
-#   pointCoordinatesServer("points", default_name = reactive("Point 10"))
+#   new_point <- pointCoordinatesServer("points", default_name = reactive("Point 10"))
+#
+#   output$point <- renderPrint({
+#     new_point()
+#   })
 # }
 #
 # shinyApp(ui, server)

@@ -21,6 +21,7 @@ defaultBaseTitle:
   hide: false
 
 defaultGGText:
+  text: ""
   fontFamily: "sans"
   fontType: "plain"
   color: "#000000"
@@ -31,6 +32,7 @@ defaultGGText:
   vjust: 0.5
 
 defaultBaseText:
+  text: ""
   fontFamily: "sans"
   fontType: 1
   color: "#000000"

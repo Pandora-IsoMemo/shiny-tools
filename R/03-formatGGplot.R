@@ -288,9 +288,46 @@ getSecAxis <- function(rescaleFactors, title) {
 
 # POINTS ----
 
+#' Add Custom Points To GGplot
+#'
+#' Add custom points to a ggplot.
+#'
+#' @param plot (ggplot)
+#' @param data (data.frame) data to be plotted
+#' @param pointStyle (list) named list with style definitions, or output of \code{plotPointsServer}
+#' @param labelStyle (list) named list with style definitions, or output of \code{plotTextServer}
+#'
+#' @export
+addCustomPointsToGGplot <- function(plot, data = NULL, pointStyle = getPointStyle(), labelStyle = getLabelStyle()) {
+
+  # add coordinates
+  ## add points and format points
+  plot <- plot %>%
+    formatPointsOfGGplot(data = data, pointStyle = pointStyle)
+
+  ## add and format errors
+
+  # format labels
+}
+
+#' Get Default Point Style
+#'
+#' @export
+getPointStyle <- function() {
+  config()$defaultPointStyle$dataPoints
+}
+
+#' Get Default Point Style
+#'
+#' @export
+getLabelStyle <- function() {
+  config()$defaultGGText
+}
+
 #' Point Style Of GGplot
 #'
-#' Style of points is defined with \code{pointStyle}. Overwrites previous definitions of \code{geom_point}
+#' Style of points is defined with \code{pointStyle}. Overwrites previous definitions of
+#'  \code{geom_point} for the same data.
 #'
 #' @param plot (ggplot)
 #' @param pointStyle (list) named list with style definitions, or output of \code{plotPointsServer}
@@ -303,16 +340,28 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
     pointStyle <- config()$defaultPointStyle
   }
 
-  dataPoints <- pointStyle[["dataPoints"]]
+  # check list structure
+  if ("dataPoints" %in% names(pointStyle)) {
+    pointStyle <- pointStyle[["dataPoints"]]
+  }
+
+  if (!(all(c("symbol", "size", "color", "colorBg", "alpha", "hide") %in% names(pointStyle)))) {
+    missingElements <- setdiff(c("symbol", "size", "color", "colorBg", "alpha", "hide"), names(pointStyle))
+    stop(sprintf("Missing elements in 'pointStyle': %s", paste(missingElements, collapse = ", ")))
+  }
 
   plot +
     geom_point(data = data,
-               shape = dataPoints[["symbol"]],
-               size = dataPoints[["size"]],
-               colour = dataPoints[["color"]],
-               fill = dataPoints[["colorBg"]],
-               alpha = ifelse(dataPoints[["hide"]], 0, dataPoints[["alpha"]]),
+               shape = pointStyle[["symbol"]],
+               size = pointStyle[["size"]],
+               colour = pointStyle[["color"]],
+               fill = pointStyle[["colorBg"]],
+               alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
                ...)
+}
+
+formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = NULL, ...) {
+
 }
 
 # LEGEND ----

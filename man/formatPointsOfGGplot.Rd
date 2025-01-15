@@ -55,5 +55,6 @@ lists which parameters it can accept.
 }}
 }
 \description{
-Style of points is defined with \code{pointStyle}. Overwrites previous definitions of \code{geom_point}
+Style of points is defined with \code{pointStyle}. Overwrites previous definitions of
+ \code{geom_point} for the same data.
 }

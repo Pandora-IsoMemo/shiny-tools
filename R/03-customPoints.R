@@ -9,7 +9,7 @@ customPointsUI <- function(id, title = "Custom Points", titleTag = "h4") {
       selected = "Add",
       tabPanel("Add", addCustomPointUI(ns("add"))),
       tabPanel("Remove", removeCustomPointsUI(ns("remove"))),
-      tabPanel("Style", styleCustomPointUI(ns("style")))
+      tabPanel("Style", styleCustomPointsUI(ns("style")))
     )
   )
 }
@@ -24,7 +24,7 @@ customPointsServer <- function(id) {
 
       addCustomPointServer("add", custom_points = custom_points)
       removeCustomPointsServer("remove", custom_points = custom_points)
-      #styleCustomPointServer(ns("style"), custom_points = custom_points)
+      styleCustomPointsServer("style", custom_points = custom_points)
 
       return(custom_points)
     }
@@ -130,17 +130,56 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
   )
 }
 
-styleCustomPointUI <- function(id) {
+styleCustomPointsUI <- function(id) {
   ns <- NS(id)
   tagList(
+    tags$br(),
     selectInput(
-      ns("pointsToRemove"),
-      label = "Select points to format",
+      ns("pointsToStyle"),
+      label = "Select points to style",
       choices = c("Add a point ..." = ""),
       multiple = TRUE
     ),
+    # ui to style points ...
     actionButton(ns("apply"), "Format point")
   )
+}
+
+styleCustomPointsServer <- function(id, custom_points = reactiveVal()) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+      ns <- session$ns
+
+      observe({
+        logDebug("%s: update 'input$pointsToStyle'", id)
+
+        if (length(custom_points()) == 0) {
+          new_choices <- c("Add a point ..." = "")
+        } else {
+          new_choices <- names(custom_points())
+        }
+
+        updateSelectInput(
+          session,
+          "pointsToStyle",
+          choices = new_choices
+        )
+      })
+
+      observeEvent(input[["apply"]], {
+        logDebug("%s: Formatting points", id)
+
+        req(length(input[["pointsToStyle"]]) > 0)
+        all_points <- custom_points()
+
+        # logic to style points ...
+
+        custom_points(all_points)
+      })
+
+      return(custom_points)
+    })
 }
 
 # TEST MODULE -------------------------------------------------------------
@@ -158,8 +197,8 @@ styleCustomPointUI <- function(id) {
 #   custom_points <- customPointsServer("points")
 #
 #   output$custom_points <- renderPrint({
-#     custom_points()
-#       })
+#     custom_points() %>% lapply(FUN = as.data.frame) %>% dplyr::bind_rows()
+#   })
 # }
 #
 # shinyApp(ui, server)

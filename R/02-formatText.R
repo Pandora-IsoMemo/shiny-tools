@@ -1,14 +1,13 @@
-#' Text Format UI
-#'
-#' @param id id of parent(!) module
-#' @rdname plotTitlesServer
-#'
-#' @return tagList
+# Text Format UI
+#
+# @param id id of parent(!) module
+# @rdname plotTitlesServer
+#
+# @return tagList
 formatTextUI <- function(id,
                          type = c("ggplot", "base", "none"),
                          initTitle = NULL,
-                         initAxis = NULL
-) {
+                         initAxis = NULL) {
   type <- match.arg(type)
 
   if (is.null(initTitle)) {
@@ -29,27 +28,40 @@ formatTextUI <- function(id,
       value = initTitle[["hide"]],
       width = "100%"
     ),
+    conditionalPanel(
+      ns = ns,
+      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle', 'yAxisTitle2'].includes(output.label_name)",
+      checkboxInput(
+        ns("useExpression"),
+        label = "Use mathematical annotation",
+        value = FALSE,
+        width = "100%"
+      ),
       conditionalPanel(
         ns = ns,
-        condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle', 'yAxisTitle2'].includes(output.label_name)",
-        checkboxInput(ns("useExpression"),
-                      label = "Use mathematical annotation",
-                      value = FALSE,
-                      width = "100%"),
-        conditionalPanel(
-          ns = ns,
-          condition = "input.useExpression",
-          uiOutput(ns("expressionInput")),
-          helpText('Example: Use \u003C"Bayesian Estimated" ~ delta^~13~C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.', width = "100%"),
-          helpText(HTML('Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'), width = "100%")
+        condition = "input.useExpression",
+        uiOutput(ns("expressionInput")),
+        helpText(
+          'Example: Use \u003C"Bayesian Estimated" ~ delta^~13~C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.',
+          width = "100%"
         ),
-        conditionalPanel(
-          ns = ns,
-          condition = "!input.useExpression",
-          textInput(ns("text"), label = "Text",
-                    value = initTitle[["text"]],
-                    placeholder = "Custom title ...")
-        ),
+        helpText(
+          HTML(
+            'Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'
+          ),
+          width = "100%"
+        )
+      ),
+      conditionalPanel(
+        ns = ns,
+        condition = "!input.useExpression",
+        textInput(
+          ns("text"),
+          label = "Text",
+          value = initTitle[["text"]],
+          placeholder = "Custom title ..."
+        )
+      ),
     ),
     conditionalPanel(
       ns = ns,
@@ -59,12 +71,15 @@ formatTextUI <- function(id,
         label = "Font type",
         choices = fontChoicesSelect(type = type),
         selected = initTitle[["fontType"]],
-        width = "100%")
+        width = "100%"
+      )
     ),
-    colourInput(ns("color"),
-                label = "Text color",
-                value = initTitle[["color"]],
-                width = "100%"),
+    colourInput(
+      ns("color"),
+      label = "Text color",
+      value = initTitle[["color"]],
+      width = "100%"
+    ),
     selectInput(
       inputId = ns("fontFamily"),
       label = "Font family",
@@ -123,86 +138,85 @@ formatTextUI <- function(id,
 #  May contain elements from \code{c("title", "axis", "yaxis2", "legend")}.
 # @param show_parse_button (logical) Show parse button for parsing mathematical expressions.
 # @inheritParams plotExportServer
-#
-# @export
 formatTextServer <- function(id,
-                             init_text,
+                             init_text = reactive(defaultInitTitle()),
                              plot_type = c("none", "ggplot", "base"),
                              text_type = c("title", "axis"),
                              show_parse_button = TRUE,
                              label_name = reactive("plotTitle")) {
   plot_type <- match.arg(plot_type)
-  # availableElements <- availableElements %>%
-  #   checkElements()
 
-  moduleServer(id,
-               function(input, output, session) {
-                 ns <- session$ns
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
 
-                 new_text <- reactiveValues()
-                 #
-                 # if (inherits(initText, "list")) {
-                 #   #default_text <- defaultTextFormat(type = plot_type)
-                 #   #initText <- initText %>% addMissingElements(default_text[[text_type]])
-                 #
-                 #   for (i in names(initText)) {
-                 #     new_text[[i]] <- initText[[i]]
-                 #   }
-                 # } else {
-                 #   new_text <- initText
-                 # }
+    new_text <- reactiveValues()
 
-                 observe({
-                   logDebug("%s: Entering observe 'init_text'", id)
-                   for (name in names(init_text())) {
-                     new_text[[name]] <- init_text()[[name]]
-                   }
-                 }) %>%
-                   bindEvent(init_text())
+    observe({
+      logDebug("%s: Entering observe 'init_text'", id)
+      for (name in names(init_text())) {
+        new_text[[name]] <- init_text()[[name]]
+      }
+    }) %>%
+      bindEvent(init_text())
 
-                 # Bind the reactive value to an output for the conditionalPanel
-                 output$label_name <- reactive({
-                   label_name()
-                 })
+    # Bind the reactive value to an output for the conditionalPanel
+    output$label_name <- reactive({
+      label_name()
+    })
 
-                 # Mark the output as usable in conditionalPanel
-                 outputOptions(output, "label_name", suspendWhenHidden = FALSE)
+    # Mark the output as usable in conditionalPanel
+    outputOptions(output, "label_name", suspendWhenHidden = FALSE)
 
-                 output$expressionInput <- renderUI({
-                   if (show_parse_button) {
-                     fluidRow(
-                       column(width = 8,
-                              textInput(ns("expression"), label = "Expression",
-                                        value = init_text()[["text"]],
-                                        placeholder = "Custom title ...")),
-                       column(width = 4,
-                              style = "margin-top: 1.7em;",
-                              actionButton(ns("parseExpression"), "Parse", width = "100%"))
-                     )
-                   } else {
-                     textInput(ns("expression"), label = "Expression",
-                               value = init_text()[["expression"]],
-                               placeholder = "Custom title ...")
-                   }
-                 })
+    output$expressionInput <- renderUI({
+      if (show_parse_button) {
+        fluidRow(
+          column(
+            width = 8,
+            textInput(
+              ns("expression"),
+              label = "Expression",
+              value = init_text()[["text"]],
+              placeholder = "Custom title ..."
+            )
+          ),
+          column(
+            width = 4,
+            style = "margin-top: 1.7em;",
+            actionButton(ns("parseExpression"), "Parse", width = "100%")
+          )
+        )
+      } else {
+        textInput(
+          ns("expression"),
+          label = "Expression",
+          value = init_text()[["expression"]],
+          placeholder = "Custom title ..."
+        )
+      }
+    })
 
-                 observe({
-                   req(label_name())
-                   logDebug("%s: Entering observe 'label_name'", id)
+    observe({
+      req(label_name())
+      logDebug("%s: Entering observe 'label_name'", id)
 
-                   browser()
-                   # load prev_text element inputs of the selected label
-                   # the update seems not to be working ----
-                   updateUserInputs(input = input, output = output, session = session, userInputs = init_text())
-                 }) %>%
-                   bindEvent(label_name())
+      updateUserInputs(
+        input = input,
+        output = output,
+        session = session,
+        userInputs = init_text()
+      )
+    }) %>%
+      bindEvent(label_name())
 
-                 new_text <- observeAndUpdateTextElements(input, output, session, id, new_text, show_parse_button)
+    new_text <- observeAndUpdateTextElements(input, output, session, id, new_text, show_parse_button)
 
-                 return(reactive(reactiveValuesToList(new_text)))
-               })
+    return(reactive(reactiveValuesToList(new_text)))
+  })
 }
 
+defaultInitTitle <- function() {
+  defaultInitText()[["plotTitle"]]
+}
 
 # Observe Text Elements Of Label (no docu for 'man' because it is a helper function)
 #
@@ -214,7 +228,12 @@ formatTextServer <- function(id,
 # @param session session from server function
 # @param plot_text (reactiveValue) contains text elements
 # @inheritParams plotTitlesServer
-observeAndUpdateTextElements <- function(input, output, session, id, plot_text, show_parse_button) {
+observeAndUpdateTextElements <- function(input,
+                                         output,
+                                         session,
+                                         id,
+                                         plot_text,
+                                         show_parse_button) {
   # set up all observers for text elements
   # we cannot loop over the elements. When looping reactivity gets lost.
 

@@ -9,7 +9,7 @@
 #' @export
 plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = deprecated()) {
   if (lifecycle::is_present(initRanges)) {
-    deprecate_warn("24.10.0", "plotRangesUI(initRanges)", details = "This parameter is no longer needed.")
+    deprecate_warn("24.10.0", "plotRangesUI(initRanges)", details = "This parameter is no longer needed here and controlled only through 'plotRangesServer'.")
   }
 
   ns <- NS(id)

@@ -104,6 +104,7 @@ test_that("Test defaultInitText", {
         hide = FALSE
       ),
       xAxisText = list(
+        text = "",
         fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
@@ -124,6 +125,7 @@ test_that("Test defaultInitText", {
         hide = FALSE
       ),
       yAxisText = list(
+        text = "",
         fontFamily = "sans",
         fontType = "plain",
         color = "#000000",
@@ -144,6 +146,7 @@ test_that("Test defaultInitText", {
         hide = FALSE
       ),
       legendText = list(
+        text = "",
         fontFamily = "sans",
         fontType = "plain",
         color = "#000000",

@@ -9,16 +9,13 @@ plotTitlesUI <- function(id,
                          title = "Plot Texts",
                          titleTag = "h4",
                          type = c("ggplot", "base", "none"),
-                         initText = NULL
-                         ) {
+                         initText = NULL) {
   type <- match.arg(type)
 
   if (is.null(initText)) {
     # if null: take values from config
-    initText <- list(
-      plotTitle = defaultTextFormat(type = type)[["title"]],
-      xAxisText = defaultTextFormat(type = type)[["text"]]
-    )
+    initText <- list(plotTitle = defaultTextFormat(type = type)[["title"]],
+                     xAxisText = defaultTextFormat(type = type)[["text"]])
   }
 
   ns <- NS(id)
@@ -31,10 +28,11 @@ plotTitlesUI <- function(id,
     ),
 
     # extracting UI
-    formatTextUI(ns(""), # id must be the input$labelName??? Must id be rendered?? OR use parent id
-                 type = type,
-                 initTitle = initText[["plotTitle"]],
-                 initAxis = initText[["xAxisText"]]
+    formatTextUI(
+      ns("text"),
+      type = type,
+      initTitle = initText[["plotTitle"]],
+      initAxis = initText[["xAxisText"]]
     )
   )
 }
@@ -92,7 +90,7 @@ plotTitlesServer <- function(id,
                  }) %>%
                    bindEvent(input[["labelName"]])
 
-                 updated_text <- formatTextServer("",
+                 updated_text <- formatTextServer("text",
                                                   init_text = init_text,
                                                   plot_type = c("none", "ggplot", "base"),
                                                   text_type = c("title", "axis"),
@@ -103,7 +101,8 @@ plotTitlesServer <- function(id,
                    logDebug("%s: Entering update plotText", id)
                    req(input[["labelName"]])
 
-                   plotText[[input[["labelName"]]]] <- updated_text()
+                   plotText[[input[["labelName"]]]] <- updated_text() %>%
+                     removeHiddenInputs(names(input))
                  }) %>%
                    bindEvent(updated_text())
 
@@ -255,6 +254,20 @@ keep_deepest_names <- function(x) {
 
   names(x) <- deepestNames
   return(x)
+}
+
+removeHiddenInputs <- function(new_text, input_names) {
+  # remove "labelName" which is an input but not an entry in new_text
+  availableElements <- input_names[input_names != "labelName"]
+
+  # gsub the namespace of the submodule: "text-"
+  availableElements <- gsub("text-", "", availableElements)
+
+  # keep all if nothing found (e.g. when initializing the module)
+  if (!(any(availableElements %in% names(new_text)))) return(new_text)
+
+  # select only available elements
+  new_text[availableElements]
 }
 
 # TEST MODULE -------------------------------------------------------------

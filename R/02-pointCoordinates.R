@@ -1,9 +1,10 @@
-pointCoordinatesUI <- function(id, title = "Custom Points", titleTag = "h4"){
+pointCoordinatesUI <- function(id, title = "Coordinates", titleTag = "h4"){
   ns <- NS(id)
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
-    pointDimensionUI("x", title = "X", titleTag = "h5"),
-    pointDimensionUI("y", title = "Y", titleTag = "h5")
+    textInput(ns("label"), label = "Point Label", value = "Point 1"),
+    pointDimensionUI(ns("x"), title = "X", titleTag = "h5"),
+    pointDimensionUI(ns("y"), title = "Y", titleTag = "h5")
   )
 }
 
@@ -29,14 +30,21 @@ pointDimensionUI <- function(id, title = NULL, titleTag = "h4"){
   )
 }
 
-pointCoordinatesServer <- function(id) {
+pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
   moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
 
+      observe({
+        req(default_name())
+        updateTextInput(session, "label", value = default_name())
+      }) %>%
+        bindEvent(default_name())
+
       reactive({
         list(
+          id = input[["label"]],
           x = input[["x-value"]],
           x_min = input[["x-min"]],
           x_max = input[["x-max"]],
@@ -57,7 +65,7 @@ pointCoordinatesServer <- function(id) {
 # )
 #
 # server <- function(input, output, session) {
-#   pointCoordinatesServer("points")
+#   pointCoordinatesServer("points", default_name = reactive("Point 10"))
 # }
 #
 # shinyApp(ui, server)

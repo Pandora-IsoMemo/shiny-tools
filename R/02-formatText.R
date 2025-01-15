@@ -30,7 +30,7 @@ formatTextUI <- function(id,
     ),
     conditionalPanel(
       ns = ns,
-      condition = "['legendTitle', 'plotTitle', 'xAxisTitle', 'yAxisTitle', 'yAxisTitle2'].includes(output.label_name)",
+      condition = "output.show_text_ui",
       checkboxInput(
         ns("useExpression"),
         label = "Use mathematical annotation",
@@ -98,7 +98,7 @@ formatTextUI <- function(id,
     ),
     conditionalPanel(
       ns = ns,
-      condition = "['xAxisText', 'yAxisText', 'yAxisText2'].includes(output.label_name)",
+      condition = "output.show_position_ui",
       sliderInput(
         ns("angle"),
         label = "Text angle",
@@ -160,12 +160,32 @@ formatTextServer <- function(id,
       bindEvent(init_text())
 
     # Bind the reactive value to an output for the conditionalPanel
-    output$label_name <- reactive({
-      label_name()
+    show_text_ui <- reactive({
+      if (label_name() %in% c("plotTitle", "legendTitle", "xAxisTitle", "yAxisTitle", "yAxisTitle2")) {
+        TRUE
+      } else {
+        FALSE
+      }
+    })
+    output$show_text_ui <- reactive({
+      show_text_ui()
+    })
+
+    show_position_ui <- reactive({
+      show_position_ui()
+    })
+    output$show_position_ui <- reactive({
+      if (label_name() %in% c("xAxisText", "yAxisText", "yAxisText2")) {
+        TRUE
+      } else {
+        FALSE
+      }
     })
 
     # Mark the output as usable in conditionalPanel
-    outputOptions(output, "label_name", suspendWhenHidden = FALSE)
+    outputOptions(output, "show_text_ui", suspendWhenHidden = FALSE)
+    outputOptions(output, "show_position_ui", suspendWhenHidden = FALSE)
+
 
     output$expressionInput <- renderUI({
       if (show_parse_button) {

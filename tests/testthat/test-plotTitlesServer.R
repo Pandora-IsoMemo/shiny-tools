@@ -1,16 +1,20 @@
-test_that("Test module plotTitlesServer", {
+test_that("Test module plotTitlesServer for a title", {
   testServer(plotTitlesServer, args = list(type = "ggplot", initText = NULL), {
     # Arrange
-    print("test plot titles")
+    print("test plot titles for titles")
     # Act
     session$setInputs(
-      labelName = "xAxisTitle",
-      text = "test",
-      fontFamily = "mono",
-      fontType = "bold",
-      color = "#FFFFFF",
-      size = 5,
-      hide = FALSE
+      labelName = "xAxisTitle"
+    )
+    session$setInputs(
+      `text-text` = "test",
+      `text-useExpression` = FALSE,
+      `text-expression` = "",
+      `text-fontFamily` = "mono",
+      `text-fontType` = "bold",
+      `text-color` = "#FFFFFF",
+      `text-size` = 5,
+      `text-hide` = FALSE
     )
 
     expect_equal(
@@ -39,14 +43,27 @@ test_that("Test module plotTitlesServer", {
         hide = FALSE
       )
     )
+  })
+})
+
+test_that("Test module plotTitlesServer for axis text", {
+  testServer(plotTitlesServer, args = list(type = "ggplot", initText = NULL), {
+    # Arrange
+    print("test plot titles for axis text")
+    # Act
+    session$setInputs(
+      labelName = "yAxisText"
+    )
 
     session$setInputs(
-      labelName = "yAxisText",
-      fontFamily = "serif",
-      fontType = "bold",
-      color = "#FFFFFF",
-      size = 5,
-      hide = FALSE
+      `text-fontFamily` = "serif",
+      `text-fontType` = "bold",
+      `text-color` = "#FFFFFF",
+      `text-size` = 5,
+      `text-hide` = FALSE,
+      `text-angle` = 0,
+      `text-hjust` = 0.5,
+      `text-vjust` = 0.5
     )
 
     expect_equal(

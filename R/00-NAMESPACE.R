@@ -2,7 +2,7 @@
 
 #' @importFrom colourpicker colourInput
 #' @importFrom futile.logger flog.debug flog.info flog.warn
-#' @importFrom ggplot2 element_blank element_text geom_point ggplot_build ggtitle labs
+#' @importFrom ggplot2 aes element_blank element_text geom_point ggplot_build ggtitle labs
 #'  scale_x_continuous scale_x_discrete scale_y_continuous scale_y_discrete
 #'  sec_axis theme waiver xlab ylab
 #' @importFrom grDevices dev.off pdf png recordPlot svg tiff
@@ -11,7 +11,7 @@
 #' @importFrom openxlsx addWorksheet createWorkbook saveWorkbook writeData write.xlsx
 #' @importFrom plotly renderPlotly plotlyOutput save_image
 #' @importFrom rjson toJSON
-#' @importFrom rlang eval_tidy
+#' @importFrom rlang eval_tidy .data
 #' @importFrom scales pseudo_log_trans sqrt_trans
 #' @importFrom shinyalert shinyalert
 #' @importFrom shinyjs alert disable enable hide

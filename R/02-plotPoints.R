@@ -257,15 +257,15 @@ symbolChoicesSelect <- function() {
 #     ggplot2::ggplot(data, ggplot2::aes(x = x, y = y))
 #   }
 #
-#   output$plot <- renderPlot({
-#     testPlotFun() %>%
-#       formatPointsOfGGplot(pointStyle = thisStyle)
-#   })
-#
 #   thisStyle <- plotPointsServer(id = "testMod",
 #                                 type = "ggplot",
 #                                 initStyle = testStyle(),
 #                                 hideInput = c("color"))
+#
+#   output$plot <- renderPlot({
+#     testPlotFun() %>%
+#       formatPointsOfGGplot(pointStyle = thisStyle)
+#   })
 # }
 #
 # shinyApp(ui = ui, server = server)

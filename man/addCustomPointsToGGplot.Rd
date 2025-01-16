@@ -4,12 +4,7 @@
 \alias{addCustomPointsToGGplot}
 \title{Add Custom Points To GGplot}
 \usage{
-addCustomPointsToGGplot(
-  plot,
-  data = NULL,
-  pointStyle = getPointStyle(),
-  labelStyle = getLabelStyle()
-)
+addCustomPointsToGGplot(plot, custom_points)
 }
 \arguments{
 \item{plot}{(ggplot)}

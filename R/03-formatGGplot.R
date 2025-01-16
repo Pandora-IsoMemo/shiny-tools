@@ -298,16 +298,21 @@ getSecAxis <- function(rescaleFactors, title) {
 #' @param labelStyle (list) named list with style definitions, or output of \code{plotTextServer}
 #'
 #' @export
-addCustomPointsToGGplot <- function(plot, data = NULL, pointStyle = getPointStyle(), labelStyle = getLabelStyle()) {
+addCustomPointsToGGplot <- function(plot, custom_points) {
+  point_data <- custom_points %>% lapply(FUN = as.data.frame) %>% dplyr::bind_rows()
 
   # add coordinates
   ## add points and format points
+  pointStyle <- getPointStyle()
   plot <- plot %>%
-    formatPointsOfGGplot(data = data, pointStyle = pointStyle)
+    formatPointsOfGGplot(data = point_data, pointStyle = pointStyle, aes(x = .data$x, y = .data$y))
 
   ## add and format errors
 
   # format labels
+  #label_style <- point_data[intersect(names(getLabelStyle()), names(point_data))]
+
+  plot
 }
 
 #' Get Default Point Style

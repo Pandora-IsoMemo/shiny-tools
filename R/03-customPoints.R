@@ -20,7 +20,8 @@ customPointsUI <- function(id,
       id = ns("custom_points"),
       selected = "Add",
       tabPanel("Add", addCustomPointUI(ns("add"))),
-      tabPanel("Style", styleCustomPointsUI(ns("style"))),
+      tabPanel("Format Point", stylePointsUI(ns("style_point"))),
+      tabPanel("Format Label", stylePointLabelsUI(ns("style_label"))),
       tabPanel("Remove", removeCustomPointsUI(ns("remove")))
     )
   )
@@ -40,7 +41,8 @@ customPointsServer <- function(id) {
     custom_points <- reactiveVal()
 
     addCustomPointServer("add", custom_points)
-    styleCustomPointsServer("style", custom_points)
+    stylePointsServer("style_point", custom_points)
+    stylePointLabelsServer("style_label", custom_points)
     removeCustomPointsServer("remove", custom_points)
 
     return(custom_points)
@@ -143,18 +145,84 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
-# UI for styling custom points
-# @param id namespace id
-# @param plot_type (character) type of plot, one of "ggplot", "base", "none"
-styleCustomPointsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
-  plot_type <- match.arg(plot_type)
+stylePointsUI <- function(id) {
   ns <- NS(id)
 
   tagList(
     tags$br(),
     selectInput(
       ns("pointsToStyle"),
-      label = "Select points to style",
+      label = "Select point(s)",
+      choices = c("Add a point ..." = ""),
+      multiple = TRUE
+    ),
+    plotPointsUI(ns("point"), type = "ggplot"),
+    actionButton(ns("apply"), "Apply")
+  )
+}
+
+stylePointsServer <- function(id, custom_points = reactiveVal()) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+
+    # set default style
+    default_style <- config()$defaultPointStyle["dataPoints"]
+
+    # observe custom_points
+    observe({
+      logDebug("%s: update choices of 'input$pointsToStyle'", id)
+
+      custom_point_ids <- names(custom_points())
+      updateSelectInput(session, "pointsToStyle", choices = getPointChoices(custom_point_ids))
+
+      req(length(custom_point_ids) > 0)
+      logDebug("%s: set point styles if empty", id)
+
+      all_points <- custom_points() %>%
+        initFormat(default_format = default_style[["dataPoints"]], prefix = "point_")
+      custom_points(all_points)
+    })
+
+    # disable button if nothing is selected
+    observe({
+      if (length(input[["pointsToStyle"]]) == 0 ||
+          any(input[["pointsToStyle"]] == "")) {
+        logDebug("%s: Disable button", id)
+        shinyjs::disable(ns("apply"), asis = TRUE)
+      } else {
+        logDebug("%s: Enable button", id)
+        shinyjs::enable(ns("apply"), asis = TRUE)
+      }
+    })
+
+    style <- plotPointsServer("point", type = "ggplot", initStyle = default_style)
+
+    observe({
+      logDebug("%s: Formatting points", id)
+
+      all_points <- custom_points() %>%
+        updateFormat(selected_ids = input[["pointsToStyle"]],
+                     new_format = style$dataPoints,
+                     prefix = "point_")
+
+      custom_points(all_points)
+    }) %>%
+      bindEvent(input[["apply"]])
+  })
+}
+
+# UI for styling custom points
+# @param id namespace id
+# @param plot_type (character) type of plot, one of "ggplot", "base", "none"
+stylePointLabelsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
+  plot_type <- match.arg(plot_type)
+  ns <- NS(id)
+
+  tagList(
+    tags$br(),
+    selectInput(
+      ns("labelsToStyle"),
+      label = "Select point(s)",
       choices = c("Add a point ..." = ""),
       multiple = TRUE
     ),
@@ -172,7 +240,7 @@ styleCustomPointsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
 # @param id namespace id
 # @param custom_points reactiveVal
 # @param plot_type (character) type of plot, one of "ggplot", "base", "none"
-styleCustomPointsServer <- function(id,
+stylePointLabelsServer <- function(id,
                                     custom_points = reactiveVal(),
                                     plot_type = c("ggplot", "base", "none")) {
   plot_type <- match.arg(plot_type)
@@ -181,27 +249,29 @@ styleCustomPointsServer <- function(id,
     default_style <- defaultInitText(type = plot_type)[["plotTitle"]]
 
     observe({
-      logDebug("%s: set custom_styles if empty, update 'input$pointsToStyle'",
-               id)
+      logDebug("%s: update choices of 'input$labelsToStyle'", id)
 
       custom_point_ids <- names(custom_points())
-      # update missing entries with default values
-      new_points <- custom_points()
-      for (id in custom_point_ids) {
-        missingEntries <- setdiff(names(default_style), names(new_points[[id]]))
-        for (name in missingEntries) {
-          new_points[[id]][[name]] <- default_style[[name]]
-        }
-      }
-      custom_points(new_points)
+      updateSelectInput(session, "labelsToStyle", choices = getPointChoices(custom_point_ids))
 
-      # update choices
-      if (length(custom_point_ids) == 0) {
-        new_choices <- c("Add a point ..." = "")
+      req(length(custom_point_ids) > 0)
+      logDebug("%s: set label styles if empty", id)
+
+      all_points <- custom_points() %>%
+        initFormat(default_format = default_style, prefix = "label_")
+      custom_points(all_points)
+    })
+
+    # disable button if nothing is selected
+    observe({
+      if (length(input[["labelsToStyle"]]) == 0 ||
+          any(input[["labelsToStyle"]] == "")) {
+        logDebug("%s: Disable button", id)
+        shinyjs::disable(ns("apply"), asis = TRUE)
       } else {
-        new_choices <- custom_point_ids
+        logDebug("%s: Enable button", id)
+        shinyjs::enable(ns("apply"), asis = TRUE)
       }
-      updateSelectInput(session, "pointsToStyle", choices = new_choices)
     })
 
     # current format settings
@@ -213,32 +283,56 @@ styleCustomPointsServer <- function(id,
       label_name = reactive("plotTitle")
     )
 
-    # disable button if nothing is selected
     observe({
-      if (length(input[["pointsToStyle"]]) == 0 ||
-          any(input[["pointsToStyle"]] == "")) {
-        logDebug("%s: Disable button", id)
-        shinyjs::disable(ns("apply"), asis = TRUE)
-      } else {
-        logDebug("%s: Enable button", id)
-        shinyjs::enable(ns("apply"), asis = TRUE)
-      }
-    })
+      logDebug("%s: Formatting point labels", id)
 
-    observe({
-      logDebug("%s: Formatting points", id)
-
-      all_points <- custom_points()
-      for (id in input[["pointsToStyle"]]) {
-        for (entry in names(updated_text())) {
-          all_points[[id]][[entry]] <- updated_text()[[entry]]
-        }
-      }
+      all_points <- custom_points() %>%
+        updateFormat(selected_ids = input[["labelsToStyle"]],
+                     new_format = updated_text(),
+                     prefix = "label_")
 
       custom_points(all_points)
     }) %>%
       bindEvent(input[["apply"]])
   })
+}
+
+getPointChoices <- function(custom_point_ids) {
+  if (length(custom_point_ids) == 0) {
+    new_choices <- c("Add a point ..." = "")
+  } else {
+    new_choices <- custom_point_ids
+  }
+
+  new_choices
+}
+
+initFormat <- function(points, default_format, prefix = "") {
+  # align names of entries
+  names(default_format) <- paste0(prefix, names(default_format))
+
+  custom_point_ids <- names(points)
+  for (id in custom_point_ids) {
+    missing_entries <- setdiff(names(default_format), names(points[[id]]))
+    for (name in missing_entries) {
+      points[[id]][[name]] <- default_format[[name]]
+    }
+  }
+
+  points
+}
+
+updateFormat <- function(points, selected_ids, new_format, prefix = "") {
+  # align names of entries
+  names(new_format) <- paste0(prefix, names(new_format))
+
+  for (id in selected_ids) {
+    for (entry in names(new_format)) {
+      points[[id]][[entry]] <- new_format[[entry]]
+    }
+  }
+
+  points
 }
 
 # TEST MODULE -------------------------------------------------------------

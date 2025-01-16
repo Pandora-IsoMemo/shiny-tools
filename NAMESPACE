@@ -2,6 +2,8 @@
 
 export(addCustomPointsToGGplot)
 export(calculateRescalingFactors)
+export(customPointsServer)
+export(customPointsUI)
 export(dataExportButton)
 export(dataExportServer)
 export(exportXLSX)

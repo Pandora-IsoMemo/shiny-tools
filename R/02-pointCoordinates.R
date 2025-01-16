@@ -5,8 +5,8 @@ pointCoordinatesUI <- function(id,
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
     textInput(ns("label"), label = "Point Label", value = "Point 1"),
-    pointDimensionUI(ns("x"), title = "X", titleTag = "h5"),
-    pointDimensionUI(ns("y"), title = "Y", titleTag = "h5")
+    pointDimensionUI(ns("x"), title = "X Dimension", titleTag = "h4"),
+    pointDimensionUI(ns("y"), title = "Y Dimension", titleTag = "h4")
   )
 }
 

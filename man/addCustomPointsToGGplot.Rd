@@ -9,11 +9,7 @@ addCustomPointsToGGplot(plot, custom_points)
 \arguments{
 \item{plot}{(ggplot)}
 
-\item{data}{(data.frame) data to be plotted}
-
-\item{pointStyle}{(list) named list with style definitions, or output of \code{plotPointsServer}}
-
-\item{labelStyle}{(list) named list with style definitions, or output of \code{plotTextServer}}
+\item{custom_points}{(list) named list with point definitions, output of \code{customPointsServer}}
 }
 \description{
 Add custom points to a ggplot.

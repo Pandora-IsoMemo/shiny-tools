@@ -57,7 +57,7 @@ addCustomPointUI <- function(id) {
   ns <- NS(id)
   tagList(tags$br(),
           pointCoordinatesUI(ns("coordinates")),
-          actionButton(ns("apply"), "Add point"))
+          actionButton(ns("apply"), "Add"))
 }
 
 # Server function for adding custom points
@@ -105,11 +105,11 @@ removeCustomPointsUI <- function(id) {
     tags$br(),
     selectInput(
       ns("pointsToRemove"),
-      label = "Select points to remove",
+      label = "Select point(s)",
       choices = c("Add a point ..." = ""),
       multiple = TRUE
     ),
-    actionButton(ns("apply"), "Remove point")
+    actionButton(ns("apply"), "Remove")
   )
 }
 
@@ -156,7 +156,7 @@ stylePointsUI <- function(id) {
       choices = c("Add a point ..." = ""),
       multiple = TRUE
     ),
-    plotPointsUI(ns("point"), type = "ggplot"),
+    plotPointsUI(ns("point"), title = NULL, type = "ggplot"),
     actionButton(ns("apply"), "Apply")
   )
 }
@@ -232,7 +232,7 @@ stylePointLabelsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
       initTitle = defaultTextFormat(type = plot_type)[["title"]],
       initAxis = defaultTextFormat(type = plot_type)[["text"]]
     ),
-    actionButton(ns("apply"), "Format point")
+    actionButton(ns("apply"), "Apply")
   )
 }
 

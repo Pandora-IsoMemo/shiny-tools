@@ -293,9 +293,7 @@ getSecAxis <- function(rescaleFactors, title) {
 #' Add custom points to a ggplot.
 #'
 #' @param plot (ggplot)
-#' @param data (data.frame) data to be plotted
-#' @param pointStyle (list) named list with style definitions, or output of \code{plotPointsServer}
-#' @param labelStyle (list) named list with style definitions, or output of \code{plotTextServer}
+#' @param custom_points (list) named list with point definitions, output of \code{customPointsServer}
 #'
 #' @export
 addCustomPointsToGGplot <- function(plot, custom_points) {

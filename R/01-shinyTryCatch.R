@@ -183,4 +183,4 @@ extractSingleTryCatch <- function(condition, type) {
 #   })
 # }
 #
-# shinyApp(ui, server)
+# shinyApp(ui = ui, server = server)

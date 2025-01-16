@@ -86,4 +86,4 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
 #   })
 # }
 #
-# shinyApp(ui, server)
+# shinyApp(ui = ui, server = server)

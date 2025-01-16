@@ -49,12 +49,13 @@ initializeReactiveObject <- function(session, id, custom_values, choices, defaul
     observe({
       logDebug("%s: Checking if all choices are present in user init_values", id)
 
-      # complete reactive values inside observer:
-      new_ranges <- init_values %>%
+      # complete reactive init_values inside observer:
+      new_values <- init_values %>%
         completeValues(choices = choices, default_values = default_values)
 
-      for (name in names(new_ranges)) {
-        init_values[[name]] <- new_ranges[[name]]
+      # update init_values with new_values
+      for (name in names(new_values)) {
+        init_values[[name]] <- new_values[[name]]
       }
     }) %>%
       bindEvent(custom_values[[names(custom_values)[1]]], once = TRUE)

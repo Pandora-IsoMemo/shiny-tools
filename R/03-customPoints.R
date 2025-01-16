@@ -279,13 +279,30 @@ stylePointLabelsServer <- function(id,
       }
     })
 
+    label_name <- reactiveVal("plotTitle")
+    init_text <- reactive({
+      if (length(input[["labelsToStyle"]]) == 0 ||
+          any(input[["labelsToStyle"]] == "")) {
+        default_style
+      } else {
+        # trigger label_name to force "updateUserInputs"
+        label_name(NULL)
+        label_name("plotTitle")
+        # load selected format
+        first_point_style <- custom_points()[input[["labelsToStyle"]]][[1]]
+        first_point_style <- first_point_style[grepl("^label_", names(first_point_style))]
+        names(first_point_style) <- gsub("^label_", "", names(first_point_style))
+        first_point_style
+      }
+    })
+
     # current format settings
     updated_text <- formatTextServer(
       "text",
-      init_text = reactive(default_style),
+      init_text = init_text, #reactive(default_style),
       text_type = c("title", "axis"),
       show_parse_button = TRUE,
-      label_name = reactive("plotTitle")
+      label_name = label_name
     )
 
     observe({

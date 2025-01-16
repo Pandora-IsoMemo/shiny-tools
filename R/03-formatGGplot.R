@@ -297,7 +297,7 @@ getSecAxis <- function(rescaleFactors, title) {
 #'
 #' @export
 addCustomPointsToGGplot <- function(plot, custom_points) {
-  point_data <- custom_points %>% lapply(FUN = as.data.frame) %>% dplyr::bind_rows()
+  point_data <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
 
   # add coordinates
   ## add points and format points

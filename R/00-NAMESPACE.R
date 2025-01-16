@@ -1,6 +1,7 @@
 #' @rawNamespace import(shiny)
 
 #' @importFrom colourpicker colourInput
+#' @importFrom dplyr bind_rows
 #' @importFrom futile.logger flog.debug flog.info flog.warn
 #' @importFrom ggplot2 aes element_blank element_text geom_point ggplot_build ggtitle labs
 #'  scale_x_continuous scale_x_discrete scale_y_continuous scale_y_discrete

@@ -57,5 +57,5 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
 
   # Test if the data in the points layer matches the input data
   expect_equal(updated_plot$layers[[2]]$data,
-               test_custom_points %>% lapply(FUN = as.data.frame) %>% dplyr::bind_rows())
+               test_custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows())
 })

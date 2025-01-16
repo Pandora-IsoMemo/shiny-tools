@@ -145,6 +145,8 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
+# UI for styling custom points
+# @param id namespace id
 stylePointsUI <- function(id) {
   ns <- NS(id)
 
@@ -161,6 +163,9 @@ stylePointsUI <- function(id) {
   )
 }
 
+# Server function for styling custom points
+# @param id namespace id
+# @param custom_points reactiveVal
 stylePointsServer <- function(id, custom_points = reactiveVal()) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -211,7 +216,7 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
-# UI for styling custom points
+# UI for styling custom point labels
 # @param id namespace id
 # @param plot_type (character) type of plot, one of "ggplot", "base", "none"
 stylePointLabelsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
@@ -236,7 +241,7 @@ stylePointLabelsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
   )
 }
 
-# Server function for styling custom points
+# Server function for styling custom point labels
 # @param id namespace id
 # @param custom_points reactiveVal
 # @param plot_type (character) type of plot, one of "ggplot", "base", "none"
@@ -350,7 +355,7 @@ updateFormat <- function(points, selected_ids, new_format, prefix = "") {
 #   custom_points <- customPointsServer("points")
 #
 #   output$custom_points <- renderPrint({
-#     custom_points() %>% lapply(FUN = as.data.frame) %>% dplyr::bind_rows()
+#     custom_points() %>% lapply(FUN = as.data.frame) %>% bind_rows()
 #   })
 # }
 #

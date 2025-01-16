@@ -4,16 +4,10 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
     ggplot2::geom_line()
 
   # Define a dataset for points
-  points_data <- data.frame(
-    wt = c(2.5, 3.5, 4.5),
-    mpg = c(15, 20, 25)
-  )
+  points_data <- data.frame(wt = c(2.5, 3.5, 4.5), mpg = c(15, 20, 25))
 
   # Call the function to add points
-  updated_plot <- addCustomPointsToGGplot(
-    plot = base_plot,
-    data = points_data
-  )
+  updated_plot <- addCustomPointsToGGplot(plot = base_plot, data = points_data)
 
   # Test if the updated plot has the expected layers
   expect_equal(length(updated_plot$layers), 2) # One line layer + one point layer

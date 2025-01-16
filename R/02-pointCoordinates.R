@@ -1,4 +1,6 @@
-pointCoordinatesUI <- function(id, title = NULL, titleTag = "h4"){
+pointCoordinatesUI <- function(id,
+                               title = NULL,
+                               titleTag = "h4") {
   ns <- NS(id)
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
@@ -8,52 +10,42 @@ pointCoordinatesUI <- function(id, title = NULL, titleTag = "h4"){
   )
 }
 
-pointDimensionUI <- function(id, title = NULL, titleTag = "h4"){
+pointDimensionUI <- function(id,
+                             title = NULL,
+                             titleTag = "h4") {
   ns <- NS(id)
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
-    numericInput(
-      ns("value"),
-      label = "Value",
-      value = numeric(0)
-    ),
-    numericInput(
-      ns("min"),
-      label = "Minimum",
-      value = numeric(0)
-    ),
-    numericInput(
-      ns("max"),
-      label = "Maximum",
-      value = numeric(0)
-    )
+    numericInput(ns("value"), label = "Value", value = numeric(0)),
+    numericInput(ns("min"), label = "Minimum", value = numeric(0)),
+    numericInput(ns("max"), label = "Maximum", value = numeric(0))
   )
 }
 
 pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
-  moduleServer(
-    id,
-    function(input, output, session) {
-      ns <- session$ns
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
 
-      observe({
-        req(default_name())
-        logDebug("%s: Update 'label'", id)
-        updateTextInput(session, "label", value = default_name())
-      }) %>%
-        bindEvent(default_name())
+    observe({
+      req(default_name())
+      logDebug("%s: Update 'label'", id)
+      updateTextInput(session, "label", value = default_name())
+    }) %>%
+      bindEvent(default_name())
 
-      new_point <- reactiveVal()
+    new_point <- reactiveVal()
 
-      observe({
-        logDebug("%s: Update 'new_point'", id)
-        if (length(names(input)) <= 1 ||
-            any(is.na(sapply(c("x-value", "y-value"), function(name) input[[name]]))) ||
-            input[["label"]] == "") {
-          # if inputs are not yet initialized or missing
-          new_point(NULL)
-        } else {
-          new_point(list(
+    observe({
+      logDebug("%s: Update 'new_point'", id)
+      if (length(names(input)) <= 1 ||
+          any(is.na(sapply(c("x-value", "y-value"), function(name)
+            input[[name]]))) ||
+          input[["label"]] == "") {
+        # if inputs are not yet initialized or missing
+        new_point(NULL)
+      } else {
+        new_point(
+          list(
             id = input[["label"]],
             x = input[["x-value"]],
             y = input[["y-value"]],
@@ -61,12 +53,13 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
             xmax = input[["x-max"]],
             ymin = input[["y-min"]],
             ymax = input[["y-max"]]
-          ))
-        }
-      })
-
-      new_point
+          )
+        )
+      }
     })
+
+    new_point
+  })
 }
 
 # TEST MODULE -------------------------------------------------------------

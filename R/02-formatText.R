@@ -157,7 +157,11 @@ formatTextServer <- function(id,
 
     # Bind the reactive value to an output for the conditionalPanel
     show_text_ui <- reactive({
-      if (label_name() %in% c("plotTitle", "legendTitle", "xAxisTitle", "yAxisTitle", "yAxisTitle2")) {
+      if (label_name() %in% c("plotTitle",
+                              "legendTitle",
+                              "xAxisTitle",
+                              "yAxisTitle",
+                              "yAxisTitle2")) {
         TRUE
       } else {
         FALSE
@@ -245,15 +249,20 @@ availableFonts <- function() {
 fontChoicesSelect <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
-  switch(type,
-         "base" = c("plain text" = 1,
-                    "bold face" = 2,
-                    "italic" = 3,
-                    "bold italic" = 4),
-         "ggplot" = c("plain text" = "plain",
-                      "bold face" = "bold",
-                      "italic" = "italic",
-                      "bold italic" = "bold.italic")
+  switch(
+    type,
+    "base" = c(
+      "plain text" = 1,
+      "bold face" = 2,
+      "italic" = 3,
+      "bold italic" = 4
+    ),
+    "ggplot" = c(
+      "plain text" = "plain",
+      "bold face" = "bold",
+      "italic" = "italic",
+      "bold italic" = "bold.italic"
+    )
   )
 }
 
@@ -265,15 +274,20 @@ fontChoicesSelect <- function(type = c("ggplot", "base")) {
 sizeValuesSlider  <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
-  switch (type,
-          "base" = list(value = 1.2,
-                        min = 0.1,
-                        max = 10,
-                        step = 0.1),
-          "ggplot" = list(value = 12,
-                          min = 1,
-                          max = 30,
-                          step = 1)
+  switch (
+    type,
+    "base" = list(
+      value = 1.2,
+      min = 0.1,
+      max = 10,
+      step = 0.1
+    ),
+    "ggplot" = list(
+      value = 12,
+      min = 1,
+      max = 30,
+      step = 1
+    )
   )
 }
 
@@ -318,8 +332,12 @@ checkElements <- function(availableElements) {
   configElements <- labelGroups %>% names()
 
   if (!all(availableElements %in% configElements))
-    stop(sprintf("Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
-                 paste0(configElements, collapse = "', '")))
+    stop(
+      sprintf(
+        "Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
+        paste0(configElements, collapse = "', '")
+      )
+    )
 
   availableElements
 }
@@ -350,7 +368,15 @@ defaultLabelGroups <- function() {
 # @return A character vector containing the names of the deepest level elements.
 keep_deepest_names <- function(x) {
   deepestNames <- names(x) %>%
-    sapply(FUN = function(x) gsub(pattern = ".*\\.", replacement = "", x = x), USE.NAMES = FALSE)
+    sapply(
+      FUN = function(x)
+        gsub(
+          pattern = ".*\\.",
+          replacement = "",
+          x = x
+        ),
+      USE.NAMES = FALSE
+    )
 
   names(x) <- deepestNames
   return(x)
@@ -365,20 +391,21 @@ keep_deepest_names <- function(x) {
 defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
   type <- match.arg(type)
 
-  title <- switch (type,
-                   "none" = config()$defaultBaseTitle,
-                   "base" = config()$defaultBaseTitle,
-                   "ggplot" = config()$defaultGGTitle
+  title <- switch (
+    type,
+    "none" = config()$defaultBaseTitle,
+    "base" = config()$defaultBaseTitle,
+    "ggplot" = config()$defaultGGTitle
   )
 
-  text <- switch (type,
-                  "none" = config()$defaultBaseText,
-                  "base" = config()$defaultBaseText,
-                  "ggplot" = config()$defaultGGText
+  text <- switch (
+    type,
+    "none" = config()$defaultBaseText,
+    "base" = config()$defaultBaseText,
+    "ggplot" = config()$defaultGGText
   )
 
-  list(title = title,
-       text = text)
+  list(title = title, text = text)
 }
 
 

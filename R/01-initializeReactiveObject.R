@@ -17,23 +17,31 @@
 # @param default_fun_args (list) optional, list of arguments to be passed to 'default_fun'
 #
 # @return reactiveValues
-initializeReactiveObject <- function(session, id, custom_values, choices, default_fun, default_fun_args = list()) {
+initializeReactiveObject <- function(session,
+                                     id,
+                                     custom_values,
+                                     choices,
+                                     default_fun,
+                                     default_fun_args = list()) {
   default_values <- do.call(default_fun, default_fun_args)
 
   if (!all(choices %in% names(default_values))) {
     new_choices <- setdiff(choices, names(default_values))
-    stop(sprintf("Logic for following choices does not exist yet: '%s'. Please check names of the choices! Currently, following choices are available: '%s'",
-                 paste(setdiff(choices, new_choices), collapse = ", "),
-                 paste(names(default_values), collapse = ", ")
-    ))
+    stop(
+      sprintf(
+        "Logic for following choices does not exist yet: '%s'. Please check names of the choices! Currently, following choices are available: '%s'",
+        paste(setdiff(choices, new_choices), collapse = ", "),
+        paste(names(default_values), collapse = ", ")
+      )
+    )
   }
 
   # define reactiveValues object 'init_values' to store init_values for set 'choices'
   init_values <- do.call(reactiveValues, default_values[choices])
 
   # overwrite with custom initial init_values if set and if present in default_values
-  if (!is.null(custom_values) && is.list(custom_values) && !is.reactivevalues(custom_values)) {
-
+  if (!is.null(custom_values) &&
+      is.list(custom_values) && !is.reactivevalues(custom_values)) {
     # complete not reactive values:
     custom_values <- custom_values %>%
       completeValues(choices = choices, default_values = default_values)
@@ -42,12 +50,14 @@ initializeReactiveObject <- function(session, id, custom_values, choices, defaul
     init_values <- do.call(reactiveValues, custom_values)
   }
 
-  if (!is.null(custom_values) && is.list(custom_values) && is.reactivevalues(custom_values)) {
+  if (!is.null(custom_values) &&
+      is.list(custom_values) && is.reactivevalues(custom_values)) {
     init_values <- custom_values
 
     # check (once!) if all choices are present, if not use default
     observe({
-      logDebug("%s: Checking if all choices are present in user init_values", id)
+      logDebug("%s: Checking if all choices are present in user init_values",
+               id)
 
       # complete reactive init_values inside observer:
       new_values <- init_values %>%

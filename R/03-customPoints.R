@@ -130,8 +130,10 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
   )
 }
 
-styleCustomPointsUI <- function(id, type = c("ggplot", "base", "none")) {
+styleCustomPointsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
+  plot_type <- match.arg(plot_type)
   ns <- NS(id)
+
   tagList(
     tags$br(),
     selectInput(
@@ -140,18 +142,18 @@ styleCustomPointsUI <- function(id, type = c("ggplot", "base", "none")) {
       choices = c("Add a point ..." = ""),
       multiple = TRUE
     ),
-    # ui to style points ...
     formatTextUI(
       ns("text"),
-      type = type,
-      initTitle = defaultTextFormat(type = type)[["title"]],
-      initAxis = defaultTextFormat(type = type)[["text"]]
+      type = plot_type,
+      initTitle = defaultTextFormat(type = plot_type)[["title"]],
+      initAxis = defaultTextFormat(type = plot_type)[["text"]]
     ),
     actionButton(ns("apply"), "Format point")
   )
 }
 
-styleCustomPointsServer <- function(id, custom_points = reactiveVal()) {
+styleCustomPointsServer <- function(id, custom_points = reactiveVal(), plot_type = c("ggplot", "base", "none")) {
+  plot_type <- match.arg(plot_type)
   moduleServer(
     id,
     function(input, output, session) {
@@ -173,24 +175,11 @@ styleCustomPointsServer <- function(id, custom_points = reactiveVal()) {
         )
       })
 
-      init_text <- reactiveVal()
-      observe({
-        logDebug("%s: Entering observe 'input$labelName'", id)
-
-        if (is.null(input[["labelName"]]) || input[["labelName"]] == "") {
-          init_text(plotText[[names(plotText)[1]]])
-        } else {
-          init_text(plotText[[input[["labelName"]]]])
-        }
-      }) %>%
-        bindEvent(input[["labelName"]])
-
       updated_text <- formatTextServer("text",
-                                       init_text = defaultInitText(type = c("none", "ggplot", "base"),
-                                                                   availableElements = c("title", "axis")),
+                                       init_text = reactive(defaultInitText(type = plot_type)[["plotTitle"]]),
                                        text_type = c("title", "axis"),
                                        show_parse_button = TRUE,
-                                       label_name = reactive(input[["labelName"]]))
+                                       label_name = reactive("plotTitle"))
 
 
       observeEvent(input[["apply"]], {
@@ -227,4 +216,4 @@ styleCustomPointsServer <- function(id, custom_points = reactiveVal()) {
 #   })
 # }
 #
-# shinyApp(ui, server)
+# shinyApp(ui = ui, server = server)

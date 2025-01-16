@@ -9,6 +9,9 @@ defaultGGTitle:
   color: "#000000"
   size: 12
   hide: false
+  angle: 0
+  hjust: 0.5
+  vjust: 0.5
 
 defaultBaseTitle:
   text: ""
@@ -19,9 +22,14 @@ defaultBaseTitle:
   color: "#000000"
   size: 1.2
   hide: false
+  angle: 0
+  hjust: 0.5
+  vjust: 0.5
 
 defaultGGText:
   text: ""
+  useExpression: false
+  expression: ""
   fontFamily: "sans"
   fontType: "plain"
   color: "#000000"
@@ -33,6 +41,8 @@ defaultGGText:
 
 defaultBaseText:
   text: ""
+  useExpression: false
+  expression: ""
   fontFamily: "sans"
   fontType: 1
   color: "#000000"

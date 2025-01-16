@@ -130,7 +130,7 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
   )
 }
 
-styleCustomPointsUI <- function(id) {
+styleCustomPointsUI <- function(id, type = c("ggplot", "base", "none")) {
   ns <- NS(id)
   tagList(
     tags$br(),
@@ -141,6 +141,12 @@ styleCustomPointsUI <- function(id) {
       multiple = TRUE
     ),
     # ui to style points ...
+    formatTextUI(
+      ns("text"),
+      type = type,
+      initTitle = defaultTextFormat(type = type)[["title"]],
+      initAxis = defaultTextFormat(type = type)[["text"]]
+    ),
     actionButton(ns("apply"), "Format point")
   )
 }
@@ -166,6 +172,26 @@ styleCustomPointsServer <- function(id, custom_points = reactiveVal()) {
           choices = new_choices
         )
       })
+
+      init_text <- reactiveVal()
+      observe({
+        logDebug("%s: Entering observe 'input$labelName'", id)
+
+        if (is.null(input[["labelName"]]) || input[["labelName"]] == "") {
+          init_text(plotText[[names(plotText)[1]]])
+        } else {
+          init_text(plotText[[input[["labelName"]]]])
+        }
+      }) %>%
+        bindEvent(input[["labelName"]])
+
+      updated_text <- formatTextServer("text",
+                                       init_text = defaultInitText(type = c("none", "ggplot", "base"),
+                                                                   availableElements = c("title", "axis")),
+                                       text_type = c("title", "axis"),
+                                       show_parse_button = TRUE,
+                                       label_name = reactive(input[["labelName"]]))
+
 
       observeEvent(input[["apply"]], {
         logDebug("%s: Formatting points", id)

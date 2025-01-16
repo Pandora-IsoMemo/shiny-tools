@@ -132,7 +132,6 @@ formatTextUI <- function(id,
 # Backend for plot titles module
 #
 # @param id namespace id
-# @param plot_type (character) Type of the plot to add titles to, one of "none", "ggplot", "base".
 # @param text_type (character) Type of formatting, e.g. for titles or for axis
 # @param availableElements (character) set of available labels for specifying the format of text.
 #  May contain elements from \code{c("title", "axis", "yaxis2", "legend")}.
@@ -140,12 +139,9 @@ formatTextUI <- function(id,
 # @inheritParams plotExportServer
 formatTextServer <- function(id,
                              init_text = reactive(defaultInitTitle()),
-                             plot_type = c("none", "ggplot", "base"),
                              text_type = c("title", "axis"),
                              show_parse_button = TRUE,
                              label_name = reactive("plotTitle")) {
-  plot_type <- match.arg(plot_type)
-
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -185,7 +181,6 @@ formatTextServer <- function(id,
     # Mark the output as usable in conditionalPanel
     outputOptions(output, "show_text_ui", suspendWhenHidden = FALSE)
     outputOptions(output, "show_position_ui", suspendWhenHidden = FALSE)
-
 
     output$expressionInput <- renderUI({
       if (show_parse_button) {
@@ -234,9 +229,158 @@ formatTextServer <- function(id,
   })
 }
 
+#' Available Fonts
+availableFonts <- function() {
+  c("sans", "serif", "mono")
+}
+
+
+#' Font Choices
+#'
+#' Mapping of font choices dependent on the plot type
+#'
+#' @param type (character) plot type, one of "ggplot" or "base"
+#'
+#' @export
+fontChoicesSelect <- function(type = c("ggplot", "base")) {
+  type <- match.arg(type)
+
+  switch(type,
+         "base" = c("plain text" = 1,
+                    "bold face" = 2,
+                    "italic" = 3,
+                    "bold italic" = 4),
+         "ggplot" = c("plain text" = "plain",
+                      "bold face" = "bold",
+                      "italic" = "italic",
+                      "bold italic" = "bold.italic")
+  )
+}
+
+# Size Values Slider (no docu for 'man' because it is a helper function)
+#
+# Initial values for sliderInput title 'size' dependent on the plot type
+#
+# @param type (character) plot type, one of "ggplot" or "base"
+sizeValuesSlider  <- function(type = c("ggplot", "base")) {
+  type <- match.arg(type)
+
+  switch (type,
+          "base" = list(value = 1.2,
+                        min = 0.1,
+                        max = 10,
+                        step = 0.1),
+          "ggplot" = list(value = 12,
+                          min = 1,
+                          max = 30,
+                          step = 1)
+  )
+}
+
 defaultInitTitle <- function() {
   defaultInitText()[["plotTitle"]]
 }
+
+# Default Init Text (no docu for 'man' because it is a helper function)
+#
+# Initial list with default text elements
+#
+# @inheritParams plotTitlesServer
+defaultInitText <- function(type = c("none", "ggplot", "base"),
+                            availableElements = c("title", "axis")) {
+  type <- match.arg(type)
+  thisLabels <- availableLabels(availableElements = availableElements)
+
+  names(entry) <- entry <- thisLabels
+  entry[grepl("Title", thisLabels)] <- "title"
+  entry[grepl("Text", thisLabels)] <- "text"
+
+  res <- list()
+  for (i in thisLabels) {
+    res[[i]] <- defaultTextFormat(type = type)[[entry[i]]]
+  }
+
+  res
+}
+
+availableLabels <- function(availableElements = c("title", "axis")) {
+  availableElements <- availableElements %>%
+    checkElements()
+
+  labelGroups <- defaultLabelGroups()
+  labelGroups[availableElements] %>%
+    unlist() %>%
+    keep_deepest_names()
+}
+
+checkElements <- function(availableElements) {
+  labelGroups <- defaultLabelGroups()
+  configElements <- labelGroups %>% names()
+
+  if (!all(availableElements %in% configElements))
+    stop(sprintf("Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
+                 paste0(configElements, collapse = "', '")))
+
+  availableElements
+}
+
+# Get default groups of labels that are available in plotTitlesUI under "Label"
+#
+# @return A list with the default groups of labels
+defaultLabelGroups <- function() {
+  list(
+    title = list(`plot title` = "plotTitle"),
+    axis = list(
+      `x axis title` = "xAxisTitle",
+      `x axis text` = "xAxisText",
+      `y axis title` = "yAxisTitle",
+      `y axis text` = "yAxisText"
+    ),
+    yaxis2 = list(`2nd y axis title` = "yAxisTitle2", `2nd y axis text` = "yAxisText2"),
+    legend = list(`legend title` = "legendTitle", `legend text` = "legendText")
+  )
+}
+
+# Keep Deepest Names (no docu for 'man' because it is a helper function)
+#
+# Extracts the names of the deepest level elements from nested names.
+#
+# @param x (vector)  A named vector with named elements and nested names separated by '.'
+#
+# @return A character vector containing the names of the deepest level elements.
+keep_deepest_names <- function(x) {
+  deepestNames <- names(x) %>%
+    sapply(FUN = function(x) gsub(pattern = ".*\\.", replacement = "", x = x), USE.NAMES = FALSE)
+
+  names(x) <- deepestNames
+  return(x)
+}
+
+
+# Default Title Format (no docu for 'man' because it is a helper function)
+#
+# Initial values for title dependent on the plot type
+#
+# @inheritParams plotTitlesServer
+defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
+  type <- match.arg(type)
+
+  title <- switch (type,
+                   "none" = config()$defaultBaseTitle,
+                   "base" = config()$defaultBaseTitle,
+                   "ggplot" = config()$defaultGGTitle
+  )
+
+  text <- switch (type,
+                  "none" = config()$defaultBaseText,
+                  "base" = config()$defaultBaseText,
+                  "ggplot" = config()$defaultGGText
+  )
+
+  list(title = title,
+       text = text)
+}
+
 
 # Observe Text Elements Of Label (no docu for 'man' because it is a helper function)
 #
@@ -372,23 +516,21 @@ observeAndUpdateTextElements <- function(input,
 # server <- function(input, output, session) {
 #     thisTitle <- formatTextServer(
 #       "testMod",
-#       plot_type = "ggplot",
 #       text_type = "title",
 #       #label_name = reactive("plotTitle"),
 #       label_name = reactive("xAxisText"),
-#       initText = list(
+#       init_text = reactive(list(
 #         text = "testHeader",
 #         fontFamily = "sans",
 #         fontType = "italic",
 #         color = "#000000",
 #         size = 32L,
 #         hide = FALSE
-#       )
+#       ))
 #     )
 #
 #     output$titleList <- renderPrint({
-#       thisTitle %>%
-#         reactiveValuesToList() %>% dput()
+#       thisTitle() %>% as.data.frame()
 #     })
 # }
 #

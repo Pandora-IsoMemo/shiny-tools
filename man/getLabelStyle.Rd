@@ -4,7 +4,10 @@
 \alias{getLabelStyle}
 \title{Get Default Point Style}
 \usage{
-getLabelStyle()
+getLabelStyle(type = c("ggplot", "base"))
+}
+\arguments{
+\item{type}{(character) type of plot to add labels to, either 'ggplot' or 'base'}
 }
 \description{
 Get Default Point Style

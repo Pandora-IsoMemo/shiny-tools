@@ -7,8 +7,9 @@
 plotPointsServer(
   id,
   type = c("ggplot", "base"),
+  hideInput = c(),
   initStyle = NULL,
-  hideInput = c()
+  reloadInit = reactiveVal(FALSE)
 )
 }
 \arguments{
@@ -16,12 +17,14 @@ plotPointsServer(
 
 \item{type}{(character) Type of the plot to edit points for, one of "ggplot", "base".}
 
-\item{initStyle}{(list) optional, named list with style definitions, should have the same format
-as the default output of \code{plotPointsServer}}
-
 \item{hideInput}{(character) inputs that should be disabled (hidden) when applying this module.
 Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
 Please use \code{shinyjs::useShinyjs()} in your UI function to enable this feature.}
+
+\item{initStyle}{(list) optional, named list with style definitions, should have the same format
+as the default output of \code{plotPointsServer}}
+
+\item{reloadInit}{(reactiveVal) logical, should \code{initStyle} be reloaded?}
 }
 \description{
 Backend for plot points module

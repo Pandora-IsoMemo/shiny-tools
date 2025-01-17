@@ -418,10 +418,6 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
   data_text <- data_combined[!data_combined$useExpression, ]
   data_expression <- data_combined[data_combined$useExpression, ]
 
-  # use id as text if text is empty
-  is_empty <- data_text[["text"]] == "" | is.na(data_text[["text"]])
-  data_text[["text"]][is_empty] <- data_text[["id"]][is_empty]
-
   # plot text labels
   plot <- plot +
     geom_text(data = data_text,

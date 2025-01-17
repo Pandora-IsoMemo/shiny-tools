@@ -187,6 +187,7 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
       req(length(custom_point_ids) > 0)
       logDebug("%s: set point styles if empty", id)
 
+      # add entries for point format if not yet set
       all_points <- custom_points() %>%
         initFormat(default_format = default_style[["dataPoints"]], prefix = "point_")
       custom_points(all_points)
@@ -298,8 +299,17 @@ stylePointLabelsServer <- function(id,
       req(length(custom_point_ids) > 0)
       logDebug("%s: set label styles if empty", id)
 
+      # add entries for label format if not yet set
       all_points <- custom_points() %>%
         initFormat(default_format = default_style, prefix = "label_")
+
+      # set id as default text
+      for (name in custom_point_ids) {
+        if (all_points[[name]]$label_text == "") {
+          all_points[[name]]$label_text <- name
+        }
+      }
+
       custom_points(all_points)
     })
 

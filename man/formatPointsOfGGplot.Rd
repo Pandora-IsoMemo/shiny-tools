@@ -4,7 +4,7 @@
 \alias{formatPointsOfGGplot}
 \title{Point Style Of GGplot}
 \usage{
-formatPointsOfGGplot(plot, data = NULL, pointStyle = NULL, ...)
+formatPointsOfGGplot(plot, data = NULL, pointStyle = getPointStyle(), ...)
 }
 \arguments{
 \item{plot}{(ggplot)}

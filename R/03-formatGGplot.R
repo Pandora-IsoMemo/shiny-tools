@@ -355,8 +355,8 @@ getLabelStyle <- function(type = c("ggplot", "base")) {
 #' @inheritParams ggplot2::geom_point
 #'
 #' @export
-formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
-  defaultStyle <- config()$defaultPointStyle$dataPoints
+formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle(), ...) {
+  defaultStyle <- getPointStyle()
   requiredElements <- c("symbol", "size", "color", "colorBg", "alpha", "hide")
 
   if (is.null(pointStyle)) {

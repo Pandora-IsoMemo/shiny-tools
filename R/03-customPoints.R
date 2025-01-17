@@ -200,7 +200,32 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
       }
     })
 
-    style <- plotPointsServer("point", type = "ggplot", initStyle = default_style)
+    reload_init <- reactiveVal(FALSE)
+    observe({
+      if (length(input[["pointsToStyle"]]) == 0 ||
+          any(input[["pointsToStyle"]] == "")) {
+        logDebug("%s: No init reload", id)
+        reload_init(FALSE)
+      } else {
+        logDebug("%s: Reload init", id)
+        reload_init(TRUE)
+      }
+    }) %>%
+      bindEvent(input[["pointsToStyle"]], ignoreNULL = FALSE)
+
+    init_style <- reactive({
+      if (length(input[["pointsToStyle"]]) == 0 ||
+          any(input[["pointsToStyle"]] == "")) {
+        default_style
+      } else {
+        # load selected format
+        first_point_style <- custom_points()[input[["pointsToStyle"]]][[1]] %>%
+          extractFormat(prefix = "point_")
+        list(dataPoints = first_point_style)
+      }
+    })
+
+    style <- plotPointsServer("point", type = "ggplot", initStyle = init_style, reloadInit = reload_init)
 
     observe({
       logDebug("%s: Formatting points", id)
@@ -289,9 +314,8 @@ stylePointLabelsServer <- function(id,
         label_name(NULL)
         label_name("plotTitle")
         # load selected format
-        first_point_style <- custom_points()[input[["labelsToStyle"]]][[1]]
-        first_point_style <- first_point_style[grepl("^label_", names(first_point_style))]
-        names(first_point_style) <- gsub("^label_", "", names(first_point_style))
+        first_point_style <- custom_points()[input[["labelsToStyle"]]][[1]] %>%
+          extractFormat(prefix = "label_")
         first_point_style
       }
     })
@@ -299,7 +323,7 @@ stylePointLabelsServer <- function(id,
     # current format settings
     updated_text <- formatTextServer(
       "text",
-      init_text = init_text, #reactive(default_style),
+      init_text = init_text,
       text_type = c("title", "axis"),
       show_parse_button = TRUE,
       label_name = label_name
@@ -344,6 +368,12 @@ initFormat <- function(points, default_format, prefix = "") {
   points
 }
 
+extractFormat <- function(points, prefix = "") {
+  points <- points[grepl(paste0("^", prefix), names(points))]
+  names(points) <- gsub(paste0("^", prefix), "", names(points))
+  points
+}
+
 updateFormat <- function(points, selected_ids, new_format, prefix = "") {
   # align names of entries
   names(new_format) <- paste0(prefix, names(new_format))
@@ -365,14 +395,24 @@ updateFormat <- function(points, selected_ids, new_format, prefix = "") {
 #                 header = includeShinyToolsCSS(),
 #                 customPointsUI("points"),
 #                 tags$h3("output"),
+#                 plotOutput("plot"),
 #                 verbatimTextOutput("custom_points")
 # )
 #
 # server <- function(input, output, session) {
+#   testPlotFun <- function() {
+#     ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line()
+#   }
+#
 #   custom_points <- customPointsServer("points")
 #
 #   output$custom_points <- renderPrint({
 #     custom_points() %>% lapply(FUN = as.data.frame) %>% bind_rows()
+#   })
+#
+#   output$plot <- renderPlot({
+#     testPlotFun() %>%
+#       addCustomPointsToGGplot(custom_points = custom_points())
 #   })
 # }
 #

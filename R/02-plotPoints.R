@@ -75,33 +75,27 @@ plotPointsUI <- function(id, title = "Data Points", titleTag = "h4", type = c("g
 #'
 #' @param id namespace id
 #' @param type (character) Type of the plot to edit points for, one of "ggplot", "base".
-#' @param initStyle (list) optional, named list with style definitions, should have the same format
-#'  as the default output of \code{plotPointsServer}
 #' @param hideInput (character) inputs that should be disabled (hidden) when applying this module.
 #'  Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
 #'  Please use \code{shinyjs::useShinyjs()} in your UI function to enable this feature.
+#' @param initStyle (list) optional, named list with style definitions, should have the same format
+#'  as the default output of \code{plotPointsServer}
+#' @param reloadInit (reactiveVal) logical, should \code{initStyle} be reloaded?
 #'
 #' @export
-plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL, hideInput = c()) {
+plotPointsServer <- function(id, type = c("ggplot", "base"), hideInput = c(), initStyle = NULL, reloadInit = reactiveVal(FALSE)) {
   type <- match.arg(type)
   moduleServer(id,
                function(input, output, session) {
                  ns <- session$ns
 
-                 if (is.null(initStyle)) {
-                   # if null: take values from config
-                   style <- reactiveValues(
-                     dataPoints = config()$defaultPointStyle[["dataPoints"]]
-                     # one could add different types of points if needed, e.g. outliers, custom, ...
-                     )
-                 } else if (inherits(initStyle, "list")) {
-                   # if list: use values to set default values
-                   style <- reactiveValues(
-                     dataPoints = initStyle[["dataPoints"]]
-                     )
-                 } else {
-                   style <- initStyle
-                 }
+                 style <- custom_style <- initializeReactiveObject(
+                   session,
+                   id,
+                   custom_values = initStyle,
+                   choices = c("dataPoints"),
+                   default_fun = defaultDataPointStyle
+                 )
 
                  observe({
                    req(length(hideInput) > 0)
@@ -112,6 +106,19 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), initStyle = NULL, h
                      shinyjs::hide(ns(i), asis = TRUE)
                    }
                  })
+
+                 observe({
+                   req(isTRUE(reloadInit()))
+                   logDebug("%s: Entering reload 'initStyle'", id)
+
+                   updateUserInputs(
+                     input = input,
+                     output = output,
+                     session = session,
+                     userInputs = custom_style[["dataPoints"]]
+                   )
+                 }) %>%
+                   bindEvent(reloadInit())
 
                  style <- observeAndUpdatePointElements(input, output, session, id,
                                                         style = style,
@@ -187,6 +194,9 @@ observeAndUpdatePointElements <- function(input, output, session, id, style, typ
   return(style)
 }
 
+defaultDataPointStyle <- function() {
+  config()$defaultPointStyle["dataPoints"]
+}
 
 #' Font Choices
 #'

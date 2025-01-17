@@ -297,18 +297,29 @@ getSecAxis <- function(rescaleFactors, title) {
 #'
 #' @export
 addCustomPointsToGGplot <- function(plot, custom_points) {
-  point_data <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
+  if (length(custom_points) == 0) return(plot)
 
-  # add coordinates
-  ## add points and format points
-  pointStyle <- getPointStyle()
+  point_df <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
+
+  # extract point style
+  point_style <- point_df %>%
+    dplyr::select(dplyr::starts_with("point_")) %>%
+    as.list()
+  names(point_style) <- gsub("point_", "", names(point_style))
+
   plot <- plot %>%
-    formatPointsOfGGplot(data = point_data, pointStyle = pointStyle, aes(x = .data$x, y = .data$y))
+    formatPointsOfGGplot(data = point_df, pointStyle = point_style, aes(x = .data$x, y = .data$y))
 
   ## add and format errors
 
   # format labels
-  #label_style <- point_data[intersect(names(getLabelStyle()), names(point_data))]
+  label_style <- point_df %>%
+    dplyr::select(dplyr::starts_with("label_")) %>%
+    as.list()
+  names(label_style) <- gsub("label_", "", names(label_style))
+
+  plot <- plot %>%
+    formatPointLabelsOfGGPlot(data = point_df, labelStyle = label_style)
 
   plot
 }
@@ -322,9 +333,15 @@ getPointStyle <- function() {
 
 #' Get Default Point Style
 #'
+#' @param type (character) type of plot to add labels to, either 'ggplot' or 'base'
+#'
 #' @export
-getLabelStyle <- function() {
-  config()$defaultGGText
+getLabelStyle <- function(type = c("ggplot", "base")) {
+  type <- match.arg(type)
+
+  switch(type,
+         "ggplot" = config()$defaultGGText,
+         "base" = config()$defaultBaseText)
 }
 
 #' Point Style Of GGplot
@@ -338,9 +355,12 @@ getLabelStyle <- function() {
 #'
 #' @export
 formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
+  defaultStyle <- config()$defaultPointStyle$dataPoints
+  requiredElements <- c("symbol", "size", "color", "colorBg", "alpha", "hide")
+
   if (is.null(pointStyle)) {
     # if null: take values from config
-    pointStyle <- config()$defaultPointStyle
+    pointStyle <- defaultStyle
   }
 
   # check list structure
@@ -348,9 +368,10 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
     pointStyle <- pointStyle[["dataPoints"]]
   }
 
-  if (!(all(c("symbol", "size", "color", "colorBg", "alpha", "hide") %in% names(pointStyle)))) {
-    missingElements <- setdiff(c("symbol", "size", "color", "colorBg", "alpha", "hide"), names(pointStyle))
-    stop(sprintf("Missing elements in 'pointStyle': %s", paste(missingElements, collapse = ", ")))
+  # check if all elements are present and complete
+  if (!(all(requiredElements %in% names(pointStyle)))) {
+    missingElements <- setdiff(requiredElements, names(pointStyle))
+    pointStyle[missingElements] <- defaultStyle[missingElements]
   }
 
   plot +
@@ -363,8 +384,51 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
                ...)
 }
 
-formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = NULL, ...) {
+#' Format Point Labels Of GGplot
+#'
+#' @param plot (ggplot)
+#' @param data (data.frame) data with x, y and label information
+#' @param labelStyle (list) named list with style definitions
+#' @param ... (list) arguments for \code{geom_text}
+#'
+#' @export
+formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("ggplot"), ...) {
+  defaultStyle <- getLabelStyle("ggplot")
+  requiredElements <- c("text", "useExpression", "expression", "fontFamily", "fontType", "color", "size", "hide", "angle", "hjust", "vjust")
 
+  if (is.null(labelStyle)) {
+    # if null: take values from config
+    labelStyle <- defaultStyle
+  }
+
+  # check if all elements are present and complete
+  if (!(all(requiredElements %in% names(labelStyle)))) {
+    missingElements <- setdiff(requiredElements, names(labelStyle))
+    labelStyle[missingElements] <- defaultStyle[missingElements]
+  }
+
+  # use expression as text if 'useExpression' is TRUE
+  labelStyle[["text"]][labelStyle[["useExpression"]]] <- labelStyle[["expression"]][labelStyle[["useExpression"]]]
+
+  # use id as text if text is empty
+  is_empty <- labelStyle[["text"]] == "" | is.na(labelStyle[["text"]])
+  labelStyle[["text"]][is_empty] <- data[["id"]][is_empty]
+
+  # combine data and format for point specific labels
+  labelStyle <- labelStyle %>% as.data.frame()
+  data_combined <- bind_cols(data[, c("x", "y")], labelStyle)
+
+  # remove hidden labels
+  data_combined <- data_combined[!data_combined$hide, ]
+
+  plot +
+    geom_text(data = data_combined,
+              aes(x = .data$x, y = .data$y, label = .data$text),
+              family = data_combined$fontFamily, fontface = data_combined$fontType,
+              color = data_combined$color, size = data_combined$size,
+              angle = data_combined$angle, hjust = data_combined$hjust, vjust = data_combined$vjust,
+              show.legend = FALSE,
+              ...)
 }
 
 # LEGEND ----

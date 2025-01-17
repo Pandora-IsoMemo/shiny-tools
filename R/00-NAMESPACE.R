@@ -1,9 +1,10 @@
 #' @rawNamespace import(shiny)
 
 #' @importFrom colourpicker colourInput
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_cols bind_rows select starts_with
 #' @importFrom futile.logger flog.debug flog.info flog.warn
-#' @importFrom ggplot2 aes element_blank element_text geom_point ggplot_build ggtitle labs
+#' @importFrom ggplot2 aes element_blank element_text geom_line geom_point geom_text
+#'  ggplot ggplot_build ggtitle labs
 #'  scale_x_continuous scale_x_discrete scale_y_continuous scale_y_discrete
 #'  sec_axis theme waiver xlab ylab
 #' @importFrom grDevices dev.off pdf png recordPlot svg tiff

@@ -63,12 +63,16 @@ addCustomPointUI <- function(id) {
 # Server function for adding custom points
 # @param id namespace id
 # @param custom_points reactiveVal
-addCustomPointServer <- function(id, custom_points = reactiveVal()) {
+addCustomPointServer <- function(id,
+                                 custom_points = reactiveVal(),
+                                 reset_coordinates = TRUE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     point_counter <- reactiveVal(1)
-    new_point <- pointCoordinatesServer("coordinates", default_name = reactive(paste("Point", point_counter())))
+    new_point <- pointCoordinatesServer("coordinates",
+                                        default_name = reactive(paste("Point", point_counter())),
+                                        reset_coordinates = reset_coordinates)
 
     # disable button if new_point is not complete
     observe({
@@ -225,15 +229,22 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
       }
     })
 
-    style <- plotPointsServer("point", type = "ggplot", initStyle = init_style, reloadInit = reload_init)
+    style <- plotPointsServer(
+      "point",
+      type = "ggplot",
+      initStyle = init_style,
+      reloadInit = reload_init
+    )
 
     observe({
       logDebug("%s: Formatting points", id)
 
       all_points <- custom_points() %>%
-        updateFormat(selected_ids = input[["pointsToStyle"]],
-                     new_format = style$dataPoints,
-                     prefix = "point_")
+        updateFormat(
+          selected_ids = input[["pointsToStyle"]],
+          new_format = style$dataPoints,
+          prefix = "point_"
+        )
 
       custom_points(all_points)
     }) %>%
@@ -271,8 +282,8 @@ stylePointLabelsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
 # @param custom_points reactiveVal
 # @param plot_type (character) type of plot, one of "ggplot", "base", "none"
 stylePointLabelsServer <- function(id,
-                                    custom_points = reactiveVal(),
-                                    plot_type = c("ggplot", "base", "none")) {
+                                   custom_points = reactiveVal(),
+                                   plot_type = c("ggplot", "base", "none")) {
   plot_type <- match.arg(plot_type)
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -333,9 +344,11 @@ stylePointLabelsServer <- function(id,
       logDebug("%s: Formatting point labels", id)
 
       all_points <- custom_points() %>%
-        updateFormat(selected_ids = input[["labelsToStyle"]],
-                     new_format = updated_text(),
-                     prefix = "label_")
+        updateFormat(
+          selected_ids = input[["labelsToStyle"]],
+          new_format = updated_text(),
+          prefix = "label_"
+        )
 
       custom_points(all_points)
     }) %>%
@@ -391,12 +404,13 @@ updateFormat <- function(points, selected_ids, new_format, prefix = "") {
 # To test the module run devtools::load_all() first
 # Please comment this code before building the package
 
-# ui <- fluidPage(shinyjs::useShinyjs(),
-#                 header = includeShinyToolsCSS(),
-#                 customPointsUI("points"),
-#                 tags$h3("output"),
-#                 plotOutput("plot"),
-#                 verbatimTextOutput("custom_points")
+# ui <- fluidPage(
+#   shinyjs::useShinyjs(),
+#   header = includeShinyToolsCSS(),
+#   customPointsUI("points"),
+#   tags$h3("output"),
+#   plotOutput("plot"),
+#   verbatimTextOutput("custom_points")
 # )
 #
 # server <- function(input, output, session) {

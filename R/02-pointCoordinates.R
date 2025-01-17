@@ -22,7 +22,7 @@ pointDimensionUI <- function(id,
   )
 }
 
-pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
+pointCoordinatesServer <- function(id, default_name = reactive(NULL), reset_coordinates = TRUE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -30,6 +30,16 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL)) {
       req(default_name())
       logDebug("%s: Update 'label'", id)
       updateTextInput(session, "label", value = default_name())
+
+      if (reset_coordinates) {
+        # clear inputs of pointDimensions
+        updateNumericInput(session, "x-value", value = numeric(0))
+        updateNumericInput(session, "x-min", value = numeric(0))
+        updateNumericInput(session, "x-max", value = numeric(0))
+        updateNumericInput(session, "y-value", value = numeric(0))
+        updateNumericInput(session, "y-min", value = numeric(0))
+        updateNumericInput(session, "y-max", value = numeric(0))
+      }
     }) %>%
       bindEvent(default_name())
 

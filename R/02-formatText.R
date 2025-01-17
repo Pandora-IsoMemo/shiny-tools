@@ -136,6 +136,7 @@ formatTextUI <- function(id,
 # @param availableElements (character) set of available labels for specifying the format of text.
 #  May contain elements from \code{c("title", "axis", "yaxis2", "legend")}.
 # @param show_parse_button (logical) Show parse button for parsing mathematical expressions.
+# This should be FALSE if there is an 'apply' button in the parent module
 # @inheritParams plotExportServer
 formatTextServer <- function(id,
                              init_text = reactive(defaultInitTitle()),

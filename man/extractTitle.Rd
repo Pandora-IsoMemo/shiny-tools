@@ -13,5 +13,5 @@ extractTitle(titleList)
 (character) title
 }
 \description{
-Extract title from list of title definitions
+Extract title from list of title definitions. If set to use an expression, convert to expression.
 }

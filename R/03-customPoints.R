@@ -336,7 +336,7 @@ stylePointLabelsServer <- function(id,
       "text",
       init_text = init_text,
       text_type = c("title", "axis"),
-      show_parse_button = TRUE,
+      show_parse_button = FALSE,
       label_name = label_name
     )
 

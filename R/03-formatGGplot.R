@@ -90,7 +90,7 @@ setCustomTitle <- function(plot, labFun, ...) {
 
 #' Extract Title
 #'
-#' Extract title from list of title definitions
+#' Extract title from list of title definitions. If set to use an expression, convert to expression.
 #'
 #' @param titleList (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
@@ -101,10 +101,11 @@ extractTitle <- function(titleList) {
   if (!is.null(titleList[["useExpression"]]) && isTRUE(titleList[["useExpression"]])) {
     return(convertToExpression(titleList[["expression"]]))
   } else {
-    res <- ""
-    if (!is.null(titleList[["text"]])) res <- titleList[["text"]]
-
-    return(res)
+    if (is.null(titleList[["text"]])) {
+      return("")
+    } else {
+      return(titleList[["text"]])
+    }
   }
 }
 
@@ -407,28 +408,42 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
     labelStyle[missingElements] <- defaultStyle[missingElements]
   }
 
-  # use expression as text if 'useExpression' is TRUE
-  labelStyle[["text"]][labelStyle[["useExpression"]]] <- labelStyle[["expression"]][labelStyle[["useExpression"]]]
-
-  # use id as text if text is empty
-  is_empty <- labelStyle[["text"]] == "" | is.na(labelStyle[["text"]])
-  labelStyle[["text"]][is_empty] <- data[["id"]][is_empty]
-
   # combine data and format for point specific labels
-  labelStyle <- labelStyle %>% as.data.frame()
-  data_combined <- bind_cols(data[, c("x", "y")], labelStyle)
+  data_combined <- bind_cols(data[, c("id", "x", "y")], as.data.frame(labelStyle))
 
   # remove hidden labels
   data_combined <- data_combined[!data_combined$hide, ]
 
-  plot +
-    geom_text(data = data_combined,
+  # split data for expression and text
+  data_text <- data_combined[!data_combined$useExpression, ]
+  data_expression <- data_combined[data_combined$useExpression, ]
+
+  # use id as text if text is empty
+  is_empty <- data_text[["text"]] == "" | is.na(data_text[["text"]])
+  data_text[["text"]][is_empty] <- data_text[["id"]][is_empty]
+
+  # plot text labels
+  plot <- plot +
+    geom_text(data = data_text,
               aes(x = .data$x, y = .data$y, label = .data$text),
-              family = data_combined$fontFamily, fontface = data_combined$fontType,
-              color = data_combined$color, size = data_combined$size,
-              angle = data_combined$angle, hjust = data_combined$hjust, vjust = data_combined$vjust,
+              family = data_text$fontFamily, fontface = data_text$fontType,
+              color = data_text$color, size = data_text$size,
+              angle = data_text$angle, hjust = data_text$hjust, vjust = data_text$vjust,
               show.legend = FALSE,
               ...)
+
+  # plot expression labels
+  plot <- plot +
+    geom_text(data = data_expression,
+              aes(x = .data$x, y = .data$y, label = .data$expression),
+              family = data_expression$fontFamily, fontface = data_expression$fontType,
+              color = data_expression$color, size = data_expression$size,
+              angle = data_expression$angle, hjust = data_expression$hjust, vjust = data_expression$vjust,
+              show.legend = FALSE,
+              parse = TRUE,
+              ...)
+
+  plot
 }
 
 # LEGEND ----

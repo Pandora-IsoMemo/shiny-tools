@@ -33,7 +33,7 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
   updated_plot <- base_plot %>% addCustomPointsToGGplot(custom_points = test_custom_points)
 
   # Test if the updated plot has the expected layers
-  expect_equal(length(updated_plot$layers), 3) # One line layer + one point layer + one text layer
+  expect_equal(length(updated_plot$layers), 4) # One line layer + one point layer + one text layer + one expression layer
 
   # Test if the points layer is added correctly
   expect_true("GeomPoint" %in% class(updated_plot$layers[[2]]$geom))

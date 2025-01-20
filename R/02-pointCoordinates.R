@@ -57,12 +57,12 @@ pointCoordinatesServer <- function(id, default_name = reactive(NULL), reset_coor
         new_point(
           list(
             id = input[["label"]],
-            x = input[["x-value"]],
-            y = input[["y-value"]],
-            xmin = input[["x-min"]],
-            xmax = input[["x-max"]],
-            ymin = input[["y-min"]],
-            ymax = input[["y-max"]]
+            x = input[["x-value"]] %>% as.numeric(),
+            y = input[["y-value"]] %>% as.numeric(),
+            xmin = input[["x-min"]] %>% as.numeric(),
+            xmax = input[["x-max"]] %>% as.numeric(),
+            ymin = input[["y-min"]] %>% as.numeric(),
+            ymax = input[["y-max"]] %>% as.numeric()
           )
         )
       }

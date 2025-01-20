@@ -308,12 +308,16 @@ addCustomPointsToGGplot <- function(plot, custom_points) {
     as.list()
   names(point_style) <- gsub("point_", "", names(point_style))
 
+  ## add errors
+  plot <- plot %>%
+    formatPointErrorsOfGGplot(dat = point_df, pointStyle = point_style) %>%
+    suppressWarnings()
+
+  # add points
   plot <- plot %>%
     formatPointsOfGGplot(data = point_df, pointStyle = point_style, aes(x = .data$x, y = .data$y))
 
-  ## add and format errors ----
-
-  # format labels
+  # add labels
   label_style <- point_df %>%
     dplyr::select(dplyr::starts_with("label_")) %>%
     as.list()
@@ -343,6 +347,50 @@ getLabelStyle <- function(type = c("ggplot", "base")) {
   switch(type,
          "ggplot" = config()$defaultGGText,
          "base" = config()$defaultBaseText)
+}
+
+formatPointErrorsOfGGplot <- function(plot, dat = NULL, pointStyle = getPointStyle(), ...) {
+  defaultStyle <- getPointStyle()
+  requiredElements <- c("size", "color", "alpha", "hide")
+
+  if (is.null(pointStyle)) {
+    # if null: take values from config
+    pointStyle <- defaultStyle
+  }
+
+  # check list structure
+  if ("dataPoints" %in% names(pointStyle)) {
+    pointStyle <- pointStyle[["dataPoints"]]
+  }
+
+  # check if all elements are present and complete
+  if (!(all(requiredElements %in% names(pointStyle)))) {
+    missingElements <- setdiff(requiredElements, names(pointStyle))
+    pointStyle[missingElements] <- defaultStyle[missingElements]
+  }
+
+  # ensure valid errors
+  dat <- dat %>%
+    mutate(xmin = ifelse(!is.na(.data$xmin) & .data$xmin > .data$x, .data$x, .data$xmin),
+           xmax = ifelse(!is.na(.data$xmax) & .data$xmax < .data$x, .data$x, .data$xmax),
+           ymin = ifelse(!is.na(.data$ymin) & .data$ymin > .data$y, .data$y, .data$ymin),
+           ymax = ifelse(!is.na(.data$ymax) & .data$ymax < .data$y, .data$y, .data$ymax))
+
+  plot +
+    # Horizontal error bars
+    geom_errorbarh(data = dat,
+                   aes(x = .data$x, y = .data$y, xmin = .data$xmin, xmax = .data$xmax),
+                   size = 0.5 * pointStyle[["size"]],
+                   colour = pointStyle[["color"]],
+                   alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
+                   ...) +
+    # Vertical error bars
+    geom_errorbar(data = dat,
+                  aes(x = .data$x, y = .data$y, ymin = .data$ymin, ymax = .data$ymax),
+                  size = 0.5 * pointStyle[["size"]],
+                  colour = pointStyle[["color"]],
+                  alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
+                  ...)
 }
 
 #' Point Style Of GGplot

@@ -111,11 +111,17 @@ plotPointsServer <- function(id, type = c("ggplot", "base"), hideInput = c(), in
                    req(isTRUE(reloadInit()))
                    logDebug("%s: Entering reload 'initStyle'", id)
 
+                   if (is.reactive(initStyle)) {
+                     new_inputs <- initStyle()[["dataPoints"]]
+                   } else {
+                     new_inputs <- custom_style[["dataPoints"]]
+                   }
+
                    updateUserInputs(
                      input = input,
                      output = output,
                      session = session,
-                     userInputs = custom_style[["dataPoints"]]
+                     userInputs = new_inputs
                    )
                  }) %>%
                    bindEvent(reloadInit())

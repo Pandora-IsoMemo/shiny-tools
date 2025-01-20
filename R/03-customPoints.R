@@ -90,7 +90,7 @@ addCustomPointServer <- function(id,
 
       req(length(new_point()) > 0)
       all_points <- custom_points()
-      # this overwrites existing point ----
+      # OVERWRITES existing point ----
       all_points[[new_point()$id]] <- new_point()
       custom_points(all_points)
 
@@ -288,7 +288,7 @@ stylePointLabelsServer <- function(id,
   plot_type <- match.arg(plot_type)
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    default_style <- defaultInitText(type = plot_type)[["plotTitle"]]
+    default_style <- defaultInitText(type = plot_type)[["xAxisText"]]
 
     observe({
       logDebug("%s: update choices of 'input$labelsToStyle'", id)
@@ -325,7 +325,7 @@ stylePointLabelsServer <- function(id,
       }
     })
 
-    label_name <- reactiveVal("plotTitle")
+    label_name <- reactiveVal("xAxisText")
     init_text <- reactive({
       if (length(input[["labelsToStyle"]]) == 0 ||
           any(input[["labelsToStyle"]] == "")) {
@@ -333,7 +333,7 @@ stylePointLabelsServer <- function(id,
       } else {
         # trigger label_name to force "updateUserInputs"
         label_name(NULL)
-        label_name("plotTitle")
+        label_name("xAxisText")
         # load selected format
         first_point_style <- custom_points()[input[["labelsToStyle"]]][[1]] %>%
           extractFormat(prefix = "label_")
@@ -347,7 +347,9 @@ stylePointLabelsServer <- function(id,
       init_text = init_text,
       text_type = c("title", "axis"),
       show_parse_button = FALSE,
-      label_name = label_name
+      label_name = label_name,
+      text_inputs = "show",
+      position_inputs = "show"
     )
 
     observe({

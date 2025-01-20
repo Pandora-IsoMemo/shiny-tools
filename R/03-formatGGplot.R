@@ -311,7 +311,7 @@ addCustomPointsToGGplot <- function(plot, custom_points) {
   plot <- plot %>%
     formatPointsOfGGplot(data = point_df, pointStyle = point_style, aes(x = .data$x, y = .data$y))
 
-  ## add and format errors
+  ## add and format errors ----
 
   # format labels
   label_style <- point_df %>%
@@ -428,7 +428,7 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
               show.legend = FALSE,
               ...)
 
-  # plot expression labels
+  # plot expression labels (parse = TRUE)
   plot <- plot +
     geom_text(data = data_expression,
               aes(x = .data$x, y = .data$y, label = .data$expression),

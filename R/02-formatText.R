@@ -133,16 +133,18 @@ formatTextUI <- function(id,
 #
 # @param id namespace id
 # @param text_type (character) Type of formatting, e.g. for titles or for axis
-# @param availableElements (character) set of available labels for specifying the format of text.
-#  May contain elements from \code{c("title", "axis", "yaxis2", "legend")}.
 # @param show_parse_button (logical) Show parse button for parsing mathematical expressions.
-# This should be FALSE if there is an 'apply' button in the parent module
+#  This should be FALSE if there is an 'apply' button in the parent module
 # @inheritParams plotExportServer
 formatTextServer <- function(id,
                              init_text = reactive(defaultInitTitle()),
                              text_type = c("title", "axis"),
                              show_parse_button = TRUE,
-                             label_name = reactive("plotTitle")) {
+                             label_name = reactive("plotTitle"),
+                             text_inputs = c("label_name", "show", "hide"),
+                             position_inputs = c("label_name", "show", "hide")) {
+  text_inputs <- match.arg(text_inputs)
+  position_inputs <- match.arg(position_inputs)
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -157,30 +159,18 @@ formatTextServer <- function(id,
       bindEvent(init_text())
 
     # Bind the reactive value to an output for the conditionalPanel
-    show_text_ui <- reactive({
-      if (label_name() %in% c("plotTitle",
-                              "legendTitle",
-                              "xAxisTitle",
-                              "yAxisTitle",
-                              "yAxisTitle2")) {
-        TRUE
-      } else {
-        FALSE
-      }
-    })
     output$show_text_ui <- reactive({
-      show_text_ui()
+      switch(text_inputs,
+             "label_name" = showTextInputs(label_name()),
+             "show" = TRUE,
+             "hide" = FALSE)
     })
 
-    show_position_ui <- reactive({
-      show_position_ui()
-    })
     output$show_position_ui <- reactive({
-      if (label_name() %in% c("xAxisText", "yAxisText", "yAxisText2")) {
-        TRUE
-      } else {
-        FALSE
-      }
+      switch(position_inputs,
+             "label_name" = showPositionInputs(label_name()),
+             "show" = TRUE,
+             "hide" = FALSE)
     })
 
     # Mark the output as usable in conditionalPanel
@@ -409,6 +399,25 @@ defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
   list(title = title, text = text)
 }
 
+showTextInputs <- function(label_name) {
+  if (label_name %in% c("plotTitle",
+                        "legendTitle",
+                        "xAxisTitle",
+                        "yAxisTitle",
+                        "yAxisTitle2")) {
+    TRUE
+  } else {
+    FALSE
+  }
+}
+
+showPositionInputs <- function(label_name){
+  if (label_name %in% c("xAxisText", "yAxisText", "yAxisText2")) {
+    TRUE
+  } else {
+    FALSE
+  }
+}
 
 # Observe Text Elements Of Label (no docu for 'man' because it is a helper function)
 #

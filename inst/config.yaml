@@ -69,3 +69,12 @@ defaultPointStyle:
     alpha: 1
     lineWidthBg: 2
     hide: false
+
+# default point style
+defaultLineStyle:
+  lineType: 1
+  color: "#000000"
+  size: 1
+  alpha: 1
+  lineWidth: 2
+  hide: false

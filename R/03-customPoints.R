@@ -20,7 +20,12 @@ customPointsUI <- function(id,
       id = ns("custom_points"),
       selected = "Add",
       tabPanel("Add", addCustomPointUI(ns("add"))),
-      tabPanel("Format Point", stylePointsUI(ns("style_point"))),
+      tabPanel("Format Point", applyFormatUI(
+        ns("style_point"),
+        formatUI = plotPointsUI(ns("style_point-point"), title = NULL, type = "ggplot")
+      )),
+      # we need ui to style errors
+      #tabPanel("Format Error", stylePointErrorsUI(ns("style_error"))),
       tabPanel("Format Label", stylePointLabelsUI(ns("style_label"))),
       tabPanel("Remove", removeCustomPointsUI(ns("remove")))
     )
@@ -149,20 +154,22 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
-# UI for styling custom points
+# UI for applying format to custom points
+#
 # @param id namespace id
-stylePointsUI <- function(id) {
+# @param formatUI UI for formatting
+applyFormatUI <- function(id, formatUI) {
   ns <- NS(id)
 
   tagList(
     tags$br(),
     selectInput(
-      ns("pointsToStyle"),
+      ns("selected_points"),
       label = "Select point(s)",
       choices = c("Add a point ..." = ""),
       multiple = TRUE
     ),
-    plotPointsUI(ns("point"), title = NULL, type = "ggplot"),
+    formatUI,
     actionButton(ns("apply"), "Apply")
   )
 }
@@ -179,10 +186,10 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
     # observe custom_points
     observe({
-      logDebug("%s: update choices of 'input$pointsToStyle'", id)
+      logDebug("%s: update choices of 'input$selected_points'", id)
 
       custom_point_ids <- names(custom_points())
-      updateSelectInput(session, "pointsToStyle", choices = getPointChoices(custom_point_ids))
+      updateSelectInput(session, "selected_points", choices = getPointChoices(custom_point_ids))
 
       req(length(custom_point_ids) > 0)
       logDebug("%s: set point styles if empty", id)
@@ -195,8 +202,8 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
     # disable button if nothing is selected
     observe({
-      if (length(input[["pointsToStyle"]]) == 0 ||
-          any(input[["pointsToStyle"]] == "")) {
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
         logDebug("%s: Disable button", id)
         shinyjs::disable(ns("apply"), asis = TRUE)
       } else {
@@ -207,8 +214,8 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
     reload_init <- reactiveVal(FALSE)
     observe({
-      if (length(input[["pointsToStyle"]]) == 0 ||
-          any(input[["pointsToStyle"]] == "")) {
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
         logDebug("%s: No init reload", id)
         reload_init(FALSE)
       } else {
@@ -216,15 +223,15 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
         reload_init(TRUE)
       }
     }) %>%
-      bindEvent(input[["pointsToStyle"]], ignoreNULL = FALSE)
+      bindEvent(input[["selected_points"]], ignoreNULL = FALSE)
 
     init_style <- reactive({
-      if (length(input[["pointsToStyle"]]) == 0 ||
-          any(input[["pointsToStyle"]] == "")) {
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
         default_style
       } else {
         # load selected format
-        first_point_style <- custom_points()[input[["pointsToStyle"]]][[1]] %>%
+        first_point_style <- custom_points()[input[["selected_points"]]][[1]] %>%
           extractFormat(prefix = "point_")
         list(dataPoints = first_point_style)
       }
@@ -242,7 +249,7 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
       all_points <- custom_points() %>%
         updateFormat(
-          selected_ids = input[["pointsToStyle"]],
+          selected_ids = input[["selected_points"]],
           new_format = style$dataPoints,
           prefix = "point_"
         )
@@ -263,7 +270,7 @@ stylePointLabelsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
   tagList(
     tags$br(),
     selectInput(
-      ns("labelsToStyle"),
+      ns("selected_points"),
       label = "Select point(s)",
       choices = c("Add a point ..." = ""),
       multiple = TRUE
@@ -291,10 +298,10 @@ stylePointLabelsServer <- function(id,
     default_style <- defaultInitText(type = plot_type)[["xAxisText"]]
 
     observe({
-      logDebug("%s: update choices of 'input$labelsToStyle'", id)
+      logDebug("%s: update choices of 'input$selected_points'", id)
 
       custom_point_ids <- names(custom_points())
-      updateSelectInput(session, "labelsToStyle", choices = getPointChoices(custom_point_ids))
+      updateSelectInput(session, "selected_points", choices = getPointChoices(custom_point_ids))
 
       req(length(custom_point_ids) > 0)
       logDebug("%s: set label styles if empty", id)
@@ -315,8 +322,8 @@ stylePointLabelsServer <- function(id,
 
     # disable button if nothing is selected
     observe({
-      if (length(input[["labelsToStyle"]]) == 0 ||
-          any(input[["labelsToStyle"]] == "")) {
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
         logDebug("%s: Disable button", id)
         shinyjs::disable(ns("apply"), asis = TRUE)
       } else {
@@ -327,15 +334,15 @@ stylePointLabelsServer <- function(id,
 
     label_name <- reactiveVal("xAxisText")
     init_text <- reactive({
-      if (length(input[["labelsToStyle"]]) == 0 ||
-          any(input[["labelsToStyle"]] == "")) {
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
         default_style
       } else {
         # trigger label_name to force "updateUserInputs"
         label_name(NULL)
         label_name("xAxisText")
         # load selected format
-        first_point_style <- custom_points()[input[["labelsToStyle"]]][[1]] %>%
+        first_point_style <- custom_points()[input[["selected_points"]]][[1]] %>%
           extractFormat(prefix = "label_")
         first_point_style
       }
@@ -357,7 +364,7 @@ stylePointLabelsServer <- function(id,
 
       all_points <- custom_points() %>%
         updateFormat(
-          selected_ids = input[["labelsToStyle"]],
+          selected_ids = input[["selected_points"]],
           new_format = updated_text(),
           prefix = "label_"
         )

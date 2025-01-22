@@ -1,3 +1,8 @@
+# shinyTools 25.01.0
+
+## New Features
+- new module (`customPoints`) that allows a user to add points to a plot and format them (#35)
+
 # shinyTools 24.12.0
 
 ## Updates

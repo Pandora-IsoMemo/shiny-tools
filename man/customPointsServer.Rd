@@ -5,7 +5,12 @@
 \alias{customPointsServer}
 \title{Custom Points Module}
 \usage{
-customPointsUI(id, title = "Custom Points", titleTag = "h4")
+customPointsUI(
+  id,
+  title = "Custom Points",
+  titleTag = "h4",
+  plot_type = c("ggplot", "base", "none")
+)
 
 customPointsServer(id)
 }

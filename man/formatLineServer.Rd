@@ -5,7 +5,12 @@
 \alias{formatLineServer}
 \title{Format Line UI}
 \usage{
-formatLineUI(id, initStyle = defaultLineFormat())
+formatLineUI(
+  id,
+  title = NULL,
+  titleTag = "h4",
+  initStyle = defaultLineFormat()
+)
 
 formatLineServer(
   id,

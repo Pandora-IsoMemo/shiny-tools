@@ -5,9 +5,11 @@
 #'
 #' @export
 formatLineUI <- function(id,
+                         title = NULL, titleTag = "h4",
                          initStyle = defaultLineFormat()) {
   ns <- NS(id)
   tagList(
+    setModuleTitle(title = title, titleTag = titleTag),
     checkboxInput(
       inputId = ns("hide"),
       label = "Hide Line",
@@ -25,14 +27,16 @@ formatLineUI <- function(id,
         "longdash" = "5",
         "twodash" = "6"
       ),
-      selected = initStyle[["lineType"]]
+      selected = initStyle[["lineType"]],
+      width = "100%"
     ),
     sliderInput(
       inputId = ns("lineWidth"),
       label = "Thickness",
       min = 0,
       max = 20,
-      value = initStyle[["lineWidth"]]
+      value = initStyle[["lineWidth"]],
+      width = "100%"
     ),
     colourInput(
       ns("color"),
@@ -45,7 +49,8 @@ formatLineUI <- function(id,
       label = "Opacity",
       min = 0,
       max = 1,
-      value = initStyle[["alpha"]]
+      value = initStyle[["alpha"]],
+      width = "100%"
     )
   )
 }

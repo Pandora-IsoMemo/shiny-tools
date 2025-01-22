@@ -11,7 +11,10 @@
 #' @export
 customPointsUI <- function(id,
                            title = "Custom Points",
-                           titleTag = "h4") {
+                           titleTag = "h4",
+                           plot_type = c("ggplot", "base", "none")) {
+  plot_type <- match.arg(plot_type)
+
   ns <- NS(id)
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
@@ -21,12 +24,28 @@ customPointsUI <- function(id,
       selected = "Add",
       tabPanel("Add", addCustomPointUI(ns("add"))),
       tabPanel("Format Point", applyFormatUI(
-        ns("style_point"),
-        formatUI = plotPointsUI(ns("style_point-point"), title = NULL, type = "ggplot")
+        wrapper_id = ns("style_point"),
+        format_FUN = plotPointsUI,
+        id = ns("style_point-format"),
+        title = NULL,
+        type = plot_type,
+        initStyle = config()$defaultPointStyle
       )),
       # we need ui to style errors
-      #tabPanel("Format Error", stylePointErrorsUI(ns("style_error"))),
-      tabPanel("Format Label", stylePointLabelsUI(ns("style_label"))),
+      tabPanel("Format Error", applyFormatUI(
+        wrapper_id = ns("style_error"),
+        format_FUN = formatLineUI,
+        id = ns("style_error-format"),
+        initStyle = config()$defaultLineStyle
+      )),
+      tabPanel("Format Label", applyFormatUI(
+        wrapper_id = ns("style_label"),
+        format_FUN = formatTextUI,
+        id = ns("style_label-format"),
+        type = plot_type,
+        initTitle = defaultTextFormat(type = plot_type)[["title"]],
+        initAxis = defaultTextFormat(type = plot_type)[["text"]]
+      )),
       tabPanel("Remove", removeCustomPointsUI(ns("remove")))
     )
   )
@@ -47,6 +66,13 @@ customPointsServer <- function(id) {
 
     addCustomPointServer("add", custom_points)
     stylePointsServer("style_point", custom_points)
+    #stylePointErrorsServer("style_error", custom_points)
+    applyFormatServer("style_error",
+                      default_style = defaultLineFormat(),
+                      formatServerFUN = formatLineServer,
+                      custom_points = custom_points,
+                      style_prefix = "error_",
+                      plot_type = c("ggplot", "base", "none"))
     stylePointLabelsServer("style_label", custom_points)
     removeCustomPointsServer("remove", custom_points)
 
@@ -156,10 +182,10 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
 
 # UI for applying format to custom points
 #
-# @param id namespace id
-# @param formatUI UI for formatting
-applyFormatUI <- function(id, formatUI) {
-  ns <- NS(id)
+# @param thisId namespace id of the wrapper module 'applyFormatUI'
+# @param formatUIFUN UI function for formatting
+applyFormatUI <- function(wrapper_id, format_FUN, ...) {
+  ns <- NS(wrapper_id)
 
   tagList(
     tags$br(),
@@ -167,11 +193,114 @@ applyFormatUI <- function(id, formatUI) {
       ns("selected_points"),
       label = "Select point(s)",
       choices = c("Add a point ..." = ""),
-      multiple = TRUE
+      multiple = TRUE,
+      width = "100%"
     ),
-    formatUI,
+    format_FUN(...),
     actionButton(ns("apply"), "Apply")
   )
+}
+
+applyFormatServer <- function(id,
+                              default_style,
+                              formatServerFUN,
+                              custom_points = reactiveVal(),
+                              style_prefix = "",
+                              plot_type = c("ggplot", "base", "none"),
+                              ...) {
+  plot_type <- match.arg(plot_type)
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    #default_style <- defaultInitText(type = plot_type)[["xAxisText"]]
+
+    observe({
+      logDebug("%s: update choices of 'input$selected_points'", id)
+
+      custom_point_ids <- names(custom_points())
+      updateSelectInput(session, "selected_points", choices = getPointChoices(custom_point_ids))
+
+      req(length(custom_point_ids) > 0)
+      logDebug("%s: set label styles if empty", id)
+
+      # add entries for label format if not yet set
+      all_points <- custom_points() %>%
+        initFormat(default_format = default_style, prefix = style_prefix)
+
+      custom_points(all_points)
+    })
+
+    # disable button if nothing is selected
+    observe({
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
+        logDebug("%s: Disable button", id)
+        shinyjs::disable(ns("apply"), asis = TRUE)
+      } else {
+        logDebug("%s: Enable button", id)
+        shinyjs::enable(ns("apply"), asis = TRUE)
+      }
+    })
+
+
+    reload_init <- reactiveVal(FALSE)
+    observe({
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
+        logDebug("%s: No init reload", id)
+        reload_init(FALSE)
+      } else {
+        logDebug("%s: Reload init", id)
+        reload_init(TRUE)
+      }
+    }) %>%
+      bindEvent(input[["selected_points"]], ignoreNULL = FALSE)
+
+    init_style <- reactive({
+      if (length(input[["selected_points"]]) == 0 ||
+          any(input[["selected_points"]] == "")) {
+        default_style
+      } else {
+        # load selected format
+        first_point_style <- custom_points()[input[["selected_points"]]][[1]] %>%
+          extractFormat(prefix = style_prefix)
+        first_point_style
+      }
+    })
+
+    # current format settings
+    new_format <- formatServerFUN(
+      id = "format",
+      initStyle = init_style,
+      reloadInit = reload_init,
+      ...
+    )
+
+    observe({
+      logDebug("%s: Apply new format", id)
+
+      all_points <- custom_points() %>%
+        updateFormat(
+          selected_ids = input[["selected_points"]],
+          new_format = new_format %>% extractReactiveValue(),
+          prefix = style_prefix
+        )
+
+      custom_points(all_points)
+    }) %>%
+      bindEvent(input[["apply"]])
+  })
+}
+
+extractReactiveValue <- function(obj) {
+  if ("reactiveVal" %in% class(obj)) {
+    # For reactiveVal, call the object to get its value
+    return(obj())
+  } else if ("reactivevalues" %in% class(obj)) {
+    # For reactiveValues, convert to a list
+    return(reactiveValuesToList(obj))
+  } else {
+    stop("The provided object is neither a reactiveVal nor a reactiveValues.")
+  }
 }
 
 # Server function for styling custom points
@@ -238,7 +367,7 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
     })
 
     style <- plotPointsServer(
-      "point",
+      "format",
       type = "ggplot",
       initStyle = init_style,
       reloadInit = reload_init
@@ -260,29 +389,13 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
-# UI for styling custom point labels
-# @param id namespace id
-# @param plot_type (character) type of plot, one of "ggplot", "base", "none"
-stylePointLabelsUI <- function(id, plot_type = c("ggplot", "base", "none")) {
+stylePointErrorsServer <- function(id, custom_points = reactiveVal(),
+                                   plot_type = c("ggplot", "base", "none")) {
   plot_type <- match.arg(plot_type)
-  ns <- NS(id)
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
 
-  tagList(
-    tags$br(),
-    selectInput(
-      ns("selected_points"),
-      label = "Select point(s)",
-      choices = c("Add a point ..." = ""),
-      multiple = TRUE
-    ),
-    formatTextUI(
-      ns("text"),
-      type = plot_type,
-      initTitle = defaultTextFormat(type = plot_type)[["title"]],
-      initAxis = defaultTextFormat(type = plot_type)[["text"]]
-    ),
-    actionButton(ns("apply"), "Apply")
-  )
+  })
 }
 
 # Server function for styling custom point labels
@@ -350,7 +463,7 @@ stylePointLabelsServer <- function(id,
 
     # current format settings
     updated_text <- formatTextServer(
-      "text",
+      "format",
       init_text = init_text,
       text_type = c("title", "axis"),
       show_parse_button = FALSE,

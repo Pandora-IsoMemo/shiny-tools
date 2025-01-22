@@ -52,8 +52,7 @@ customPointsUI <- function(id,
           format_FUN = formatTextUI,
           id = ns("style_label-format"),
           type = plot_type,
-          initTitle = defaultTextFormat(type = plot_type)[["title"]],
-          initAxis = defaultTextFormat(type = plot_type)[["text"]]
+          initStyle = config()$defaultGGLabel
         )
       )
     )
@@ -232,7 +231,13 @@ applyFormatServer <- function(id,
       logDebug("%s: update choices of 'input$selected_points'", id)
 
       custom_point_ids <- names(custom_points())
-      updateSelectInput(session, "selected_points", choices = getPointChoices(custom_point_ids))
+      last_selected <- input[["selected_points"]]
+      updateSelectInput(
+        session,
+        "selected_points",
+        choices = getPointChoices(custom_point_ids),
+        selected = last_selected
+      )
 
       req(length(custom_point_ids) > 0)
       logDebug("%s: set label styles if empty", id)
@@ -331,7 +336,13 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
       logDebug("%s: update choices of 'input$selected_points'", id)
 
       custom_point_ids <- names(custom_points())
-      updateSelectInput(session, "selected_points", choices = getPointChoices(custom_point_ids))
+      last_selected <- input[["selected_points"]]
+      updateSelectInput(
+        session,
+        "selected_points",
+        choices = getPointChoices(custom_point_ids),
+        selected = last_selected
+      )
 
       req(length(custom_point_ids) > 0)
       logDebug("%s: set point styles if empty", id)
@@ -422,13 +433,19 @@ stylePointLabelsServer <- function(id,
   plot_type <- match.arg(plot_type)
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    default_style <- defaultInitText(type = plot_type)[["xAxisText"]]
+    default_style <- config()$defaultGGLabel
 
     observe({
       logDebug("%s: update choices of 'input$selected_points'", id)
 
       custom_point_ids <- names(custom_points())
-      updateSelectInput(session, "selected_points", choices = getPointChoices(custom_point_ids))
+      last_selected <- input[["selected_points"]]
+      updateSelectInput(
+        session,
+        "selected_points",
+        choices = getPointChoices(custom_point_ids),
+        selected = last_selected
+      )
 
       req(length(custom_point_ids) > 0)
       logDebug("%s: set label styles if empty", id)

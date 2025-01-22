@@ -31,8 +31,7 @@ plotTitlesUI <- function(id,
     formatTextUI(
       ns("text"),
       type = type,
-      initTitle = initText[["plotTitle"]],
-      initAxis = initText[["xAxisText"]]
+      initStyle = initText[["plotTitle"]]
     )
   )
 }

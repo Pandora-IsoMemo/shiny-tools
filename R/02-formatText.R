@@ -6,18 +6,12 @@
 # @return tagList
 formatTextUI <- function(id,
                          type = c("ggplot", "base", "none"),
-                         initTitle = NULL,
-                         initAxis = NULL) {
+                         initStyle = NULL) {
   type <- match.arg(type)
 
-  if (is.null(initTitle)) {
+  if (is.null(initStyle)) {
     # if null: take values from config
-    initTitle <- defaultTextFormat(type = type)[["title"]]
-  }
-
-  if (is.null(initAxis)) {
-    # if null: take values from config
-    initAxis <- defaultTextFormat(type = type)[["text"]]
+    initStyle <- defaultTextFormat(type = type)[["title"]]
   }
 
   ns <- NS(id)
@@ -25,7 +19,7 @@ formatTextUI <- function(id,
     checkboxInput(
       inputId = ns("hide"),
       label = "Hide Text",
-      value = initTitle[["hide"]],
+      value = initStyle[["hide"]],
       width = "100%"
     ),
     conditionalPanel(
@@ -58,7 +52,7 @@ formatTextUI <- function(id,
         textInput(
           ns("text"),
           label = "Text",
-          value = initTitle[["text"]],
+          value = initStyle[["text"]],
           placeholder = "Custom title ...",
           width = "100%"
         )
@@ -71,27 +65,27 @@ formatTextUI <- function(id,
         ns("fontType"),
         label = "Font type",
         choices = fontChoicesSelect(type = type),
-        selected = initTitle[["fontType"]],
+        selected = initStyle[["fontType"]],
         width = "100%"
       )
     ),
     colourInput(
       ns("color"),
       label = "Text color",
-      value = initTitle[["color"]],
+      value = initStyle[["color"]],
       width = "100%"
     ),
     selectInput(
       inputId = ns("fontFamily"),
       label = "Font family",
-      selected = initTitle[["fontFamily"]],
+      selected = initStyle[["fontFamily"]],
       choices = availableFonts(),
       width = "100%"
     ),
     sliderInput(
       ns("size"),
       label = "Text size",
-      value = initTitle[["size"]],
+      value = initStyle[["size"]],
       min = sizeValuesSlider(type = type)[["min"]],
       max = sizeValuesSlider(type = type)[["max"]],
       step = sizeValuesSlider(type = type)[["step"]],
@@ -103,7 +97,7 @@ formatTextUI <- function(id,
       sliderInput(
         ns("angle"),
         label = "Text angle",
-        value = initAxis[["angle"]],
+        value = initStyle[["angle"]],
         min = 0,
         max = 360,
         step = 5,
@@ -112,18 +106,18 @@ formatTextUI <- function(id,
       sliderInput(
         ns("hjust"),
         label = "Horizontal adjustment",
-        value = initAxis[["hjust"]],
-        min = 0,
-        max = 1,
+        value = initStyle[["hjust"]],
+        min = -5,
+        max = 5,
         step = 0.1,
         width = "100%"
       ),
       sliderInput(
         ns("vjust"),
         label = "Vertical adjustment",
-        value = initAxis[["vjust"]],
-        min = 0,
-        max = 1,
+        value = initStyle[["vjust"]],
+        min = -5,
+        max = 5,
         step = 0.1,
         width = "100%"
       )

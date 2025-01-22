@@ -52,6 +52,19 @@ defaultBaseText:
   hjust: 0.5
   vjust: 0.5
 
+defaultGGLabel:
+  text: ""
+  useExpression: false
+  expression: ""
+  fontFamily: "sans"
+  fontType: "plain"
+  color: "#000000"
+  size: 12
+  hide: false
+  angle: 0
+  hjust: -0.2
+  vjust: 0.5
+
 # default range of axis (for plotExport.R)
 defaultRange:
   min: 0
@@ -65,7 +78,7 @@ defaultPointStyle:
     symbol: 19
     color: "#000000"
     colorBg: "#000000"
-    size: 1
+    size: 2
     alpha: 1
     lineWidthBg: 2
     hide: false

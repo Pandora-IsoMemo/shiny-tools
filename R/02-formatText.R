@@ -59,7 +59,8 @@ formatTextUI <- function(id,
           ns("text"),
           label = "Text",
           value = initTitle[["text"]],
-          placeholder = "Custom title ..."
+          placeholder = "Custom title ...",
+          width = "100%"
         )
       ),
     ),
@@ -105,7 +106,8 @@ formatTextUI <- function(id,
         value = initAxis[["angle"]],
         min = 0,
         max = 360,
-        step = 5
+        step = 5,
+        width = "100%"
       ),
       sliderInput(
         ns("hjust"),
@@ -113,7 +115,8 @@ formatTextUI <- function(id,
         value = initAxis[["hjust"]],
         min = 0,
         max = 1,
-        step = 0.1
+        step = 0.1,
+        width = "100%"
       ),
       sliderInput(
         ns("vjust"),
@@ -121,7 +124,8 @@ formatTextUI <- function(id,
         value = initAxis[["vjust"]],
         min = 0,
         max = 1,
-        step = 0.1
+        step = 0.1,
+        width = "100%"
       )
     )
   )
@@ -404,6 +408,8 @@ defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
 }
 
 showTextInputs <- function(label_name) {
+  if (length(label_name) == 0) return(FALSE)
+
   if (label_name %in% c("plotTitle",
                         "legendTitle",
                         "xAxisTitle",
@@ -416,6 +422,8 @@ showTextInputs <- function(label_name) {
 }
 
 showPositionInputs <- function(label_name) {
+  if (length(label_name) == 0) return(FALSE)
+
   if (label_name %in% c("xAxisText", "yAxisText", "yAxisText2")) {
     TRUE
   } else {

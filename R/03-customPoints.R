@@ -23,8 +23,9 @@ customPointsUI <- function(id,
       id = ns("custom_points"),
       selected = "Add",
       tabPanel("Add", addCustomPointUI(ns("add"))),
+      tabPanel("Remove", removeCustomPointsUI(ns("remove"))),
       tabPanel(
-        "Format Point",
+        "Point",
         applyFormatUI(
           wrapper_id = ns("style_point"),
           format_FUN = plotPointsUI,
@@ -36,7 +37,7 @@ customPointsUI <- function(id,
       ),
       # we need ui to style errors
       tabPanel(
-        "Format Error",
+        "Error",
         applyFormatUI(
           wrapper_id = ns("style_error"),
           format_FUN = formatLineUI,
@@ -45,7 +46,7 @@ customPointsUI <- function(id,
         )
       ),
       tabPanel(
-        "Format Label",
+        "Label",
         applyFormatUI(
           wrapper_id = ns("style_label"),
           format_FUN = formatTextUI,
@@ -54,8 +55,7 @@ customPointsUI <- function(id,
           initTitle = defaultTextFormat(type = plot_type)[["title"]],
           initAxis = defaultTextFormat(type = plot_type)[["text"]]
         )
-      ),
-      tabPanel("Remove", removeCustomPointsUI(ns("remove")))
+      )
     )
   )
 }
@@ -99,6 +99,7 @@ addCustomPointUI <- function(id) {
   ns <- NS(id)
   tagList(tags$br(),
           pointCoordinatesUI(ns("coordinates")),
+          tags$br(),
           actionButton(ns("apply"), "Add"))
 }
 
@@ -153,8 +154,10 @@ removeCustomPointsUI <- function(id) {
       ns("pointsToRemove"),
       label = "Select point(s)",
       choices = c("Add a point ..." = ""),
-      multiple = TRUE
+      multiple = TRUE,
+      width = "100%"
     ),
+    tags$br(),
     actionButton(ns("apply"), "Remove")
   )
 }
@@ -208,6 +211,7 @@ applyFormatUI <- function(wrapper_id, format_FUN, ...) {
       width = "100%"
     ),
     format_FUN(...),
+    tags$br(),
     actionButton(ns("apply"), "Apply")
   )
 }

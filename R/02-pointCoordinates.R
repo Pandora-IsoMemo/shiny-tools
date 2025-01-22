@@ -4,21 +4,21 @@ pointCoordinatesUI <- function(id,
   ns <- NS(id)
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
-    textInput(ns("label"), label = "Point ID", value = "Point 1"),
-    pointDimensionUI(ns("x"), title = "X Dimension", titleTag = "h4"),
-    pointDimensionUI(ns("y"), title = "Y Dimension", titleTag = "h4")
+    textInput(ns("label"), label = "Point ID", value = "Point 1", width = "100%"),
+    pointDimensionUI(ns("x"), title = "X Dimension"),
+    pointDimensionUI(ns("y"), title = "Y Dimension")
   )
 }
 
 pointDimensionUI <- function(id,
                              title = NULL,
-                             titleTag = "h4") {
+                             titleTag = "h5") {
   ns <- NS(id)
   tagList(
     setModuleTitle(title = title, titleTag = titleTag),
-    numericInput(ns("value"), label = "Value", value = numeric(0)),
-    numericInput(ns("min"), label = "Minimum", value = numeric(0)),
-    numericInput(ns("max"), label = "Maximum", value = numeric(0))
+    numericInput(ns("value"), label = "Value", value = numeric(0), width = "100%"),
+    numericInput(ns("min"), label = "Minimum", value = numeric(0), width = "100%"),
+    numericInput(ns("max"), label = "Maximum", value = numeric(0), width = "100%")
   )
 }
 

@@ -27,26 +27,30 @@ plotPointsUI <- function(id, title = "Data Points", titleTag = "h4", type = c("g
       inputId = ns("symbol"),
       label = "Symbol",
       choices = symbolChoicesSelect(),
-      selected = initStyle[["dataPoints"]][["symbol"]]
+      selected = initStyle[["dataPoints"]][["symbol"]],
+      width = "100%"
     ),
     colourInput(
       inputId = ns("color"),
       label = "Color",
-      value = initStyle[["dataPoints"]][["color"]]
+      value = initStyle[["dataPoints"]][["color"]],
+      width = "100%"
     ),
     sliderInput(
       inputId = ns("size"),
       label = "Size",
       min = 0,
       max = 20,
-      value = initStyle[["dataPoints"]][["size"]]
+      value = initStyle[["dataPoints"]][["size"]],
+      width = "100%"
     ),
     sliderInput(
       inputId = ns("alpha"),
       label = "Opacity",
       min = 0,
       max = 1,
-      value = initStyle[["dataPoints"]][["alpha"]]
+      value = initStyle[["dataPoints"]][["alpha"]],
+      width = "100%"
     ),
     conditionalPanel(
       condition = "input.symbol == 21 | input.symbol == 22 |input.symbol == 23 |input.symbol == 24 |input.symbol == 25",
@@ -54,7 +58,8 @@ plotPointsUI <- function(id, title = "Data Points", titleTag = "h4", type = c("g
       colourInput(
         inputId = ns("colorBg"),
         label = "Background color",
-        value = initStyle[["dataPoints"]][["colorBg"]]
+        value = initStyle[["dataPoints"]][["colorBg"]],
+        width = "100%"
       ),
       if (type == "base") {
         sliderInput(
@@ -62,7 +67,8 @@ plotPointsUI <- function(id, title = "Data Points", titleTag = "h4", type = c("g
           label = "Thickness",
           min = 0,
           max = 20,
-          value = initStyle[["dataPoints"]][["lineWidthBg"]]
+          value = initStyle[["dataPoints"]][["lineWidthBg"]],
+          width = "100%"
         )
       } else NULL
     )

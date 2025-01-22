@@ -5,7 +5,8 @@
 #'
 #' @export
 formatLineUI <- function(id,
-                         title = NULL, titleTag = "h4",
+                         title = NULL,
+                         titleTag = "h4",
                          initStyle = defaultLineFormat()) {
   ns <- NS(id)
   tagList(
@@ -84,52 +85,62 @@ formatLineUI <- function(id,
 #' @param reloadInit (reactiveVal) logical, should \code{initStyle} be reloaded?
 #'
 #' @export
-formatLineServer <- function(id, hideInput = c(), initStyle = defaultLineFormat(), reloadInit = reactiveVal(FALSE)) {
-  moduleServer(id,
-               function(input, output, session) {
-                 ns <- session$ns
+formatLineServer <- function(id,
+                             hideInput = c(),
+                             initStyle = defaultLineFormat(),
+                             reloadInit = reactiveVal(FALSE)) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
 
-                 style <- custom_style <- initializeReactiveObject(
-                   session,
-                   id,
-                   custom_values = initStyle,
-                   choices = c("size", "linetype", "horizontalcaps", "verticalcaps", "color", "alpha", "hide"),
-                   default_fun = defaultLineFormat
-                 )
+    style <- custom_style <- initializeReactiveObject(
+      session,
+      id,
+      custom_values = initStyle,
+      choices = c(
+        "size",
+        "linetype",
+        "horizontalcaps",
+        "verticalcaps",
+        "color",
+        "alpha",
+        "hide"
+      ),
+      default_fun = defaultLineFormat
+    )
 
-                 observe({
-                   req(length(hideInput) > 0)
-                   logDebug("%s: Entering observe 'hideInput'", id)
+    observe({
+      req(length(hideInput) > 0)
+      logDebug("%s: Entering observe 'hideInput'", id)
 
-                   # hide inputs
-                   for (i in hideInput) {
-                     shinyjs::hide(ns(i), asis = TRUE)
-                   }
-                 })
+      # hide inputs
+      for (i in hideInput) {
+        shinyjs::hide(ns(i), asis = TRUE)
+      }
+    })
 
-                 observe({
-                   req(isTRUE(reloadInit()))
-                   logDebug("%s: Entering reload 'initStyle'", id)
+    observe({
+      req(isTRUE(reloadInit()))
+      logDebug("%s: Entering reload 'initStyle'", id)
 
-                   if (is.reactive(initStyle)) {
-                     new_inputs <- initStyle()
-                   } else {
-                     new_inputs <- custom_style
-                   }
+      if (is.reactive(initStyle)) {
+        new_inputs <- initStyle()
+      } else {
+        new_inputs <- custom_style
+      }
 
-                   updateUserInputs(
-                     input = input,
-                     output = output,
-                     session = session,
-                     userInputs = new_inputs
-                   )
-                 }) %>%
-                   bindEvent(reloadInit())
+      updateUserInputs(
+        input = input,
+        output = output,
+        session = session,
+        userInputs = new_inputs
+      )
+    }) %>%
+      bindEvent(reloadInit())
 
-                 style <- observeAndUpdateLineElements(input, output, session, id, style = style)
+    style <- observeAndUpdateLineElements(input, output, session, id, style = style)
 
-                 return(style)
-               })
+    return(style)
+  })
 }
 
 observeAndUpdateLineElements <- function(input, output, session, id, style) {

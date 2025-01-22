@@ -160,17 +160,21 @@ formatTextServer <- function(id,
 
     # Bind the reactive value to an output for the conditionalPanel
     output$show_text_ui <- reactive({
-      switch(text_inputs,
-             "label_name" = showTextInputs(label_name()),
-             "show" = TRUE,
-             "hide" = FALSE)
+      switch(
+        text_inputs,
+        "label_name" = showTextInputs(label_name()),
+        "show" = TRUE,
+        "hide" = FALSE
+      )
     })
 
     output$show_position_ui <- reactive({
-      switch(position_inputs,
-             "label_name" = showPositionInputs(label_name()),
-             "show" = TRUE,
-             "hide" = FALSE)
+      switch(
+        position_inputs,
+        "label_name" = showPositionInputs(label_name()),
+        "show" = TRUE,
+        "hide" = FALSE
+      )
     })
 
     # Mark the output as usable in conditionalPanel
@@ -411,7 +415,7 @@ showTextInputs <- function(label_name) {
   }
 }
 
-showPositionInputs <- function(label_name){
+showPositionInputs <- function(label_name) {
   if (label_name %in% c("xAxisText", "yAxisText", "yAxisText2")) {
     TRUE
   } else {

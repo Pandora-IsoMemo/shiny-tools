@@ -22,7 +22,9 @@ pointDimensionUI <- function(id,
   )
 }
 
-pointCoordinatesServer <- function(id, default_name = reactive(NULL), reset_coordinates = TRUE) {
+pointCoordinatesServer <- function(id,
+                                   default_name = reactive(NULL),
+                                   reset_coordinates = TRUE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 

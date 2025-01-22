@@ -23,29 +23,38 @@ customPointsUI <- function(id,
       id = ns("custom_points"),
       selected = "Add",
       tabPanel("Add", addCustomPointUI(ns("add"))),
-      tabPanel("Format Point", applyFormatUI(
-        wrapper_id = ns("style_point"),
-        format_FUN = plotPointsUI,
-        id = ns("style_point-format"),
-        title = NULL,
-        type = plot_type,
-        initStyle = config()$defaultPointStyle
-      )),
+      tabPanel(
+        "Format Point",
+        applyFormatUI(
+          wrapper_id = ns("style_point"),
+          format_FUN = plotPointsUI,
+          id = ns("style_point-format"),
+          title = NULL,
+          type = plot_type,
+          initStyle = config()$defaultPointStyle
+        )
+      ),
       # we need ui to style errors
-      tabPanel("Format Error", applyFormatUI(
-        wrapper_id = ns("style_error"),
-        format_FUN = formatLineUI,
-        id = ns("style_error-format"),
-        initStyle = config()$defaultLineStyle
-      )),
-      tabPanel("Format Label", applyFormatUI(
-        wrapper_id = ns("style_label"),
-        format_FUN = formatTextUI,
-        id = ns("style_label-format"),
-        type = plot_type,
-        initTitle = defaultTextFormat(type = plot_type)[["title"]],
-        initAxis = defaultTextFormat(type = plot_type)[["text"]]
-      )),
+      tabPanel(
+        "Format Error",
+        applyFormatUI(
+          wrapper_id = ns("style_error"),
+          format_FUN = formatLineUI,
+          id = ns("style_error-format"),
+          initStyle = config()$defaultLineStyle
+        )
+      ),
+      tabPanel(
+        "Format Label",
+        applyFormatUI(
+          wrapper_id = ns("style_label"),
+          format_FUN = formatTextUI,
+          id = ns("style_label-format"),
+          type = plot_type,
+          initTitle = defaultTextFormat(type = plot_type)[["title"]],
+          initAxis = defaultTextFormat(type = plot_type)[["text"]]
+        )
+      ),
       tabPanel("Remove", removeCustomPointsUI(ns("remove")))
     )
   )
@@ -67,12 +76,14 @@ customPointsServer <- function(id, plot_type = c("ggplot", "base", "none")) {
 
     addCustomPointServer("add", custom_points)
     stylePointsServer("style_point", custom_points)
-    applyFormatServer("style_error",
-                      default_style = defaultLineFormat(),
-                      formatServerFUN = formatLineServer,
-                      custom_points = custom_points,
-                      style_prefix = "error_",
-                      plot_type = plot_type)
+    applyFormatServer(
+      "style_error",
+      default_style = defaultLineFormat(),
+      formatServerFUN = formatLineServer,
+      custom_points = custom_points,
+      style_prefix = "error_",
+      plot_type = plot_type
+    )
     stylePointLabelsServer("style_label", custom_points)
     removeCustomPointsServer("remove", custom_points)
 
@@ -268,12 +279,10 @@ applyFormatServer <- function(id,
     })
 
     # current format settings
-    new_format <- formatServerFUN(
-      id = "format",
-      initStyle = init_style,
-      reloadInit = reload_init,
-      ...
-    )
+    new_format <- formatServerFUN(id = "format",
+                                  initStyle = init_style,
+                                  reloadInit = reload_init,
+                                  ...)
 
     observe({
       logDebug("%s: Apply new format", id)
@@ -389,7 +398,8 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
-stylePointErrorsServer <- function(id, custom_points = reactiveVal(),
+stylePointErrorsServer <- function(id,
+                                   custom_points = reactiveVal(),
                                    plot_type = c("ggplot", "base", "none")) {
   plot_type <- match.arg(plot_type)
   moduleServer(id, function(input, output, session) {

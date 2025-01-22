@@ -302,20 +302,17 @@ addCustomPointsToGGplot <- function(plot, custom_points) {
 
   point_df <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
 
-  # extract point style
-  point_style <- point_df %>%
-    dplyr::select(dplyr::starts_with("point_")) %>%
-    as.list()
-  names(point_style) <- gsub("point_", "", names(point_style))
-
   ## add errors
   plot <- plot %>%
-    formatPointErrorsOfGGplot(dat = point_df, pointStyle = point_style) %>%
+    formatPointErrorsOfGGplot(dat = point_df,
+                              style = point_df %>% extractStyleList(prefix = "error_")) %>%
     suppressWarnings()
 
   # add points
   plot <- plot %>%
-    formatPointsOfGGplot(data = point_df, pointStyle = point_style, aes(x = .data$x, y = .data$y))
+    formatPointsOfGGplot(data = point_df,
+                         pointStyle = point_df %>% extractStyleList(prefix = "point_"),
+                         aes(x = .data$x, y = .data$y))
 
   # add labels
   label_style <- point_df %>%
@@ -327,6 +324,14 @@ addCustomPointsToGGplot <- function(plot, custom_points) {
     formatPointLabelsOfGGPlot(data = point_df, labelStyle = label_style)
 
   plot
+}
+
+extractStyleList <- function(df, prefix) {
+  style <- df %>%
+    dplyr::select(dplyr::starts_with(prefix)) %>%
+    as.list()
+  names(style) <- gsub(prefix, "", names(style))
+  style
 }
 
 #' Get Default Point Style
@@ -349,24 +354,24 @@ getLabelStyle <- function(type = c("ggplot", "base")) {
          "base" = config()$defaultBaseText)
 }
 
-formatPointErrorsOfGGplot <- function(plot, dat = NULL, pointStyle = getPointStyle(), ...) {
-  defaultStyle <- getPointStyle()
-  requiredElements <- c("size", "color", "alpha", "hide")
+formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineFormat(), ...) {
+  defaultStyle <- defaultLineFormat()
+  requiredElements <- c("size", "linetype", "horizontalcaps", "verticalcaps", "color", "alpha", "hide")
 
-  if (is.null(pointStyle)) {
+  if (is.null(style)) {
     # if null: take values from config
-    pointStyle <- defaultStyle
+    style <- defaultStyle
   }
 
   # check list structure
-  if ("dataPoints" %in% names(pointStyle)) {
-    pointStyle <- pointStyle[["dataPoints"]]
+  if ("dataPoints" %in% names(style)) {
+    style <- style[["dataPoints"]]
   }
 
   # check if all elements are present and complete
-  if (!(all(requiredElements %in% names(pointStyle)))) {
-    missingElements <- setdiff(requiredElements, names(pointStyle))
-    pointStyle[missingElements] <- defaultStyle[missingElements]
+  if (!(all(requiredElements %in% names(style)))) {
+    missingElements <- setdiff(requiredElements, names(style))
+    style[missingElements] <- defaultStyle[missingElements]
   }
 
   # ensure valid errors
@@ -380,16 +385,20 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, pointStyle = getPointSty
     # Horizontal error bars
     geom_errorbarh(data = dat,
                    aes(x = .data$x, y = .data$y, xmin = .data$xmin, xmax = .data$xmax),
-                   size = 0.5 * pointStyle[["size"]],
-                   colour = pointStyle[["color"]],
-                   alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
+                   size = style[["size"]], # thickness
+                   height = style[["verticalcaps"]], # height of the caps
+                   colour = style[["color"]],
+                   linetype = style[["linetype"]],
+                   alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),
                    ...) +
     # Vertical error bars
     geom_errorbar(data = dat,
                   aes(x = .data$x, y = .data$y, ymin = .data$ymin, ymax = .data$ymax),
-                  size = 0.5 * pointStyle[["size"]],
-                  colour = pointStyle[["color"]],
-                  alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
+                  size = style[["size"]], # thickness
+                  width = style[["horizontalcaps"]], # width of the caps
+                  colour = style[["color"]],
+                  linetype = style[["linetype"]],
+                  alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),
                   ...)
 }
 

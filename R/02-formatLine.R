@@ -1,6 +1,6 @@
 #' Format Line UI
 #'
-#'
+#' @inheritParams setModuleTitle
 #' @rdname formatLineServer
 #'
 #' @export
@@ -17,8 +17,8 @@ formatLineUI <- function(id,
       width = "100%"
     ),
     selectInput(
-      inputId = ns("lineType"),
-      label = "Linetype",
+      inputId = ns("linetype"),
+      label = "linetype",
       choices = c(
         "solid" = "1",
         "dashed" = "2",
@@ -27,15 +27,31 @@ formatLineUI <- function(id,
         "longdash" = "5",
         "twodash" = "6"
       ),
-      selected = initStyle[["lineType"]],
+      selected = initStyle[["linetype"]],
       width = "100%"
     ),
     sliderInput(
-      inputId = ns("lineWidth"),
+      ns("size"),
       label = "Thickness",
-      min = 0,
-      max = 20,
-      value = initStyle[["lineWidth"]],
+      value = initStyle[["size"]],
+      min = 0.1,
+      max = 10,
+      width = "100%"
+    ),
+    sliderInput(
+      inputId = ns("horizontalcaps"),
+      label = "Cap Size (horizontal)",
+      min = 0.1,
+      max = 2,
+      value = initStyle[["horizontalcaps"]],
+      width = "100%"
+    ),
+    sliderInput(
+      inputId = ns("verticalcaps"),
+      label = "Cap Size (vertical)",
+      min = 0.1,
+      max = 2,
+      value = initStyle[["verticalcaps"]],
       width = "100%"
     ),
     colourInput(
@@ -77,7 +93,7 @@ formatLineServer <- function(id, hideInput = c(), initStyle = defaultLineFormat(
                    session,
                    id,
                    custom_values = initStyle,
-                   choices = c("lineType", "color", "alpha", "lineWidth", "hide"),
+                   choices = c("size", "linetype", "horizontalcaps", "verticalcaps", "color", "alpha", "hide"),
                    default_fun = defaultLineFormat
                  )
 
@@ -118,11 +134,11 @@ formatLineServer <- function(id, hideInput = c(), initStyle = defaultLineFormat(
 
 observeAndUpdateLineElements <- function(input, output, session, id, style) {
   observe({
-    logDebug("%s: Entering observe 'lineType'", id)
+    logDebug("%s: Entering observe 'linetype'", id)
 
-    style[["lineType"]] <- as.numeric(input[["lineType"]])
+    style[["linetype"]] <- as.numeric(input[["linetype"]])
   }) %>%
-    bindEvent(input[["lineType"]])
+    bindEvent(input[["linetype"]])
 
   observe({
     logDebug("%s: Entering observe 'color'", id)
@@ -139,11 +155,25 @@ observeAndUpdateLineElements <- function(input, output, session, id, style) {
     bindEvent(input[["alpha"]])
 
   observe({
-    logDebug("%s: Entering observe 'lineWidth'", id)
+    logDebug("%s: Entering observe 'size'", id)
 
-    style[["lineWidth"]] <- input[["lineWidth"]]
+    style[["size"]] <- input[["size"]]
   }) %>%
-    bindEvent(input[["lineWidth"]])
+    bindEvent(input[["size"]])
+
+  observe({
+    logDebug("%s: Entering observe 'horizontalcaps'", id)
+
+    style[["horizontalcaps"]] <- input[["horizontalcaps"]]
+  }) %>%
+    bindEvent(input[["horizontalcaps"]])
+
+  observe({
+    logDebug("%s: Entering observe 'verticalcaps'", id)
+
+    style[["verticalcaps"]] <- input[["verticalcaps"]]
+  }) %>%
+    bindEvent(input[["verticalcaps"]])
 
   observe({
     logDebug("%s: Entering observe 'hide'", id)
@@ -164,7 +194,7 @@ defaultLineFormat <- function() {
 # Please comment this code before building the package
 
 # testStyle <- function() {
-#   list(lineType = 2, color = "#00FF22", alpha = 0.3, lineWidth = 1, hide = FALSE)
+#   list(linetype = 2, color = "#00FF22", alpha = 0.3, capsize = 1, hide = FALSE)
 # }
 #
 # ui <- fluidPage(shinyjs::useShinyjs(),

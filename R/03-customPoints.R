@@ -56,9 +56,10 @@ customPointsUI <- function(id,
 #' Backend for custom points module
 #'
 #' @param id namespace id
+#' @param plot_type (character) Type of the plot to add points to, one of "ggplot", "base".
 #'
 #' @export
-customPointsServer <- function(id) {
+customPointsServer <- function(id, plot_type = c("ggplot", "base", "none")) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -66,13 +67,12 @@ customPointsServer <- function(id) {
 
     addCustomPointServer("add", custom_points)
     stylePointsServer("style_point", custom_points)
-    #stylePointErrorsServer("style_error", custom_points)
     applyFormatServer("style_error",
                       default_style = defaultLineFormat(),
                       formatServerFUN = formatLineServer,
                       custom_points = custom_points,
                       style_prefix = "error_",
-                      plot_type = c("ggplot", "base", "none"))
+                      plot_type = plot_type)
     stylePointLabelsServer("style_label", custom_points)
     removeCustomPointsServer("remove", custom_points)
 

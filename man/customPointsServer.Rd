@@ -12,7 +12,7 @@ customPointsUI(
   plot_type = c("ggplot", "base", "none")
 )
 
-customPointsServer(id)
+customPointsServer(id, plot_type = c("ggplot", "base", "none"))
 }
 \arguments{
 \item{id}{namespace id}
@@ -21,6 +21,8 @@ customPointsServer(id)
 
 \item{titleTag}{(character) HTML tag to put around the title, e.g. "h4" for \code{h4} from
 \code{htmltools}}
+
+\item{plot_type}{(character) Type of the plot to add points to, one of "ggplot", "base".}
 }
 \description{
 This module provides the UI that allows to add, style and remove custom points, and returns the

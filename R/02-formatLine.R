@@ -11,7 +11,7 @@ formatLineUI <- function(id,
     setModuleTitle(title = title, titleTag = titleTag),
     checkboxInput(
       inputId = ns("hide"),
-      label = "Hide Line",
+      label = "Hide",
       value = initStyle[["hide"]],
       width = "100%"
     ),

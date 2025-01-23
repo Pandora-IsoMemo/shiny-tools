@@ -19,7 +19,7 @@ plotPointsUI <- function(id, title = "Data Points", titleTag = "h4", type = c("g
     setModuleTitle(title = title, titleTag = titleTag),
     checkboxInput(
       inputId = ns("hide"),
-      label = "Hide points",
+      label = "Hide",
       value = initStyle[["dataPoints"]][["hide"]],
       width = "100%"
     ),

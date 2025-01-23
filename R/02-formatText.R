@@ -18,7 +18,7 @@ formatTextUI <- function(id,
   tagList(
     checkboxInput(
       inputId = ns("hide"),
-      label = "Hide Text",
+      label = "Hide",
       value = initStyle[["hide"]],
       width = "100%"
     ),
@@ -53,7 +53,7 @@ formatTextUI <- function(id,
           ns("text"),
           label = "Text",
           value = initStyle[["text"]],
-          placeholder = "Custom title ...",
+          placeholder = "Custom text ...",
           width = "100%"
         )
       ),

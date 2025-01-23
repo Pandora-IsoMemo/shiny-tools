@@ -356,7 +356,7 @@ getLabelStyle <- function(type = c("ggplot", "base")) {
 
 formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineFormat(), ...) {
   defaultStyle <- defaultLineFormat()
-  requiredElements <- c("size", "linetype", "horizontalcaps", "verticalcaps", "color", "alpha", "hide")
+  requiredElements <- c("size", "linetype", "capwidth", "capheight", "color", "alpha", "hide")
 
   if (is.null(style)) {
     # if null: take values from config
@@ -386,7 +386,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
     geom_errorbarh(data = dat,
                    aes(x = .data$x, y = .data$y, xmin = .data$xmin, xmax = .data$xmax),
                    size = style[["size"]], # thickness
-                   height = style[["verticalcaps"]], # height of the caps
+                   height = style[["capheight"]],
                    colour = style[["color"]],
                    linetype = style[["linetype"]],
                    alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),
@@ -395,7 +395,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
     geom_errorbar(data = dat,
                   aes(x = .data$x, y = .data$y, ymin = .data$ymin, ymax = .data$ymax),
                   size = style[["size"]], # thickness
-                  width = style[["horizontalcaps"]], # width of the caps
+                  width = style[["capwidth"]],
                   colour = style[["color"]],
                   linetype = style[["linetype"]],
                   alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),

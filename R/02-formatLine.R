@@ -39,22 +39,6 @@ formatLineUI <- function(id,
       max = 10,
       width = "100%"
     ),
-    sliderInput(
-      inputId = ns("horizontalcaps"),
-      label = "Cap Size (horizontal)",
-      min = 0.1,
-      max = 2,
-      value = initStyle[["horizontalcaps"]],
-      width = "100%"
-    ),
-    sliderInput(
-      inputId = ns("verticalcaps"),
-      label = "Cap Size (vertical)",
-      min = 0.1,
-      max = 2,
-      value = initStyle[["verticalcaps"]],
-      width = "100%"
-    ),
     colourInput(
       ns("color"),
       label = "Line color",
@@ -67,6 +51,22 @@ formatLineUI <- function(id,
       min = 0,
       max = 1,
       value = initStyle[["alpha"]],
+      width = "100%"
+    ),
+    # next inputs are only relevant for error bars and set the size of the caps (whiskers)
+    # if this module will be used for other lines, we can add a condition here
+    numericInput(
+      inputId = ns("capheight"),
+      label = "X Error Cap Height",
+      min = 0,
+      value = initStyle[["capheight"]],
+      width = "100%"
+    ),
+    numericInput(
+      inputId = ns("capwidth"),
+      label = "Y Error Cap Width",
+      min = 0,
+      value = initStyle[["capwidth"]],
       width = "100%"
     )
   )
@@ -99,8 +99,8 @@ formatLineServer <- function(id,
       choices = c(
         "size",
         "linetype",
-        "horizontalcaps",
-        "verticalcaps",
+        "capwidth",
+        "capheight",
         "color",
         "alpha",
         "hide"
@@ -173,18 +173,18 @@ observeAndUpdateLineElements <- function(input, output, session, id, style) {
     bindEvent(input[["size"]])
 
   observe({
-    logDebug("%s: Entering observe 'horizontalcaps'", id)
+    logDebug("%s: Entering observe 'capwidth'", id)
 
-    style[["horizontalcaps"]] <- input[["horizontalcaps"]]
+    style[["capwidth"]] <- input[["capwidth"]]
   }) %>%
-    bindEvent(input[["horizontalcaps"]])
+    bindEvent(input[["capwidth"]])
 
   observe({
-    logDebug("%s: Entering observe 'verticalcaps'", id)
+    logDebug("%s: Entering observe 'capheight'", id)
 
-    style[["verticalcaps"]] <- input[["verticalcaps"]]
+    style[["capheight"]] <- input[["capheight"]]
   }) %>%
-    bindEvent(input[["verticalcaps"]])
+    bindEvent(input[["capheight"]])
 
   observe({
     logDebug("%s: Entering observe 'hide'", id)

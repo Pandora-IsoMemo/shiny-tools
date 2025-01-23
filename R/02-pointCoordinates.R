@@ -1,24 +1,47 @@
-pointCoordinatesUI <- function(id,
-                               title = NULL,
-                               titleTag = "h4") {
+pointCoordinatesUI <- function(id) {
   ns <- NS(id)
   tagList(
-    setModuleTitle(title = title, titleTag = titleTag),
-    textInput(ns("label"), label = "Point ID", value = "Point 1", width = "100%"),
-    pointDimensionUI(ns("x"), title = "X Dimension"),
-    pointDimensionUI(ns("y"), title = "Y Dimension")
+    helpText(
+      paste(
+        "Enter the coordinates of a new point. Optionally, you can specify the error for the coordinates.",
+        "The layout of the point, error bar, and label can be modified in the 'Point', 'Error', and 'Label' tabs, respectively."
+      )
+    ),
+    textInput(
+      ns("label"),
+      label = "Point ID",
+      value = "Point 1",
+      width = "100%"
+    ),
+    pointDimensionUI(ns("x"), label_value = "X Axis Value", label_range = "X Error (optional)"),
+    pointDimensionUI(ns("y"), label_value = "Y Axis Value", label_range = "Y Error (optional)")
   )
 }
 
 pointDimensionUI <- function(id,
-                             title = NULL,
-                             titleTag = "h5") {
+                             label_value = "Value",
+                             label_range = "Error (optional)") {
   ns <- NS(id)
   tagList(
-    setModuleTitle(title = title, titleTag = titleTag),
-    numericInput(ns("value"), label = "Value", value = numeric(0), width = "100%"),
-    numericInput(ns("min"), label = "Minimum", value = numeric(0), width = "100%"),
-    numericInput(ns("max"), label = "Maximum", value = numeric(0), width = "100%")
+    numericInput(
+      ns("value"),
+      label = label_value,
+      value = numeric(0),
+      width = "100%"
+    ),
+    tags$label(label_range),
+    numericInput(
+      ns("min"),
+      label = "Minimum",
+      value = numeric(0),
+      width = "100%"
+    ),
+    numericInput(
+      ns("max"),
+      label = "Maximum",
+      value = numeric(0),
+      width = "100%"
+    )
   )
 }
 

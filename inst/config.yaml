@@ -87,8 +87,8 @@ defaultPointStyle:
 defaultLineStyle:
   linetype: 1
   color: "#000000"
-  size: 1.2
-  horizontalcaps: 0.5
-  verticalcaps: 0.5
+  size: 0.5
+  capwidth: 0
+  capheight: 0
   alpha: 1
   hide: false

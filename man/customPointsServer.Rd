@@ -12,7 +12,11 @@ customPointsUI(
   plot_type = c("ggplot", "base", "none")
 )
 
-customPointsServer(id, plot_type = c("ggplot", "base", "none"))
+customPointsServer(
+  id,
+  plot_type = c("ggplot", "base", "none"),
+  custom_points = NULL
+)
 }
 \arguments{
 \item{id}{namespace id}
@@ -23,6 +27,9 @@ customPointsServer(id, plot_type = c("ggplot", "base", "none"))
 \code{htmltools}}
 
 \item{plot_type}{(character) Type of the plot to add points to, one of "ggplot", "base".}
+
+\item{custom_points}{(reactiveVal) optional custom_points from parent module, this enables to
+change custom_points outside of the module}
 }
 \description{
 This module provides the UI that allows to add, style and remove custom points, and returns the

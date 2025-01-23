@@ -65,13 +65,19 @@ customPointsUI <- function(id,
 #'
 #' @param id namespace id
 #' @param plot_type (character) Type of the plot to add points to, one of "ggplot", "base".
+#' @param custom_points (reactiveVal) optional custom_points from parent module, this enables to
+#'  change custom_points outside of the module
 #'
 #' @export
-customPointsServer <- function(id, plot_type = c("ggplot", "base", "none")) {
+customPointsServer <- function(id,
+                               plot_type = c("ggplot", "base", "none"),
+                               custom_points = NULL) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    custom_points <- reactiveVal()
+    if (!("reactiveVal" %in% class(custom_points))) {
+      custom_points <- reactiveVal()
+    }
 
     addCustomPointServer("add", custom_points)
     stylePointsServer("style_point", custom_points)

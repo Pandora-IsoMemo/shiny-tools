@@ -1,9 +1,7 @@
-#' Format Line UI
-#'
-#' @inheritParams setModuleTitle
-#' @rdname formatLineServer
-#'
-#' @export
+# Format Line UI
+#
+# @inheritParams setModuleTitle
+# @rdname formatLineServer
 formatLineUI <- function(id,
                          title = NULL,
                          titleTag = "h4",
@@ -72,19 +70,17 @@ formatLineUI <- function(id,
   )
 }
 
-#' Server function for format line
-#'
-#' Backend for format line module
-#'
-#' @param id namespace id
-#' @param hideInput (character) inputs that should be disabled (hidden) when applying this module.
-#'  Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
-#'  Please use \code{shinyjs::useShinyjs()} in your UI function to enable this feature.
-#' @param initStyle (list) optional, named list with style definitions, should have the same format
-#'  as the default output of \code{plotPointsServer}
-#' @param reloadInit (reactiveVal) logical, should \code{initStyle} be reloaded?
-#'
-#' @export
+# Server function for format line
+#
+# Backend for format line module
+#
+# @param id namespace id
+# @param hideInput (character) inputs that should be disabled (hidden) when applying this module.
+#  Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
+#  Please use \code{shinyjs::useShinyjs()} in your UI function to enable this feature.
+# @param initStyle (list) optional, named list with style definitions, should have the same format
+#  as the default output of \code{plotPointsServer}
+# @param reloadInit (reactiveVal) logical, should \code{initStyle} be reloaded?
 formatLineServer <- function(id,
                              hideInput = c(),
                              initStyle = defaultLineFormat(),

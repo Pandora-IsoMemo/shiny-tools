@@ -341,11 +341,9 @@ getPointStyle <- function() {
   config()$defaultPointStyle$dataPoints
 }
 
-#' Get Default Point Style
-#'
-#' @param type (character) type of plot to add labels to, either 'ggplot' or 'base'
-#'
-#' @export
+# Get Default Point Style
+#
+# @param type (character) type of plot to add labels to, either 'ggplot' or 'base'
 getLabelStyle <- function(type = c("ggplot", "base")) {
   type <- match.arg(type)
 
@@ -442,14 +440,12 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle()
                ...)
 }
 
-#' Format Point Labels Of GGplot
-#'
-#' @param plot (ggplot)
-#' @param data (data.frame) data with x, y and label information
-#' @param labelStyle (list) named list with style definitions
-#' @param ... (list) arguments for \code{geom_text}
-#'
-#' @export
+# Format Point Labels Of GGplot
+#
+# @param plot (ggplot)
+# @param data (data.frame) data with x, y and label information
+# @param labelStyle (list) named list with style definitions
+# @param ... (list) arguments for \code{geom_text}
 formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("ggplot"), ...) {
   defaultStyle <- getLabelStyle("ggplot")
   requiredElements <- c("text", "useExpression", "expression", "fontFamily", "fontType", "color", "size", "hide", "angle", "hjust", "vjust")

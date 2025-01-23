@@ -4,16 +4,16 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/authors.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/index.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/news/index.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/addCustomPointsToGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/availableFonts.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/calculateRescalingFactors.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/convertToExpression.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/customPointsServer.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/dataExportButton.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/dataExportServer.html</loc></url>
-<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/dot-onLoad.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportCSV.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportJSON.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportXLSX.html</loc></url>
-<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractSingleTryCatch.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractTitle.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/fontChoicesSelect.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatLegendOfGGplot.html</loc></url>
@@ -21,7 +21,7 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatRangesOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatScalesOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatTitlesOfGGplot.html</loc></url>
-<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/getDefaultRanges.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/getPointStyle.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/headerButtonsUI.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/includeShinyToolsCSS.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/index.html</loc></url>

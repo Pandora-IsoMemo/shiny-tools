@@ -33,8 +33,9 @@ formatLineUI <- function(id,
       ns("size"),
       label = "Thickness",
       value = initStyle[["size"]],
-      min = 0.1,
+      min = 0,
       max = 10,
+      step = 0.1,
       width = "100%"
     ),
     colourInput(

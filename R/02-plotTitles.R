@@ -24,7 +24,8 @@ plotTitlesUI <- function(id,
     selectInput(
       inputId = ns("labelName"),
       label = "Label",
-      choices = c("No label available ..." = "")
+      choices = c("No label available ..." = ""),
+      width = "100%"
     ),
 
     # extracting UI

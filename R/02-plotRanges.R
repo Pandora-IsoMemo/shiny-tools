@@ -18,7 +18,8 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
     selectInput(
       inputId = ns("labelName"),
       label = "Axis",
-      choices = c("x axis" = "xAxis", "y axis" = "yAxis")
+      choices = c("x axis" = "xAxis", "y axis" = "yAxis"),
+      width = "100%"
     ),
     conditionalPanel(
       ns = ns,
@@ -32,7 +33,8 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
           "Square Root" = "sqrt"#,
           #"reciprocal" = "reciprocal", # transformation leads to issues with axis labels in OsteoBioR
           #"reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
-        )
+        ),
+        width = "100%"
       )
     ),
     # use initRanges from server to setup inputs
@@ -86,12 +88,14 @@ plotRangesServer <- function(id,
                        numericInput(
                          ns("min"),
                          label = "Minimum",
-                         value = ranges[["xAxis"]][["min"]]
+                         value = ranges[["xAxis"]][["min"]],
+                         width = "100%"
                        ),
                        numericInput(
                          ns("max"),
                          label = "Maximum",
-                         value = ranges[["xAxis"]][["max"]]
+                         value = ranges[["xAxis"]][["max"]],
+                         width = "100%"
                        )
                      )
                    )

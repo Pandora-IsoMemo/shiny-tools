@@ -4,7 +4,7 @@
 \alias{formatPointsOfGGplot}
 \title{Point Style Of GGplot}
 \usage{
-formatPointsOfGGplot(plot, data = NULL, pointStyle = NULL, ...)
+formatPointsOfGGplot(plot, data = NULL, pointStyle = getPointStyle(), ...)
 }
 \arguments{
 \item{plot}{(ggplot)}
@@ -55,5 +55,6 @@ lists which parameters it can accept.
 }}
 }
 \description{
-Style of points is defined with \code{pointStyle}. Overwrites previous definitions of \code{geom_point}
+Style of points is defined with \code{pointStyle}. Overwrites previous definitions of
+ \code{geom_point} for the same data.
 }

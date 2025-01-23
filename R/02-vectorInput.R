@@ -128,4 +128,4 @@ vectorInputServer <- function(id, defaultInputs) {
 #   })
 # }
 #
-# shiny::shinyApp(ui, server)
+# shiny::shinyApp(ui = ui, server = server)

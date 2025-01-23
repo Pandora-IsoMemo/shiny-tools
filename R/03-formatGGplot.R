@@ -1,3 +1,5 @@
+# TITLES ----
+
 #' Format Titles Of GGplot
 #'
 #' Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
@@ -88,7 +90,7 @@ setCustomTitle <- function(plot, labFun, ...) {
 
 #' Extract Title
 #'
-#' Extract title from list of title definitions
+#' Extract title from list of title definitions. If set to use an expression, convert to expression.
 #'
 #' @param titleList (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
@@ -99,10 +101,11 @@ extractTitle <- function(titleList) {
   if (!is.null(titleList[["useExpression"]]) && isTRUE(titleList[["useExpression"]])) {
     return(convertToExpression(titleList[["expression"]]))
   } else {
-    res <- ""
-    if (!is.null(titleList[["text"]])) res <- titleList[["text"]]
-
-    return(res)
+    if (is.null(titleList[["text"]])) {
+      return("")
+    } else {
+      return(titleList[["text"]])
+    }
   }
 }
 
@@ -131,6 +134,9 @@ getElementText <- function(textDef = list(fontFamily = "sans",
                  vjust = textDef[["vjust"]])
   }
 }
+
+
+# SCALES / RANGES ----
 
 #' Specify Scales of a GGplot
 #'
@@ -281,32 +287,215 @@ getSecAxis <- function(rescaleFactors, title) {
   }
 }
 
+# POINTS ----
+
+#' Add Custom Points To GGplot
+#'
+#' Add custom points to a ggplot.
+#'
+#' @param plot (ggplot)
+#' @param custom_points (list) named list with point definitions, output of \code{customPointsServer}
+#'
+#' @export
+addCustomPointsToGGplot <- function(plot, custom_points) {
+  if (length(custom_points) == 0) return(plot)
+
+  point_df <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
+
+  ## add errors
+  plot <- plot %>%
+    formatPointErrorsOfGGplot(dat = point_df,
+                              style = point_df %>% extractStyleList(prefix = "error_")) %>%
+    suppressWarnings()
+
+  # add points
+  plot <- plot %>%
+    formatPointsOfGGplot(data = point_df,
+                         pointStyle = point_df %>% extractStyleList(prefix = "point_"),
+                         aes(x = .data$x, y = .data$y))
+
+  # add labels
+  label_style <- point_df %>%
+    dplyr::select(dplyr::starts_with("label_")) %>%
+    as.list()
+  names(label_style) <- gsub("label_", "", names(label_style))
+
+  plot <- plot %>%
+    formatPointLabelsOfGGPlot(data = point_df, labelStyle = label_style)
+
+  plot
+}
+
+extractStyleList <- function(df, prefix) {
+  style <- df %>%
+    dplyr::select(dplyr::starts_with(prefix)) %>%
+    as.list()
+  names(style) <- gsub(prefix, "", names(style))
+  style
+}
+
+#' Get Default Point Style
+#'
+#' @export
+getPointStyle <- function() {
+  config()$defaultPointStyle$dataPoints
+}
+
+# Get Default Point Style
+#
+# @param type (character) type of plot to add labels to, either 'ggplot' or 'base'
+getLabelStyle <- function(type = c("ggplot", "base")) {
+  type <- match.arg(type)
+
+  switch(type,
+         "ggplot" = config()$defaultGGText,
+         "base" = config()$defaultBaseText)
+}
+
+formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineFormat(), ...) {
+  defaultStyle <- defaultLineFormat()
+  requiredElements <- c("size", "linetype", "capwidth", "capheight", "color", "alpha", "hide")
+
+  if (is.null(style)) {
+    # if null: take values from config
+    style <- defaultStyle
+  }
+
+  # check list structure
+  if ("dataPoints" %in% names(style)) {
+    style <- style[["dataPoints"]]
+  }
+
+  # check if all elements are present and complete
+  if (!(all(requiredElements %in% names(style)))) {
+    missingElements <- setdiff(requiredElements, names(style))
+    style[missingElements] <- defaultStyle[missingElements]
+  }
+
+  # ensure valid errors
+  dat <- dat %>%
+    mutate(xmin = ifelse(!is.na(.data$xmin) & .data$xmin > .data$x, .data$x, .data$xmin),
+           xmax = ifelse(!is.na(.data$xmax) & .data$xmax < .data$x, .data$x, .data$xmax),
+           ymin = ifelse(!is.na(.data$ymin) & .data$ymin > .data$y, .data$y, .data$ymin),
+           ymax = ifelse(!is.na(.data$ymax) & .data$ymax < .data$y, .data$y, .data$ymax))
+
+  plot +
+    # Horizontal error bars
+    geom_errorbarh(data = dat,
+                   aes(x = .data$x, y = .data$y, xmin = .data$xmin, xmax = .data$xmax),
+                   size = style[["size"]], # thickness
+                   height = style[["capheight"]],
+                   colour = style[["color"]],
+                   linetype = style[["linetype"]],
+                   alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),
+                   ...) +
+    # Vertical error bars
+    geom_errorbar(data = dat,
+                  aes(x = .data$x, y = .data$y, ymin = .data$ymin, ymax = .data$ymax),
+                  size = style[["size"]], # thickness
+                  width = style[["capwidth"]],
+                  colour = style[["color"]],
+                  linetype = style[["linetype"]],
+                  alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),
+                  ...)
+}
+
 #' Point Style Of GGplot
 #'
-#' Style of points is defined with \code{pointStyle}. Overwrites previous definitions of \code{geom_point}
+#' Style of points is defined with \code{pointStyle}. Overwrites previous definitions of
+#'  \code{geom_point} for the same data.
 #'
 #' @param plot (ggplot)
 #' @param pointStyle (list) named list with style definitions, or output of \code{plotPointsServer}
 #' @inheritParams ggplot2::geom_point
 #'
 #' @export
-formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = NULL, ...) {
+formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle(), ...) {
+  defaultStyle <- getPointStyle()
+  requiredElements <- c("symbol", "size", "color", "colorBg", "alpha", "hide")
+
   if (is.null(pointStyle)) {
     # if null: take values from config
-    pointStyle <- config()$defaultPointStyle
+    pointStyle <- defaultStyle
   }
 
-  dataPoints <- pointStyle[["dataPoints"]]
+  # check list structure
+  if ("dataPoints" %in% names(pointStyle)) {
+    pointStyle <- pointStyle[["dataPoints"]]
+  }
+
+  # check if all elements are present and complete
+  if (!(all(requiredElements %in% names(pointStyle)))) {
+    missingElements <- setdiff(requiredElements, names(pointStyle))
+    pointStyle[missingElements] <- defaultStyle[missingElements]
+  }
 
   plot +
     geom_point(data = data,
-               shape = dataPoints[["symbol"]],
-               size = dataPoints[["size"]],
-               colour = dataPoints[["color"]],
-               fill = dataPoints[["colorBg"]],
-               alpha = ifelse(dataPoints[["hide"]], 0, dataPoints[["alpha"]]),
+               shape = pointStyle[["symbol"]],
+               size = pointStyle[["size"]],
+               colour = pointStyle[["color"]],
+               fill = pointStyle[["colorBg"]],
+               alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
                ...)
 }
+
+# Format Point Labels Of GGplot
+#
+# @param plot (ggplot)
+# @param data (data.frame) data with x, y and label information
+# @param labelStyle (list) named list with style definitions
+# @param ... (list) arguments for \code{geom_text}
+formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("ggplot"), ...) {
+  defaultStyle <- getLabelStyle("ggplot")
+  requiredElements <- c("text", "useExpression", "expression", "fontFamily", "fontType", "color", "size", "hide", "angle", "hjust", "vjust")
+
+  if (is.null(labelStyle)) {
+    # if null: take values from config
+    labelStyle <- defaultStyle
+  }
+
+  # check if all elements are present and complete
+  if (!(all(requiredElements %in% names(labelStyle)))) {
+    missingElements <- setdiff(requiredElements, names(labelStyle))
+    labelStyle[missingElements] <- defaultStyle[missingElements]
+  }
+
+  # combine data and format for point specific labels
+  data_combined <- bind_cols(data[, c("id", "x", "y")], as.data.frame(labelStyle))
+
+  # remove hidden labels
+  data_combined <- data_combined[!data_combined$hide, ]
+
+  # split data for expression and text
+  data_text <- data_combined[!data_combined$useExpression, ]
+  data_expression <- data_combined[data_combined$useExpression, ]
+
+  # plot text labels
+  plot <- plot +
+    geom_text(data = data_text,
+              aes(x = .data$x, y = .data$y, label = .data$text),
+              family = data_text$fontFamily, fontface = data_text$fontType,
+              color = data_text$color, size = data_text$size,
+              angle = data_text$angle, hjust = data_text$hjust, vjust = data_text$vjust,
+              show.legend = FALSE,
+              ...)
+
+  # plot expression labels (parse = TRUE)
+  plot <- plot +
+    geom_text(data = data_expression,
+              aes(x = .data$x, y = .data$y, label = .data$expression),
+              family = data_expression$fontFamily, fontface = data_expression$fontType,
+              color = data_expression$color, size = data_expression$size,
+              angle = data_expression$angle, hjust = data_expression$hjust, vjust = data_expression$vjust,
+              show.legend = FALSE,
+              parse = TRUE,
+              ...)
+
+  plot
+}
+
+# LEGEND ----
 
 #' Legend Style Of GGplot
 #'

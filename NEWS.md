@@ -1,3 +1,11 @@
+# shinyTools 25.01.0
+
+## New Features
+- new module (`customPoints`) that allows a user to add points to a plot and format them (#35)
+
+## Updates
+- _headerUI_: keep only logos for _Pandora_ and _Isomemo_, add button to _Data Search_ app (#1)
+
 # shinyTools 24.12.0
 
 ## Updates

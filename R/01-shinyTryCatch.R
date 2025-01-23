@@ -87,10 +87,10 @@ shinyTryCatch <- function(expr,
   res
 }
 
-#' Extract Single Try Catch
-#'
-#' @param condition error or warning object
-#' @param type (character) type of the message: "error" or "warning"
+# Extract Single Try Catch
+#
+# @param condition error or warning object
+# @param type (character) type of the message: "error" or "warning"
 extractSingleTryCatch <- function(condition, type) {
   text <- condition$message %>%
     gsub(pattern = "\033\\[[0-9;]*m", replacement = "") %>% # remove ANSI codes (formatting of warnings)
@@ -183,4 +183,4 @@ extractSingleTryCatch <- function(condition, type) {
 #   })
 # }
 #
-# shinyApp(ui, server)
+# shinyApp(ui = ui, server = server)

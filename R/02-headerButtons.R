@@ -20,14 +20,6 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
     div(
       id = "header-right",
       div(
-        id = "logo-mpi",
-        tags$a(
-          href = "https://www.mpg.de/en",
-          img(src = "shinyTools_files/mpi-minerva-logo.png", alt = "Max Planck society"),
-          target = "_blank"
-        )
-      ),
-      div(
         id = "logo-pandora",
         tags$a(
           href = "https://pandoradata.earth/",
@@ -44,7 +36,15 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
         )
       ),
       div(
-        id = "apps",
+        id = "help",
+        tags$button(
+          onclick = paste0("window.open('https://pandorasearch.earth/','_blank');"),
+          class = "btn btn-default",
+          "Data Search"
+        )
+      ),
+      div(
+        id = "help",
         tags$button(
           onclick = paste0("window.open('https://pandora-isomemo.github.io/docs/apps.html','_blank');"),
           class = "btn btn-default",
@@ -88,7 +88,7 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
 #       collapsible = TRUE,
 #       id = "test"
 #     ),
-#     headerButtonsUI(id = "header_id", help_link = "https://isomemo.com/", further_help_link = NULL)
+#     headerButtonsUI(id = "header_id", help_link = "https://pandora-isomemo.github.io/shiny-tools/", further_help_link = NULL)
 #   )
 # )
 #

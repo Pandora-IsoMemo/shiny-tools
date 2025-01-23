@@ -9,6 +9,9 @@ defaultGGTitle:
   color: "#000000"
   size: 12
   hide: false
+  angle: 0
+  hjust: 0.5
+  vjust: 0.5
 
 defaultBaseTitle:
   text: ""
@@ -19,8 +22,14 @@ defaultBaseTitle:
   color: "#000000"
   size: 1.2
   hide: false
+  angle: 0
+  hjust: 0.5
+  vjust: 0.5
 
 defaultGGText:
+  text: ""
+  useExpression: false
+  expression: ""
   fontFamily: "sans"
   fontType: "plain"
   color: "#000000"
@@ -31,6 +40,9 @@ defaultGGText:
   vjust: 0.5
 
 defaultBaseText:
+  text: ""
+  useExpression: false
+  expression: ""
   fontFamily: "sans"
   fontType: 1
   color: "#000000"
@@ -39,6 +51,19 @@ defaultBaseText:
   angle: 0
   hjust: 0.5
   vjust: 0.5
+
+defaultGGLabel:
+  text: ""
+  useExpression: false
+  expression: ""
+  fontFamily: "sans"
+  fontType: "plain"
+  color: "#000000"
+  size: 10
+  hide: false
+  angle: 0
+  hjust: -0.2
+  vjust: -0.2
 
 # default range of axis (for plotExport.R)
 defaultRange:
@@ -53,7 +78,17 @@ defaultPointStyle:
     symbol: 19
     color: "#000000"
     colorBg: "#000000"
-    size: 1
+    size: 2
     alpha: 1
     lineWidthBg: 2
     hide: false
+
+# default point style
+defaultLineStyle:
+  linetype: 1
+  color: "#000000"
+  size: 0.5
+  capwidth: 0
+  capheight: 0
+  alpha: 1
+  hide: false

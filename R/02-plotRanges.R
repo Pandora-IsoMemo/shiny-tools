@@ -9,7 +9,7 @@
 #' @export
 plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = deprecated()) {
   if (lifecycle::is_present(initRanges)) {
-    deprecate_warn("24.10.0", "plotRangesUI(initRanges)", details = "This parameter is no longer needed.")
+    deprecate_warn("24.10.0", "plotRangesUI(initRanges)", details = "This parameter is no longer needed here and controlled only through 'plotRangesServer'.")
   }
 
   ns <- NS(id)
@@ -18,7 +18,8 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
     selectInput(
       inputId = ns("labelName"),
       label = "Axis",
-      choices = c("x axis" = "xAxis", "y axis" = "yAxis")
+      choices = c("x axis" = "xAxis", "y axis" = "yAxis"),
+      width = "100%"
     ),
     conditionalPanel(
       ns = ns,
@@ -32,7 +33,8 @@ plotRangesUI <- function(id, title = "Ranges", titleTag = "h4", initRanges = dep
           "Square Root" = "sqrt"#,
           #"reciprocal" = "reciprocal", # transformation leads to issues with axis labels in OsteoBioR
           #"reverse" = "reverse" # transformation leads to issues with axis labels in OsteoBioR
-        )
+        ),
+        width = "100%"
       )
     ),
     # use initRanges from server to setup inputs
@@ -86,12 +88,14 @@ plotRangesServer <- function(id,
                        numericInput(
                          ns("min"),
                          label = "Minimum",
-                         value = ranges[["xAxis"]][["min"]]
+                         value = ranges[["xAxis"]][["min"]],
+                         width = "100%"
                        ),
                        numericInput(
                          ns("max"),
                          label = "Maximum",
-                         value = ranges[["xAxis"]][["max"]]
+                         value = ranges[["xAxis"]][["max"]],
+                         width = "100%"
                        )
                      )
                    )
@@ -121,13 +125,13 @@ plotRangesServer <- function(id,
                })
 }
 
-#' Get default ranges
-#'
-#' @return list
+# Get default ranges
+#
+# @return list
 getDefaultRanges <- function() {
-  list(xAxis = list(min = 0, max = 1, fromData = TRUE, transform = "identity"),
-       yAxis = list(min = 0, max = 1, fromData = TRUE, transform = "identity"),
-       yAxis2 = list(min = 0, max = 1, fromData = TRUE, transform = "identity"))
+  list(xAxis = config()$defaultRange,
+       yAxis = config()$defaultRange,
+       yAxis2 = config()$defaultRange)
 }
 
 # Initialize ranges
@@ -162,7 +166,7 @@ initializeRanges <- function(session, id, initRanges, axes) {
   if (!is.null(initRanges) && is.list(initRanges) && !is.reactivevalues(initRanges)) {
 
     initRanges <- initRanges %>%
-      completeRanges(needed_entries = axes, default_ranges = default_ranges)
+      completeValues(choices = axes, default_values = default_ranges)
 
     ranges <- do.call(reactiveValues, initRanges)
   }
@@ -175,27 +179,13 @@ initializeRanges <- function(session, id, initRanges, axes) {
       logDebug("%s: Checking if all axes are present in user ranges", id)
 
       new_ranges <- ranges %>%
-        completeRanges(needed_entries = axes, default_ranges = default_ranges)
+        completeValues(choices = axes, default_values = default_ranges)
 
       for (name in names(new_ranges)) {
         ranges[[name]] <- new_ranges[[name]]
       }
     }) %>%
       bindEvent(initRanges$xAxis, once = TRUE)
-  }
-
-  return(ranges)
-}
-
-completeRanges <- function(ranges, needed_entries, default_ranges) {
-  # complete ranges with needed entries that are not present in ranges
-  missingEntries <- setdiff(needed_entries, names(ranges))
-
-  # only add default values for missing entries that are present in default_ranges
-  missingEntries <- intersect(missingEntries, names(default_ranges))
-
-  for (name in missingEntries) {
-    ranges[[name]] <- default_ranges[[name]]
   }
 
   return(ranges)

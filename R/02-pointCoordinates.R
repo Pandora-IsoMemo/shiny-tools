@@ -13,14 +13,25 @@ pointCoordinatesUI <- function(id) {
       value = "Point 1",
       width = "100%"
     ),
-    pointDimensionUI(ns("x"), label_value = "X Axis Value", label_range = "X Error (optional)"),
-    pointDimensionUI(ns("y"), label_value = "Y Axis Value", label_range = "Y Error (optional)")
+    pointDimensionUI(
+      ns("x"),
+      label_value = "X Axis Value",
+      label_min = "Min. X Error (optional)",
+      label_max = "Max. X Error (optional)"
+    ),
+    pointDimensionUI(
+      ns("y"),
+      label_value = "Y Axis Value",
+      label_min = "Min. Y Error (optional)",
+      label_max = "Max. Y Error (optional)"
+    )
   )
 }
 
 pointDimensionUI <- function(id,
                              label_value = "Value",
-                             label_range = "Error (optional)") {
+                             label_min = "Min. Error (optional)",
+                             label_max = "Max. Error (optional)") {
   ns <- NS(id)
   tagList(
     numericInput(
@@ -29,16 +40,15 @@ pointDimensionUI <- function(id,
       value = numeric(0),
       width = "100%"
     ),
-    tags$label(label_range),
     numericInput(
       ns("min"),
-      label = "Minimum",
+      label = label_min,
       value = numeric(0),
       width = "100%"
     ),
     numericInput(
       ns("max"),
-      label = "Maximum",
+      label = label_max,
       value = numeric(0),
       width = "100%"
     )

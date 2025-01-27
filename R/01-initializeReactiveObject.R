@@ -74,8 +74,9 @@ initializeReactiveObject <- function(session,
   return(init_values)
 }
 
-completeValues <- function(custom_values, choices, default_values) {
-  # complete ranges with needed entries that are not present in ranges
+completeValues <- function(custom_values, default_values, choices = NULL) {
+  if (is.null(choices)) choices <- names(default_values)
+  # complete custom_values with needed entries that are not present in custom_values
   missingEntries <- setdiff(choices, names(custom_values))
 
   # only add default values for missing entries that are present in default_values

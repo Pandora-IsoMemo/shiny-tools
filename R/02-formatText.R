@@ -14,6 +14,10 @@ formatTextUI <- function(id,
     initStyle <- defaultTextFormat(type = type)[["title"]]
   }
 
+  # complete initStyle
+  initStyle <- initStyle %>%
+    completeValues(default_values = defaultTextFormat(type = type)[["title"]])
+
   ns <- NS(id)
   tagList(
     checkboxInput(
@@ -280,6 +284,12 @@ sizeValuesSlider  <- function(type = c("ggplot", "base")) {
       min = 1,
       max = 30,
       step = 1
+    ),
+    list(
+      value = 1.2,
+      min = 0.1,
+      max = 10,
+      step = 0.1
     )
   )
 }

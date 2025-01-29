@@ -29,6 +29,8 @@ customPointsUI <- function(id,
         applyFormatUI(
           wrapper_id = ns("style_point"),
           format_FUN = plotPointsUI,
+          label_selected = "Select point(s)",
+          choices_selected = c("Add a point ..." = ""),
           id = ns("style_point-format"),
           title = NULL,
           type = plot_type,
@@ -41,6 +43,8 @@ customPointsUI <- function(id,
         applyFormatUI(
           wrapper_id = ns("style_error"),
           format_FUN = formatLineUI,
+          label_selected = "Select point(s)",
+          choices_selected = c("Add a point ..." = ""),
           id = ns("style_error-format"),
           initStyle = config()$defaultLineStyle
         )
@@ -50,6 +54,8 @@ customPointsUI <- function(id,
         applyFormatUI(
           wrapper_id = ns("style_label"),
           format_FUN = formatTextUI,
+          label_selected = "Select point(s)",
+          choices_selected = c("Add a point ..." = ""),
           id = ns("style_label-format"),
           type = plot_type,
           initStyle = config()$defaultGGLabel
@@ -85,7 +91,7 @@ customPointsServer <- function(id,
       "style_error",
       default_style = defaultLineFormat(),
       formatServerFUN = formatLineServer,
-      custom_points = custom_points,
+      element_list = custom_points,
       style_prefix = "error_",
       plot_type = plot_type
     )
@@ -199,134 +205,6 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
-# UI for applying format to custom points
-#
-# @param thisId namespace id of the wrapper module 'applyFormatUI'
-# @param formatUIFUN UI function for formatting
-applyFormatUI <- function(wrapper_id, format_FUN, ...) {
-  ns <- NS(wrapper_id)
-
-  tagList(
-    tags$br(),
-    selectInput(
-      ns("selected_points"),
-      label = "Select point(s)",
-      choices = c("Add a point ..." = ""),
-      multiple = TRUE,
-      width = "100%"
-    ),
-    format_FUN(...),
-    tags$br(),
-    actionButton(ns("apply"), "Apply")
-  )
-}
-
-applyFormatServer <- function(id,
-                              default_style,
-                              formatServerFUN,
-                              custom_points = reactiveVal(),
-                              style_prefix = "",
-                              plot_type = c("ggplot", "base", "none"),
-                              ...) {
-  plot_type <- match.arg(plot_type)
-  moduleServer(id, function(input, output, session) {
-    ns <- session$ns
-    #default_style <- defaultInitText(type = plot_type)[["xAxisText"]]
-
-    observe({
-      logDebug("%s: update choices of 'input$selected_points'", id)
-
-      custom_point_ids <- names(custom_points())
-      last_selected <- input[["selected_points"]]
-      updateSelectInput(
-        session,
-        "selected_points",
-        choices = getPointChoices(custom_point_ids),
-        selected = last_selected
-      )
-
-      req(length(custom_point_ids) > 0)
-      logDebug("%s: set label styles if empty", id)
-
-      # add entries for label format if not yet set
-      all_points <- custom_points() %>%
-        initFormat(default_format = default_style, prefix = style_prefix)
-
-      custom_points(all_points)
-    })
-
-    # disable button if nothing is selected
-    observe({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
-        logDebug("%s: Disable button", id)
-        shinyjs::disable(ns("apply"), asis = TRUE)
-      } else {
-        logDebug("%s: Enable button", id)
-        shinyjs::enable(ns("apply"), asis = TRUE)
-      }
-    })
-
-
-    reload_init <- reactiveVal(FALSE)
-    observe({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
-        logDebug("%s: No init reload", id)
-        reload_init(FALSE)
-      } else {
-        logDebug("%s: Reload init", id)
-        reload_init(TRUE)
-      }
-    }) %>%
-      bindEvent(input[["selected_points"]], ignoreNULL = FALSE)
-
-    init_style <- reactive({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
-        default_style
-      } else {
-        # load selected format
-        first_point_style <- custom_points()[input[["selected_points"]]][[1]] %>%
-          extractFormat(prefix = style_prefix)
-        first_point_style
-      }
-    })
-
-    # current format settings
-    new_format <- formatServerFUN(id = "format",
-                                  initStyle = init_style,
-                                  reloadInit = reload_init,
-                                  ...)
-
-    observe({
-      logDebug("%s: Apply new format", id)
-
-      all_points <- custom_points() %>%
-        updateFormat(
-          selected_ids = input[["selected_points"]],
-          new_format = new_format %>% extractReactiveValue(),
-          prefix = style_prefix
-        )
-
-      custom_points(all_points)
-    }) %>%
-      bindEvent(input[["apply"]])
-  })
-}
-
-extractReactiveValue <- function(obj) {
-  if ("reactiveVal" %in% class(obj)) {
-    # For reactiveVal, call the object to get its value
-    return(obj())
-  } else if ("reactivevalues" %in% class(obj)) {
-    # For reactiveValues, convert to a list
-    return(reactiveValuesToList(obj))
-  } else {
-    stop("The provided object is neither a reactiveVal nor a reactiveValues.")
-  }
-}
-
 # Server function for styling custom points
 # @param id namespace id
 # @param custom_points reactiveVal
@@ -419,16 +297,6 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
   })
 }
 
-stylePointErrorsServer <- function(id,
-                                   custom_points = reactiveVal(),
-                                   plot_type = c("ggplot", "base", "none")) {
-  plot_type <- match.arg(plot_type)
-  moduleServer(id, function(input, output, session) {
-    ns <- session$ns
-
-  })
-}
-
 # Server function for styling custom point labels
 # @param id namespace id
 # @param custom_points reactiveVal
@@ -482,15 +350,15 @@ stylePointLabelsServer <- function(id,
       }
     })
 
-    label_name <- reactiveVal("xAxisText")
+    element_id <- reactiveVal("point_label")
     init_text <- reactive({
       if (length(input[["selected_points"]]) == 0 ||
           any(input[["selected_points"]] == "")) {
         default_style
       } else {
-        # trigger label_name to force "updateUserInputs"
-        label_name(NULL)
-        label_name("xAxisText")
+        # trigger element_id to force "updateUserInputs"
+        element_id(NULL)
+        element_id("point_label")
         # load selected format
         first_point_style <- custom_points()[input[["selected_points"]]][[1]] %>%
           extractFormat(prefix = "label_")
@@ -501,10 +369,9 @@ stylePointLabelsServer <- function(id,
     # current format settings
     updated_text <- formatTextServer(
       "format",
-      init_text = init_text,
-      text_type = c("title", "axis"),
+      init_layout = init_text,
       show_parse_button = FALSE,
-      label_name = label_name,
+      element_id = element_id,
       text_inputs = "show",
       position_inputs = "show"
     )
@@ -525,49 +392,6 @@ stylePointLabelsServer <- function(id,
   })
 }
 
-getPointChoices <- function(custom_point_ids) {
-  if (length(custom_point_ids) == 0) {
-    new_choices <- c("Add a point ..." = "")
-  } else {
-    new_choices <- custom_point_ids
-  }
-
-  new_choices
-}
-
-initFormat <- function(points, default_format, prefix = "") {
-  # align names of entries
-  names(default_format) <- paste0(prefix, names(default_format))
-
-  custom_point_ids <- names(points)
-  for (id in custom_point_ids) {
-    missing_entries <- setdiff(names(default_format), names(points[[id]]))
-    for (name in missing_entries) {
-      points[[id]][[name]] <- default_format[[name]]
-    }
-  }
-
-  points
-}
-
-extractFormat <- function(points, prefix = "") {
-  points <- points[grepl(paste0("^", prefix), names(points))]
-  names(points) <- gsub(paste0("^", prefix), "", names(points))
-  points
-}
-
-updateFormat <- function(points, selected_ids, new_format, prefix = "") {
-  # align names of entries
-  names(new_format) <- paste0(prefix, names(new_format))
-
-  for (id in selected_ids) {
-    for (entry in names(new_format)) {
-      points[[id]][[entry]] <- new_format[[entry]]
-    }
-  }
-
-  points
-}
 
 # TEST MODULE -------------------------------------------------------------
 # To test the module run devtools::load_all() first

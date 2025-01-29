@@ -334,13 +334,16 @@ checkElements <- function(availableElements) {
   labelGroups <- defaultLabelGroups()
   configElements <- labelGroups %>% names()
 
-  if (!all(availableElements %in% configElements))
+  if (!all(availableElements %in% configElements)) {
+    invalid_elements <- availableElements[!availableElements %in% configElements]
     stop(
       sprintf(
-        "Selection of 'availableElements' not allowed. 'availableElements' must be one ore more of c('%s')",
+        "Invalid 'availableElements' found: '%s'. 'availableElements' must be one ore more of c('%s')",
+        paste0(invalid_elements, collapse = "', '"),
         paste0(configElements, collapse = "', '")
       )
     )
+  }
 
   availableElements
 }
@@ -357,8 +360,7 @@ defaultLabelGroups <- function() {
       `y axis title` = "yAxisTitle",
       `y axis text` = "yAxisText"
     ),
-    yaxis2 = list(`2nd y axis title` = "yAxisTitle2", `2nd y axis text` = "yAxisText2"),
-    legend = list(`legend title` = "legendTitle", `legend text` = "legendText")
+    yaxis2 = list(`2nd y axis title` = "yAxisTitle2", `2nd y axis text` = "yAxisText2")
   )
 }
 
@@ -415,7 +417,6 @@ showTextInputs <- function(element_id) {
   if (length(element_id) == 0) return(FALSE)
 
   if (element_id %in% c("plotTitle",
-                        "legendTitle",
                         "xAxisTitle",
                         "yAxisTitle",
                         "yAxisTitle2")) {

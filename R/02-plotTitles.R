@@ -156,7 +156,7 @@ removeHiddenInputs <- function(new_text, input_names) {
 #     thisTitles <- plotTitlesServer(
 #       "testMod",
 #       type = "ggplot",
-#       availableElements = c("title", "axis", "yaxis2", "legend"),
+#       availableElements = c("title", "axis", "yaxis2"),
 #       initText = list(
 #         plotTitle = list(
 #           text = "testHeader",
@@ -199,14 +199,6 @@ removeHiddenInputs <- function(new_text, input_names) {
 #           hide = FALSE,
 #           angle = 0,
 #           vjust = 0.5
-#         ),
-#         legendTitle = list(
-#           text = "",
-#           fontFamily = "sans",
-#           fontType = "plain",
-#           color = "#000000",
-#           size = 12L,
-#           hide = FALSE
 #         )
 #       )
 #     )

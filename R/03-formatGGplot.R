@@ -53,20 +53,6 @@ formatTitlesOfGGplot <- function(plot, text) {
     plot <- plot + theme(plot.title = getElementText(text[["plotTitle"]]))
   }
 
-  # LEGEND ----
-  if (any(grepl("legend", names(text)))) {
-    plot <- plot %>%
-      setCustomTitle(labFun = labs,
-                     color = extractTitle(text[["legendTitle"]]),
-                     size = extractTitle(text[["legendTitle"]]),
-                     fill = extractTitle(text[["legendTitle"]]),
-                     shape = extractTitle(text[["legendTitle"]]))
-    # apply text formatting (theme)
-    plot <- plot +
-      theme(legend.title = getElementText(text[["legendTitle"]]),
-            legend.text  = getElementText(text[["legendText"]]))
-  }
-
   plot
 }
 
@@ -509,4 +495,19 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 formatLegendOfGGplot <- function(plot, legend, ...) {
   plot +
     theme(legend.position = legend$position, ...)
+
+
+  # LEGEND ----
+  # if (any(grepl("legend", names(text)))) {
+  #   plot <- plot %>%
+  #     setCustomTitle(labFun = labs,
+  #                    color = extractTitle(text[["legendTitle"]]),
+  #                    size = extractTitle(text[["legendTitle"]]),
+  #                    fill = extractTitle(text[["legendTitle"]]),
+  #                    shape = extractTitle(text[["legendTitle"]]))
+  #   # apply text formatting (theme)
+  #   plot <- plot +
+  #     theme(legend.title = getElementText(text[["legendTitle"]]),
+  #           legend.text  = getElementText(text[["legendText"]]))
+  # }
 }

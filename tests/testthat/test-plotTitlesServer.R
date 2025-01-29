@@ -102,7 +102,7 @@ test_that("Test defaultInitText", {
   expect_equal(
     defaultInitText(
       type = "ggplot",
-      availableElements = c("title", "axis", "legend")
+      availableElements = c("title", "axis")
     ),
     list(
       plotTitle = list(
@@ -158,32 +158,6 @@ test_that("Test defaultInitText", {
         vjust = 0.5
       ),
       yAxisText = list(
-        text = "",
-        useExpression = FALSE,
-        expression = "",
-        fontFamily = "sans",
-        fontType = "plain",
-        color = "#000000",
-        size = 10L,
-        hide = FALSE,
-        angle = 0L,
-        hjust = 0.5,
-        vjust = 0.5
-      ),
-      legendTitle = list(
-        text = "",
-        useExpression = FALSE,
-        expression = "",
-        fontFamily = "sans",
-        fontType = "plain",
-        color = "#000000",
-        size = 12L,
-        hide = FALSE,
-        angle = 0L,
-        hjust = 0.5,
-        vjust = 0.5
-      ),
-      legendText = list(
         text = "",
         useExpression = FALSE,
         expression = "",

@@ -23,10 +23,20 @@ plotLegendServer(
 \arguments{
 \item{id}{namespace id}
 
-\item{title}{(character) title of the module}
+\item{title}{(character) module title}
 
 \item{titleTag}{(character) HTML tag to put around the title, e.g. "h4" for \code{h4} from
 \code{htmltools}}
+
+\item{type}{character. Type of plot. Default is "ggplot".}
+
+\item{width}{character. Width of the input.}
+
+\item{legend_title}{reactive. Default title of the legend.}
+
+\item{legend_labels}{reactive. Default labels of the legend.}
+
+\item{plot_type}{character. Type of plot. Default is "ggplot".}
 }
 \description{
 Function to create the UI for the legend

@@ -6,7 +6,8 @@
 # @return tagList
 formatTextUI <- function(id,
                          type = c("ggplot", "base", "none"),
-                         initStyle = NULL) {
+                         initStyle = NULL,
+                         width = "100%") {
   type <- match.arg(type)
 
   if (is.null(initStyle)) {
@@ -24,7 +25,7 @@ formatTextUI <- function(id,
       inputId = ns("hide"),
       label = "Hide",
       value = initStyle[["hide"]],
-      width = "100%"
+      width = width
     ),
     conditionalPanel(
       ns = ns,
@@ -33,7 +34,7 @@ formatTextUI <- function(id,
         ns("useExpression"),
         label = "Use mathematical annotation",
         value = FALSE,
-        width = "100%"
+        width = width
       ),
       conditionalPanel(
         ns = ns,
@@ -41,13 +42,13 @@ formatTextUI <- function(id,
         uiOutput(ns("expressionInput")),
         helpText(
           'Example: Use \u003C"Bayesian Estimated" ~ delta^~13~C ~ ("\u2030" - ~ "VPDB")\u003E for \u003C"Bayesian Estimated \u03B4\u00B9\u00B3C (\u2030 - VPDB)"\u003E.',
-          width = "100%"
+          width = width
         ),
         helpText(
           HTML(
             'Note: "Font type" input is not available for "Expression". For more information, visit the <a href="https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html" target="_blank">R Documentation</a>.'
           ),
-          width = "100%"
+          width = width
         )
       ),
       conditionalPanel(
@@ -58,7 +59,7 @@ formatTextUI <- function(id,
           label = "Text",
           value = initStyle[["text"]],
           placeholder = "Custom text ...",
-          width = "100%"
+          width = width
         )
       ),
     ),
@@ -70,21 +71,21 @@ formatTextUI <- function(id,
         label = "Font type",
         choices = fontChoicesSelect(type = type),
         selected = initStyle[["fontType"]],
-        width = "100%"
+        width = width
       )
     ),
     colourInput(
       ns("color"),
       label = "Text color",
       value = initStyle[["color"]],
-      width = "100%"
+      width = width
     ),
     selectInput(
       inputId = ns("fontFamily"),
       label = "Font family",
       selected = initStyle[["fontFamily"]],
       choices = availableFonts(),
-      width = "100%"
+      width = width
     ),
     sliderInput(
       ns("size"),
@@ -93,7 +94,7 @@ formatTextUI <- function(id,
       min = sizeValuesSlider(type = type)[["min"]],
       max = sizeValuesSlider(type = type)[["max"]],
       step = sizeValuesSlider(type = type)[["step"]],
-      width = "100%"
+      width = width
     ),
     conditionalPanel(
       ns = ns,
@@ -105,7 +106,7 @@ formatTextUI <- function(id,
         min = 0,
         max = 360,
         step = 5,
-        width = "100%"
+        width = width
       ),
       sliderInput(
         ns("hjust"),
@@ -114,7 +115,7 @@ formatTextUI <- function(id,
         min = -5,
         max = 5,
         step = 0.1,
-        width = "100%"
+        width = width
       ),
       sliderInput(
         ns("vjust"),
@@ -123,7 +124,7 @@ formatTextUI <- function(id,
         min = -5,
         max = 5,
         step = 0.1,
-        width = "100%"
+        width = width
       )
     )
   )
@@ -134,17 +135,16 @@ formatTextUI <- function(id,
 # Backend for plot titles module
 #
 # @param id namespace id
-# @param text_type (character) Type of formatting, e.g. for titles or for axis
 # @param show_parse_button (logical) Show parse button for parsing mathematical expressions.
 #  This should be FALSE if there is an 'apply' button in the parent module
 # @inheritParams plotExportServer
 formatTextServer <- function(id,
-                             init_text = reactive(defaultInitTitle()),
-                             text_type = c("title", "axis"),
+                             init_layout = reactive(defaultInitTitle()),
                              show_parse_button = TRUE,
-                             label_name = reactive("plotTitle"),
-                             text_inputs = c("label_name", "show", "hide"),
-                             position_inputs = c("label_name", "show", "hide")) {
+                             element_id = reactive("plotTitle"),
+                             text_inputs = c("element_id", "show", "hide"),
+                             position_inputs = c("element_id", "show", "hide"),
+                             width = "100%") {
   text_inputs <- match.arg(text_inputs)
   position_inputs <- match.arg(position_inputs)
   moduleServer(id, function(input, output, session) {
@@ -153,18 +153,18 @@ formatTextServer <- function(id,
     new_text <- reactiveValues()
 
     observe({
-      logDebug("%s: Entering observe 'init_text'", id)
-      for (name in names(init_text())) {
-        new_text[[name]] <- init_text()[[name]]
+      logDebug("%s: Entering observe 'init_layout'", id)
+      for (name in names(init_layout())) {
+        new_text[[name]] <- init_layout()[[name]]
       }
     }) %>%
-      bindEvent(init_text())
+      bindEvent(init_layout())
 
     # Bind the reactive value to an output for the conditionalPanel
     output$show_text_ui <- reactive({
       switch(
         text_inputs,
-        "label_name" = showTextInputs(label_name()),
+        "element_id" = showTextInputs(element_id()),
         "show" = TRUE,
         "hide" = FALSE
       )
@@ -173,7 +173,7 @@ formatTextServer <- function(id,
     output$show_position_ui <- reactive({
       switch(
         position_inputs,
-        "label_name" = showPositionInputs(label_name()),
+        "element_id" = showPositionInputs(element_id()),
         "show" = TRUE,
         "hide" = FALSE
       )
@@ -191,38 +191,38 @@ formatTextServer <- function(id,
             textInput(
               ns("expression"),
               label = "Expression",
-              value = init_text()[["text"]],
+              value = init_layout()[["text"]],
               placeholder = "Custom title ..."
             )
           ),
           column(
             width = 4,
             style = "margin-top: 1.7em;",
-            actionButton(ns("parseExpression"), "Parse", width = "100%")
+            actionButton(ns("parseExpression"), "Parse", width = width)
           )
         )
       } else {
         textInput(
           ns("expression"),
           label = "Expression",
-          value = init_text()[["expression"]],
+          value = init_layout()[["expression"]],
           placeholder = "Custom title ..."
         )
       }
     })
 
     observe({
-      req(label_name())
-      logDebug("%s: Entering observe 'label_name'", id)
+      req(element_id())
+      logDebug("%s: Entering observe 'element_id'", id)
 
       updateUserInputs(
         input = input,
         output = output,
         session = session,
-        userInputs = init_text()
+        userInputs = init_layout()
       )
     }) %>%
-      bindEvent(label_name())
+      bindEvent(element_id())
 
     new_text <- observeAndUpdateTextElements(input, output, session, id, new_text, show_parse_button)
 
@@ -411,10 +411,10 @@ defaultTextFormat <- function(type = c("none", "ggplot", "base")) {
   list(title = title, text = text)
 }
 
-showTextInputs <- function(label_name) {
-  if (length(label_name) == 0) return(FALSE)
+showTextInputs <- function(element_id) {
+  if (length(element_id) == 0) return(FALSE)
 
-  if (label_name %in% c("plotTitle",
+  if (element_id %in% c("plotTitle",
                         "legendTitle",
                         "xAxisTitle",
                         "yAxisTitle",
@@ -425,10 +425,10 @@ showTextInputs <- function(label_name) {
   }
 }
 
-showPositionInputs <- function(label_name) {
-  if (length(label_name) == 0) return(FALSE)
+showPositionInputs <- function(element_id) {
+  if (length(element_id) == 0) return(FALSE)
 
-  if (label_name %in% c("xAxisText", "yAxisText", "yAxisText2")) {
+  if (element_id %in% c("xAxisText", "yAxisText", "yAxisText2")) {
     TRUE
   } else {
     FALSE
@@ -569,10 +569,9 @@ observeAndUpdateTextElements <- function(input,
 # server <- function(input, output, session) {
 #     thisTitle <- formatTextServer(
 #       "testMod",
-#       text_type = "title",
-#       #label_name = reactive("plotTitle"),
-#       label_name = reactive("xAxisText"),
-#       init_text = reactive(list(
+#       #element_id = reactive("plotTitle"),
+#       element_id = reactive("xAxisText"),
+#       init_layout = reactive(list(
 #         text = "testHeader",
 #         fontFamily = "sans",
 #         fontType = "italic",

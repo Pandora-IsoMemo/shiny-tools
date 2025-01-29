@@ -79,20 +79,20 @@ formatLineUI <- function(id,
 # @param hideInput (character) inputs that should be disabled (hidden) when applying this module.
 #  Possible inputs are "hide", "symbol", "color", "size", "alpha", "colorBg", "lineWidthBg".
 #  Please use \code{shinyjs::useShinyjs()} in your UI function to enable this feature.
-# @param initStyle (list) optional, named list with style definitions, should have the same format
+# @param init_layout (list) optional, named list with style definitions, should have the same format
 #  as the default output of \code{plotPointsServer}
-# @param reloadInit (reactiveVal) logical, should \code{initStyle} be reloaded?
+# @param element_id (reactiveVal) logical, should \code{init_layout} be reloaded?
 formatLineServer <- function(id,
                              hideInput = c(),
-                             initStyle = defaultLineFormat(),
-                             reloadInit = reactiveVal(FALSE)) {
+                             init_layout = defaultLineFormat(),
+                             element_id = reactiveVal(NULL)) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     style <- custom_style <- initializeReactiveObject(
       session,
       id,
-      custom_values = initStyle,
+      custom_values = init_layout,
       choices = c(
         "size",
         "linetype",
@@ -116,11 +116,11 @@ formatLineServer <- function(id,
     })
 
     observe({
-      req(isTRUE(reloadInit()))
-      logDebug("%s: Entering reload 'initStyle'", id)
+      req(element_id())
+      logDebug("%s: Entering reload 'init_layout'", id)
 
-      if (is.reactive(initStyle)) {
-        new_inputs <- initStyle()
+      if (is.reactive(init_layout)) {
+        new_inputs <- init_layout()
       } else {
         new_inputs <- custom_style
       }
@@ -132,7 +132,7 @@ formatLineServer <- function(id,
         userInputs = new_inputs
       )
     }) %>%
-      bindEvent(reloadInit())
+      bindEvent(element_id())
 
     style <- observeAndUpdateLineElements(input, output, session, id, style = style)
 
@@ -202,7 +202,7 @@ defaultLineFormat <- function() {
 # Please comment this code before building the package
 
 # testStyle <- function() {
-#   list(linetype = 2, color = "#00FF22", alpha = 0.3, capsize = 1, hide = FALSE)
+#   list(linetype = 2, color = "#00FF22", size = 1, alpha = 0.3, capwidth = 1, capheight = 0, hide = FALSE)
 # }
 #
 # ui <- fluidPage(shinyjs::useShinyjs(),
@@ -230,7 +230,7 @@ defaultLineFormat <- function() {
 #     ggplot2::ggplot(data, ggplot2::aes(x = x, y = y))
 #   }
 #
-#   thisStyle <- formatLineServer(id = "testMod", initStyle = testStyle())
+#   thisStyle <- formatLineServer(id = "testMod", init_layout = testStyle())
 #
 #   output$titleList <- renderPrint({
 #     thisStyle %>% reactiveValuesToList() %>% as.data.frame()

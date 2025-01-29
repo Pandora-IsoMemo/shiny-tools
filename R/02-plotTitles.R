@@ -91,10 +91,9 @@ plotTitlesServer <- function(id,
                    bindEvent(input[["labelName"]])
 
                  updated_text <- formatTextServer("text",
-                                                  init_text = init_text,
-                                                  text_type = c("title", "axis"),
+                                                  init_layout = init_text,
                                                   show_parse_button = TRUE,
-                                                  label_name = reactive(input[["labelName"]]))
+                                                  element_id = reactive(input[["labelName"]]))
 
                  observe({
                    logDebug("%s: Entering update plotText", id)

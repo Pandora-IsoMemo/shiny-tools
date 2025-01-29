@@ -146,8 +146,8 @@ initFormat <- function(elements, default_format, prefix = "") {
   # align names of entries
   names(default_format) <- paste0(prefix, names(default_format))
 
-  custom_ids <- names(elements)
-  for (id in custom_ids) {
+  ids <- names(elements)
+  for (id in ids) {
     missing_entries <- setdiff(names(default_format), names(elements[[id]]))
     for (name in missing_entries) {
       elements[[id]][[name]] <- default_format[[name]]

@@ -56,7 +56,8 @@ plotLegendUI <- function(id, title = NULL, titleTag = "h4", type = c("ggplot", "
       label_selected = "Legend elements",
       choices_selected = c("Add a point ..." = ""),
       id = ns("legend_layout-format"),
-      type = type
+      type = type,
+      layout_info_text = "The legend layout can only be set for the legend title or for all legend labels simultaneously."
     )
   )
 }
@@ -89,21 +90,7 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
     })
 
     # legend content and layout ----
-    default_layout <- config()$defaultGGLabel
-
-    legend_element_choices <- reactive({
-      if (length(legend_title()) == 1 && legend_title() != "") {
-        choices <- c(legend_title())
-      } else {
-        choices <- c("title")
-      }
-
-      if (!is.null(legend_labels())) {
-        choices <- c(choices, legend_labels())
-      }
-
-      choices
-    })
+    default_layout <- config()$defaultGGText
 
     legend_elements <- reactiveVal(list())
 
@@ -111,32 +98,38 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
       logDebug("%s: Update 'legend_element()'", id)
 
       current_elements <- legend_elements()
+      new_legend_choices <- getLegendChoices(legend_title(), legend_labels())
 
-      # create new elements from title and labels
-      new_elements_names <- setdiff(legend_element_choices(), names(current_elements))
-      new_elements <- setNames(replicate(length(new_elements_names), list(), simplify = FALSE), new_elements_names)
-      # add NEW title or labels with default layout values to list
-      new_elements <- new_elements %>%
-        initFormat(default_format = default_layout)
+      # create new title element
+      title_id <- legend_title() %>% setLegendTitleID()
+      if (!title_id %in% names(current_elements)) {
+        current_elements[[title_id]] <- list(type = "title")
+      }
 
-      # set id as default text
-      for (name in new_elements_names) {
-        if (new_elements[[name]]$text == "") {
-          new_elements[[name]]$text <- name
+      if (length(legend_labels()) > 0) {
+        # create new labels elements
+        for (label in legend_labels()) {
+          if (!label %in% names(current_elements)) {
+            current_elements[[label]] <- list(type = "label")
+          }
         }
       }
 
-      # combine current and new elements
-      all_elements <- c(current_elements, new_elements)
+      current_elements <- current_elements %>%
+        initFormat(default_format = default_layout)
 
       # select all elements from title and labels
-      legend_elements(all_elements[legend_element_choices()])
+      legend_elements(current_elements[new_legend_choices])
     }) %>%
       bindEvent(list(legend_title(), legend_labels()))
 
     observe({
       logDebug("%s: Update 'legend_layout'", id)
-      legend$layout <- legend_elements()
+
+      legend$layout <- list(
+        title = legend_elements() %>% Filter(f = function(x) x$type == "title"),
+        labels = legend_elements() %>% Filter(f = function(x) x$type == "label")
+      )
     }) %>%
       bindEvent(legend_elements())
 
@@ -144,7 +137,7 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
       id = "legend_layout",
       default_style = default_layout,
       formatServerFUN = formatTextServer,
-      element_list = legend_elements,
+      element_list = legend_elements, # list that contains the layout for 'title' and the labels
       style_prefix = "",
       plot_type = plot_type,
       text_inputs = "show",
@@ -154,6 +147,30 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
 
     return(legend)
   })
+}
+
+setLegendTitleID <- function(legend_title) {
+  if (length(legend_title) == 1 && legend_title != "") {
+    title <- legend_title
+  } else {
+    title <- "title"
+  }
+
+  title
+}
+
+getLegendChoices <- function(legend_title, legend_labels) {
+  if (length(legend_title) == 1 && legend_title != "") {
+    choices <- c(legend_title)
+  } else {
+    choices <- c("title")
+  }
+
+  if (!is.null(legend_labels)) {
+    choices <- c(choices, legend_labels)
+  }
+
+  choices
 }
 
 # TEST MODULE -------------------------------------------------------------
@@ -191,8 +208,13 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
 #   thisLegend <- plotLegendServer("testMod", legend_title = reactive("group"), legend_labels = reactive(c("A", "B")))
 #
 #     output$legend_layout <- renderPrint({
-#       req(thisLegend$layout)
-#       thisLegend$layout %>% lapply(FUN = as.data.frame) %>% bind_rows(.id = "legend_element")
+#       req(thisLegend$layout$title)
+#
+#       title <- thisLegend$layout$title[[1]] %>% as.data.frame %>% mutate(element_id = names(thisLegend$layout$title))
+#       labels <- thisLegend$layout$labels %>% lapply(FUN = as.data.frame) %>% bind_rows(.id = "element_id")
+#
+#       bind_rows(title, labels) %>%
+#         select("element_id", dplyr::everything())
 #     })
 #
 #   output$plot <- renderPlot({

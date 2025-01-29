@@ -4,7 +4,7 @@
 \alias{formatLegendOfGGplot}
 \title{Legend Style Of GGplot}
 \usage{
-formatLegendOfGGplot(plot, legend, ...)
+formatLegendOfGGplot(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...)
 }
 \arguments{
 \item{plot}{(ggplot)}

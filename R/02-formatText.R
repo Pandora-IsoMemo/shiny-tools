@@ -7,6 +7,7 @@
 formatTextUI <- function(id,
                          type = c("ggplot", "base", "none"),
                          initStyle = NULL,
+                         layout_info_text = NULL,
                          width = "100%") {
   type <- match.arg(type)
 
@@ -21,12 +22,6 @@ formatTextUI <- function(id,
 
   ns <- NS(id)
   tagList(
-    checkboxInput(
-      inputId = ns("hide"),
-      label = "Hide",
-      value = initStyle[["hide"]],
-      width = width
-    ),
     conditionalPanel(
       ns = ns,
       condition = "output.show_text_ui",
@@ -62,6 +57,16 @@ formatTextUI <- function(id,
           width = width
         )
       ),
+    ),
+    if (!is.null(layout_info_text)) helpText(
+      layout_info_text,
+      width = width
+    ) else NULL,
+    checkboxInput(
+      inputId = ns("hide"),
+      label = "Hide",
+      value = initStyle[["hide"]],
+      width = width
     ),
     conditionalPanel(
       ns = ns,

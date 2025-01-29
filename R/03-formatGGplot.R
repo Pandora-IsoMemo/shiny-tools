@@ -79,16 +79,17 @@ setCustomTitle <- function(plot, labFun, ...) {
 #' Extract title from list of title definitions. If set to use an expression, convert to expression.
 #'
 #' @param titleList (list) named list with title definitions, output of \code{plotTitlesServer}
+#' @param default (character) default title if no title is set
 #'
 #' @return (character) title
 #'
 #' @export
-extractTitle <- function(titleList) {
+extractTitle <- function(titleList, default = "") {
   if (!is.null(titleList[["useExpression"]]) && isTRUE(titleList[["useExpression"]])) {
     return(convertToExpression(titleList[["expression"]]))
   } else {
-    if (is.null(titleList[["text"]])) {
-      return("")
+    if (is.null(titleList[["text"]]) || titleList[["text"]] == "") {
+      return(default)
     } else {
       return(titleList[["text"]])
     }
@@ -492,22 +493,37 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 #' @inheritParams ggplot2::theme
 #'
 #' @export
-formatLegendOfGGplot <- function(plot, legend, ...) {
+formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
+  # Build the ggplot object
+  plot_build <- ggplot_build(plot)
+
+  # Extract plot data
+  plot_data <- plot_build$data[[1]]  # Get the first layer's data
+
+  # Get unique color mappings
+  unique_colors <- dplyr::distinct(data.frame(
+    category = plot_data$colour,   # Extract assigned colors (hex values)
+    factor_variable = plot_data$group  # Extract the mapped factor levels
+  ))
+
+  # CHECK IF ORDER OF COLORS IS CORRECT <----
+
+  # Dynamically assign extracted colors to factor levels
+  color_mapping <- setNames(unique_colors$category, unique(plot_data$group))
+
+  legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
+  legend_labels <- sapply(names(legend$layout$labels), function(name) {
+    extractTitle(legend$layout$labels[[name]], default = name)
+  }, USE.NAMES = FALSE)
+
   plot +
-    theme(legend.position = legend$position, ...)
-
-
-  # LEGEND ----
-  # if (any(grepl("legend", names(text)))) {
-  #   plot <- plot %>%
-  #     setCustomTitle(labFun = labs,
-  #                    color = extractTitle(text[["legendTitle"]]),
-  #                    size = extractTitle(text[["legendTitle"]]),
-  #                    fill = extractTitle(text[["legendTitle"]]),
-  #                    shape = extractTitle(text[["legendTitle"]]))
-  #   # apply text formatting (theme)
-  #   plot <- plot +
-  #     theme(legend.title = getElementText(text[["legendTitle"]]),
-  #           legend.text  = getElementText(text[["legendText"]]))
-  # }
+    scaleFUN(
+      name = legend_title,
+      labels = legend_labels,
+      values = unname(color_mapping)
+    ) +
+    theme(legend.position = legend$position,
+          legend.title = getElementText(legend$layout$title[[1]]),
+          legend.text = getElementText(legend$layout$labels[[1]]),
+          ...)
 }

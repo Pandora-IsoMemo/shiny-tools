@@ -157,45 +157,45 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
 # To test the module run devtools::load_all() first
 # Please comment this code before building the package
 
-ui <- fluidPage(
-  tagList(
-    navbarPage(
-      header = includeShinyToolsCSS(),
-      title = "test app",
-      theme = shinythemes::shinytheme("flatly"),
-      position = "fixed-top",
-      collapsible = TRUE,
-      id = "test"
-    ),
-    plotOutput("plot"),
-    plotLegendUI(id = "testMod", title = "Legend", titleTag = "h4"),
-    verbatimTextOutput("legend_layout")
-  )
-)
-
-server <- function(input, output, session) {
-  testPlotFun <- function() {
-    data <- data.frame(
-      x = c(1, 2, 3, 4, 5),
-      y = c(3, 5, 2, 8, 7),
-      group = factor(c("A", "B", "A", "B", "A"))
-    )
-
-    ggplot2::ggplot(data, ggplot2::aes(x = x, y = y, color = group)) +
-      ggplot2::geom_line()
-  }
-
-  thisLegend <- plotLegendServer("testMod", legend_title = reactive("group"), legend_labels = reactive(c("A", "B")))
-
-    output$legend_layout <- renderPrint({
-      req(thisLegend$layout)
-      thisLegend$layout %>% lapply(FUN = as.data.frame) %>% bind_rows(.id = "legend_element")
-    })
-
-  output$plot <- renderPlot({
-    testPlotFun() %>%
-      formatLegendOfGGplot(legend = thisLegend)
-  })
-}
-
-shinyApp(ui = ui, server = server)
+# ui <- fluidPage(
+#   tagList(
+#     navbarPage(
+#       header = includeShinyToolsCSS(),
+#       title = "test app",
+#       theme = shinythemes::shinytheme("flatly"),
+#       position = "fixed-top",
+#       collapsible = TRUE,
+#       id = "test"
+#     ),
+#     plotOutput("plot"),
+#     plotLegendUI(id = "testMod", title = "Legend", titleTag = "h4"),
+#     verbatimTextOutput("legend_layout")
+#   )
+# )
+#
+# server <- function(input, output, session) {
+#   testPlotFun <- function() {
+#     data <- data.frame(
+#       x = c(1, 2, 3, 4, 5),
+#       y = c(3, 5, 2, 8, 7),
+#       group = factor(c("A", "B", "A", "B", "A"))
+#     )
+#
+#     ggplot2::ggplot(data, ggplot2::aes(x = x, y = y, color = group)) +
+#       ggplot2::geom_line()
+#   }
+#
+#   thisLegend <- plotLegendServer("testMod", legend_title = reactive("group"), legend_labels = reactive(c("A", "B")))
+#
+#     output$legend_layout <- renderPrint({
+#       req(thisLegend$layout)
+#       thisLegend$layout %>% lapply(FUN = as.data.frame) %>% bind_rows(.id = "legend_element")
+#     })
+#
+#   output$plot <- renderPlot({
+#     testPlotFun() %>%
+#       formatLegendOfGGplot(legend = thisLegend)
+#   })
+# }
+#
+# shinyApp(ui = ui, server = server)

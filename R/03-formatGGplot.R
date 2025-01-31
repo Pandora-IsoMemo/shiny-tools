@@ -8,7 +8,7 @@
 #' @param text (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
 #' @export
-formatTitlesOfGGplot <- function(plot, text, legend = NULL) {
+formatTitlesOfGGplot <- function(plot, text) {
   # check if all elements are present
   if (!all(
     names(text) %in% c(

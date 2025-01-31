@@ -4,7 +4,7 @@
 \alias{formatTitlesOfGGplot}
 \title{Format Titles Of GGplot}
 \usage{
-formatTitlesOfGGplot(plot, text)
+formatTitlesOfGGplot(plot, text, legend = NULL)
 }
 \arguments{
 \item{plot}{(ggplot)}

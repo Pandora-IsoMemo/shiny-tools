@@ -7,6 +7,7 @@
 formatTextUI <- function(id,
                          type = c("ggplot", "base", "none"),
                          initStyle = NULL,
+                         label_info_text = NULL,
                          layout_info_text = NULL,
                          width = "100%") {
   type <- match.arg(type)
@@ -25,6 +26,10 @@ formatTextUI <- function(id,
     conditionalPanel(
       ns = ns,
       condition = "output.show_text_ui",
+      if (!is.null(label_info_text)) helpText(
+        label_info_text,
+        width = width
+      ) else NULL,
       checkboxInput(
         ns("useExpression"),
         label = "Use mathematical annotation",
@@ -340,14 +345,15 @@ checkElements <- function(availableElements) {
   configElements <- labelGroups %>% names()
 
   if (!all(availableElements %in% configElements)) {
-    invalid_elements <- availableElements[!availableElements %in% configElements]
-    stop(
+    invalid_elements <- availableElements[!(availableElements %in% configElements)]
+    warning(
       sprintf(
-        "Invalid 'availableElements' found: '%s'. 'availableElements' must be one ore more of c('%s')",
+        "Invalid 'availableElements' found: '%s'. They will be ignored. 'availableElements' must be one ore more of c('%s')",
         paste0(invalid_elements, collapse = "', '"),
         paste0(configElements, collapse = "', '")
       )
     )
+    availableElements <- availableElements[availableElements %in% configElements]
   }
 
   availableElements

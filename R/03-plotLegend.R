@@ -15,11 +15,10 @@ plotLegendUI <- function(id, title = NULL, titleTag = "h4", type = c("ggplot", "
     setModuleTitle(title = title, titleTag = titleTag),
     selectInput(
       inputId = ns("legendPosition"),
-      label = "Legend position",
+      label = "Position",
       choices = c("none", "right", "top", "bottom", "left", "custom"),
       width = width
     ),
-    tags$br(),
     conditionalPanel(
       ns = ns,
       condition = "input.legendPosition == 'custom'",
@@ -40,23 +39,21 @@ plotLegendUI <- function(id, title = NULL, titleTag = "h4", type = c("ggplot", "
         width = width
       )
     ),
-    # pickerInput(
-    #   inputId = ns("legendElements"),
-    #   label = "Legend elements",
-    #   choices = c("title"),
-    #   multiple = TRUE,
-    #   options = list(`actions-box` = TRUE,   # Enables the action box for select/deselect all
-    #                  `none-selected-text` = "Select elements ..."),
-    #   width = width
-    # ),
-    #formatTextUI(id = ns("legendText"), type = type)
+    selectInput(
+      inputId = ns("legendDirection"),
+      label = "Orientation",
+      choices = c("auto", "vertical", "horizontal"),
+      width = width
+    ),
+    tags$br(),
     applyFormatUI(
       wrapper_id = ns("legend_layout"),
       format_FUN = formatTextUI,
-      label_selected = "Legend elements",
-      choices_selected = c("Add a point ..." = ""),
+      label_selected = "Select legend item(s)",
+      choices_selected = c("Add data ..." = ""),
       id = ns("legend_layout-format"),
       type = type,
+      label_info_text = "The legend title and each legend label can be set individually.",
       layout_info_text = "The legend layout can only be set for the legend title or for all legend labels simultaneously."
     )
   )
@@ -76,16 +73,27 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
                              plot_type = c("ggplot", "base", "none")) {
   plot_type <- match.arg(plot_type)
   moduleServer(id, function(input, output, session) {
-    # legend position ----
     legend <- reactiveValues(position = "none",
+                             direction = "vertical",
                              layout = NULL)
 
+    # legend position ----
     observe({
       logDebug("%s: Entering observe 'legendPosition'", id)
       if (input[["legendPosition"]] == "custom") {
         legend$position <- c(input[["legendX"]], input[["legendY"]])
       } else {
         legend$position <- input[["legendPosition"]]
+      }
+    })
+
+    # legend direction ----
+    observe({
+      logDebug("%s: Entering observe 'legendDirection'", id)
+      if (input[["legendDirection"]] == "auto") {
+        legend$direction <- autoLegendDirection(input[["legendPosition"]])
+      } else {
+        legend$direction <- input[["legendDirection"]]
       }
     })
 
@@ -98,27 +106,29 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
       logDebug("%s: Update 'legend_element()'", id)
 
       current_elements <- legend_elements()
-      new_legend_choices <- getLegendChoices(legend_title(), legend_labels())
 
-      # create new title element
+      # add NEW title element to current_elements
       title_id <- legend_title() %>% setLegendTitleID()
       if (!title_id %in% names(current_elements)) {
         current_elements[[title_id]] <- list(type = "title")
       }
 
-      if (length(legend_labels()) > 0) {
-        # create new labels elements
-        for (label in legend_labels()) {
+      # add NEW label elements to current_elements
+      label_ids <- as.character(legend_labels())
+      if (length(label_ids) > 0) {
+        for (label in label_ids) {
           if (!label %in% names(current_elements)) {
             current_elements[[label]] <- list(type = "label")
           }
         }
       }
 
+      # initialize format for all NEW elements
       current_elements <- current_elements %>%
         initFormat(default_format = default_layout)
 
-      # select all elements from title and labels
+      # select only elements from title and labels arguments
+      new_legend_choices <- getLegendChoices(title_id, label_ids)
       legend_elements(current_elements[new_legend_choices])
     }) %>%
       bindEvent(list(legend_title(), legend_labels()))
@@ -127,8 +137,8 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
       logDebug("%s: Update 'legend_layout'", id)
 
       legend$layout <- list(
-        title = legend_elements() %>% Filter(f = function(x) x$type == "title"),
-        labels = legend_elements() %>% Filter(f = function(x) x$type == "label")
+        title = legend_elements() %>% filterType("title"),
+        labels = legend_elements() %>% filterType("label")
       )
     }) %>%
       bindEvent(legend_elements())
@@ -142,11 +152,21 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
       plot_type = plot_type,
       text_inputs = "show",
       position_inputs = "show",
-      show_parse_button = FALSE
+      show_parse_button = FALSE,
+      layout_group = reactive(legend_elements() %>% filterType("label") %>% names()), # same layout for all labels
+      group_entries = names(default_layout)[!(names(default_layout) %in% c("text", "useExpression", "expression"))] # keep separate labels
     )
 
     return(legend)
   })
+}
+
+autoLegendDirection <- function(position) {
+  if (position %in% c("top", "bottom")) {
+    return("horizontal")
+  } else {
+    return("vertical")
+  }
 }
 
 setLegendTitleID <- function(legend_title) {
@@ -173,11 +193,15 @@ getLegendChoices <- function(legend_title, legend_labels) {
   choices
 }
 
+filterType <- function(elements, type) {
+  elements %>% Filter(f = function(x) x$type == type)
+}
+
 # TEST MODULE -------------------------------------------------------------
 # To test the module run devtools::load_all() first
 # Please comment this code before building the package
 
-# ui <- fluidPage(
+# ui <- fluidPage(shinyjs::useShinyjs(),
 #   tagList(
 #     navbarPage(
 #       header = includeShinyToolsCSS(),
@@ -205,7 +229,7 @@ getLegendChoices <- function(legend_title, legend_labels) {
 #       ggplot2::geom_line()
 #   }
 #
-#   thisLegend <- plotLegendServer("testMod", legend_title = reactive("group"), legend_labels = reactive(c("A", "B")))
+#   thisLegend <- plotLegendServer("testMod", legend_title = reactive("group"), legend_labels = reactive(as.factor(c("A", "B"))))
 #
 #     output$legend_layout <- renderPrint({
 #       req(thisLegend$layout$title)

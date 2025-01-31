@@ -1,7 +1,7 @@
 #' @rawNamespace import(shiny)
 
 #' @importFrom colourpicker colourInput
-#' @importFrom dplyr bind_cols bind_rows mutate select starts_with
+#' @importFrom dplyr as_label bind_cols bind_rows distinct inner_join mutate select starts_with
 #' @importFrom futile.logger flog.debug flog.info flog.warn
 #' @importFrom ggplot2 aes element_blank element_text geom_errorbar geom_errorbarh geom_line
 #'  geom_point geom_text ggplot ggplot_build ggtitle labs
@@ -17,8 +17,8 @@
 #' @importFrom scales pseudo_log_trans sqrt_trans
 #' @importFrom shinyalert shinyalert
 #' @importFrom shinyjs alert disable enable hide
-#' @importFrom shinyWidgets pickerInput updatePickerInput
-#' @importFrom stats lm
+#' @importFrom shinyWidgets pickerInput pickerOptions updatePickerInput
+#' @importFrom stats lm setNames
 #' @importFrom utils capture.output write.table
 #' @importFrom yaml yaml.load_file
 

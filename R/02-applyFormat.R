@@ -1,7 +1,13 @@
-# UI for applying format to selected elements
-#
-# @param thisId namespace id of the wrapper module 'applyFormatUI'
-# @param formatUIFUN UI function for formatting
+#' UI for applying format to selected elements
+#'
+#' @param wrapper_id character. Wrapper ID for the UI.
+#' @param format_FUN function. Function to create the UI for the format.
+#' @param label_selected character. Label for the selectInput.
+#' @param choices_selected character. Choices for the selectInput.
+#' @param width character. Width of the selectInput.
+#' @param ... further arguments passed to the format_FUN.
+#'
+#' @rdname applyFormatServer
 applyFormatUI <- function(wrapper_id,
                           format_FUN,
                           label_selected = "Select point(s)",
@@ -11,13 +17,23 @@ applyFormatUI <- function(wrapper_id,
   ns <- NS(wrapper_id)
 
   tagList(
-    tags$br(),
-    selectInput(
-      ns("selected_elements"),
-      label = label_selected,
-      choices = choices_selected,
-      multiple = TRUE,
-      width = width
+    # selectInput(
+    #   ns("selected_elements"),
+    #   label = label_selected,
+    #   choices = choices_selected,
+    #   multiple = TRUE,
+    #   width = width
+    # ),
+    pickerInput(
+      inputId = ns("selected_elements"),  # Namespaced ID
+      label = label_selected,             # Label for the input
+      choices = choices_selected,         # Choices for selection
+      multiple = TRUE,                     # Allow multiple selections
+      options = pickerOptions(
+        actionsBox = TRUE,                 # Enables "Select All" / "Deselect All"
+        title = "Select items to enable button 'Apply' ..."    # Placeholder text
+      ),
+      width = width                      # Set custom width
     ),
     format_FUN(...),
     tags$br(),
@@ -25,12 +41,26 @@ applyFormatUI <- function(wrapper_id,
   )
 }
 
+#' Server logic for applying format to selected elements
+#'
+#' @param id character. Module ID.
+#' @param default_style list. Default style settings.
+#' @param formatServerFUN function. Function to create the server logic for the format.
+#' @param element_list reactiveVal. List of elements to apply the format to.
+#' @param style_prefix character. Prefix for the style settings.
+#' @param plot_type character. Type of plot. Default is "ggplot".
+#' @param layout_group reactive. Group of elements to apply the format to.
+#' @param group_entries character. Specify entries for 'layout_group' to apply the format to.
+#'   If empty, all entries are updated for 'layout_group'.
+#' @param ... further arguments passed to the formatServerFUN.
 applyFormatServer <- function(id,
                               default_style,
                               formatServerFUN,
                               element_list = reactiveVal(),
                               style_prefix = "",
                               plot_type = c("ggplot", "base", "none"),
+                              layout_group = reactive(c()),
+                              group_entries = c(),
                               ...) {
   plot_type <- match.arg(plot_type)
   moduleServer(id, function(input, output, session) {
@@ -41,7 +71,7 @@ applyFormatServer <- function(id,
 
       custom_ids <- names(element_list())
       last_selected <- input[["selected_elements"]]
-      updateSelectInput(
+      updatePickerInput(
         session,
         "selected_elements",
         choices = getPointChoices(custom_ids),
@@ -69,7 +99,6 @@ applyFormatServer <- function(id,
         shinyjs::enable(ns("apply"), asis = TRUE)
       }
     })
-
 
     element_id <- reactiveVal(FALSE)
     observe({
@@ -105,12 +134,32 @@ applyFormatServer <- function(id,
     observe({
       logDebug("%s: Apply new format", id)
 
+      selected_elements <- input[["selected_elements"]]
+      new_format <- new_format %>% extractReactiveValue()
+
+      # apply format to all selected elements and all entries
       all_elements <- element_list() %>%
         updateFormat(
-          selected_ids = input[["selected_elements"]],
-          new_format = new_format %>% extractReactiveValue(),
+          selected_ids = selected_elements,
+          new_format = new_format,
           prefix = style_prefix
         )
+
+      # apply format to layout group and group_entries
+      if (any(selected_elements %in% layout_group())) {
+        logDebug("%s: Apply format to layout group", id)
+        selected_elements <- unique(c(selected_elements, layout_group()))
+        if (length(group_entries) == 0) {
+          group_entries <- names(new_format)
+        }
+
+        all_elements <- all_elements %>%
+          updateFormat(
+            selected_ids = selected_elements,
+            new_format = new_format[group_entries],
+            prefix = style_prefix
+          )
+      }
 
       element_list(all_elements)
     }) %>%

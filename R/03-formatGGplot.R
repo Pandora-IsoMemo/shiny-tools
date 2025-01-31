@@ -8,7 +8,7 @@
 #' @param text (list) named list with title definitions, output of \code{plotTitlesServer}
 #'
 #' @export
-formatTitlesOfGGplot <- function(plot, text) {
+formatTitlesOfGGplot <- function(plot, text, legend = NULL) {
   # check if all elements are present
   if (!all(
     names(text) %in% c(
@@ -490,40 +490,72 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 #'
 #' @param plot (ggplot)
 #' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
+#' @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
 #' @inheritParams ggplot2::theme
 #'
 #' @export
 formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
+  # set the title/labels depending on whether it is an expression, empty, or text
+  legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
+  legend_labels <- sapply(names(legend$layout$labels), function(name) {
+    extractTitle(legend$layout$labels[[name]], default = name)
+  })
+  color_mapping <- extractColourMapping(plot)
+
+  # set legend labels and apply text formatting (theme)
+  plot <- plot +
+    scaleFUN(
+      labels = legend_labels,
+      values = color_mapping
+    ) +
+    theme(legend.position = legend$position,
+          legend.direction = legend$direction,
+          legend.title = getElementText(legend$layout$title[[1]]),
+          legend.text = getElementText(legend$layout$labels[[1]]),
+          ...)
+
+  # set legend titles
+  plot %>%
+    setCustomTitle(labFun = labs,
+                   color = legend_title,
+                   size = legend_title,
+                   fill = legend_title,
+                   shape = legend_title)
+}
+
+extractColourMapping <- function(plot) {
   # Build the ggplot object
   plot_build <- ggplot_build(plot)
+
+  # find mapping
+  ## extract base mapping
+  base_mapping <- extractMapping(plot$mapping)
+  ## check for mappings in all layers
+  if (length(plot_build$plot$layers) > 0) {
+    layer_mappings <- sapply(plot_build$plot$layers, function(layer) extractMapping(layer$mapping)) %>%
+      unlist()
+  } else {
+    layer_mappings <- extractMapping(plot_build$plot$mapping)
+  }
+
+  # combine mappings and select relevant
+  mapping <- c(base_mapping, layer_mappings)[c("x", "y", "colour")]
 
   # Extract plot data
   plot_data <- plot_build$data[[1]]  # Get the first layer's data
 
-  # Get unique color mappings
-  unique_colors <- dplyr::distinct(data.frame(
-    category = plot_data$colour,   # Extract assigned colors (hex values)
-    factor_variable = plot_data$group  # Extract the mapped factor levels
-  ))
+  # Get unique color mapping as data.frame
+  color_mapping <- inner_join(plot_data, plot$data, by = c("x" = mapping[["x"]], "y" = mapping[["y"]])) %>%
+    select("colour", starts_with(mapping[["colour"]])) %>%
+    distinct()
 
-  # CHECK IF ORDER OF COLORS IS CORRECT <----
+  # convert to named vector
+  # use last column, it comes from 'y' of inner_join
+  color_mapping <- setNames(color_mapping$colour, color_mapping[[ncol(color_mapping)]])
 
-  # Dynamically assign extracted colors to factor levels
-  color_mapping <- setNames(unique_colors$category, unique(plot_data$group))
+  color_mapping
+}
 
-  legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
-  legend_labels <- sapply(names(legend$layout$labels), function(name) {
-    extractTitle(legend$layout$labels[[name]], default = name)
-  }, USE.NAMES = FALSE)
-
-  plot +
-    scaleFUN(
-      name = legend_title,
-      labels = legend_labels,
-      values = unname(color_mapping)
-    ) +
-    theme(legend.position = legend$position,
-          legend.title = getElementText(legend$layout$title[[1]]),
-          legend.text = getElementText(legend$layout$labels[[1]]),
-          ...)
+extractMapping <- function(mapping_list) {
+  sapply(names(mapping_list), function(name) {as_label(mapping_list[[name]])})
 }

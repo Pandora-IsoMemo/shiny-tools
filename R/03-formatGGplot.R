@@ -56,8 +56,6 @@ formatTitlesOfGGplot <- function(plot, text) {
   plot
 }
 
-# Set Custom Title (no docu for 'man' because it is a helper function)
-#
 # Set label of a ggplot object
 #
 # @param plot (ggplot)
@@ -484,16 +482,14 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 
 # LEGEND ----
 
-#' Legend Style Of GGplot
-#'
-#' Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
-#'
-#' @param plot (ggplot)
-#' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
-#' @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
-#' @inheritParams ggplot2::theme
-#'
-#' @export
+# Legend Style Of GGplot
+#
+# Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
+#
+# @param plot (ggplot)
+# @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
+# @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
+# @inheritParams ggplot2::theme
 formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
   # set the title/labels depending on whether it is an expression, empty, or text
   legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
@@ -502,25 +498,39 @@ formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_m
   })
   color_mapping <- extractColourMapping(plot)
 
-  # set legend labels and apply text formatting (theme)
+  # set legend labels
   plot <- plot +
     scaleFUN(
       labels = legend_labels,
       values = color_mapping
-    ) +
-    theme(legend.position = legend$position,
-          legend.direction = legend$direction,
-          legend.title = getElementText(legend$layout$title[[1]]),
-          legend.text = getElementText(legend$layout$labels[[1]]),
-          ...)
+    )
 
-  # set legend titles
+  # apply text formatting (theme) and set legend titles
   plot %>%
+    setLegendThemeOfGGplot(legend = legend, ...) %>%
     setCustomTitle(labFun = labs,
                    color = legend_title,
                    size = legend_title,
                    fill = legend_title,
                    shape = legend_title)
+}
+
+#' Legend Theme Of GGplot
+#'
+#' Apply theme settings for legend to a ggplot object.
+#'
+#' @param plot (ggplot)
+#' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
+#' @param ... (list) arguments for \code{theme}
+#'
+#' @export
+setLegendThemeOfGGplot <- function(plot, legend, ...) {
+  plot +
+    theme(legend.position = legend$position,
+          legend.direction = legend$direction,
+          legend.title = getElementText(legend$layout$title[[1]]),
+          legend.text = getElementText(legend$layout$labels[[1]]),
+          ...)
 }
 
 extractColourMapping <- function(plot) {

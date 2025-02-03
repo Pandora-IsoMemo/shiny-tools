@@ -83,6 +83,7 @@ customPointsServer <- function(id,
     }
 
     addCustomPointServer("add", custom_points)
+    removeCustomPointsServer("remove", custom_points)
     stylePointsServer("style_point", custom_points)
     applyLayoutServer(
       "style_error",
@@ -93,7 +94,6 @@ customPointsServer <- function(id,
       plot_type = plot_type
     )
     stylePointLabelsServer("style_label", custom_points)
-    removeCustomPointsServer("remove", custom_points)
 
     return(custom_points)
   })

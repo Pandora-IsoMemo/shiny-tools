@@ -133,6 +133,8 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'
 #' @export
 formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
+  if (is.null(plot) || length(ranges) == 0) return(plot)
+
   if (isContinuousAxis(plot, axis = "x")) {
     plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
                                       limits = getUserLimits(ranges[["xAxis"]]),
@@ -543,6 +545,12 @@ formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_m
 #'
 #' @export
 setLegendThemeOfGGplot <- function(plot, legend, ...) {
+  if (is.null(plot) || length(legend) == 0 || is.null(legend$position)) return(plot)
+
+  if (legend$position == "none") {
+    return(plot + theme(legend.position = "none"))
+  }
+
   plot +
     theme(legend.position = legend$position,
           legend.direction = legend$direction,

@@ -1,4 +1,4 @@
-# shinyTools 25.01.1
+# shinyTools 25.02.0
 
 ## New Features
 - _plotLegend_ module:

@@ -174,12 +174,30 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
 isContinuousAxis <- function(plot, axis = c("x", "y")) {
   axis <- match.arg(axis)
   axis_data <- eval_tidy(plot$mapping[[axis]], plot$data)
+
+  # if data not found in mapping, check layers
+  if (is.null(axis_data)) {
+    for (layer in seq_along(plot$layers)) {
+      axis_data <- eval_tidy(plot$layers[[layer]]$mapping[[axis]], plot$data)
+      if (!is.null(axis_data)) break
+    }
+  }
+
   is.numeric(axis_data)
 }
 
 isDiscreteAxis <- function(plot, axis = c("x", "y")) {
   axis <- match.arg(axis)
   axis_data <- eval_tidy(plot$mapping[[axis]], plot$data)
+
+  # if data not found in mapping, check layers
+  if (is.null(axis_data)) {
+    for (layer in seq_along(plot$layers)) {
+      axis_data <- eval_tidy(plot$layers[[layer]]$mapping[[axis]], plot$data)
+      if (!is.null(axis_data)) break
+    }
+  }
+
   is.factor(axis_data) || is.character(axis_data)
 }
 

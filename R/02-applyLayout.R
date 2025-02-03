@@ -1,31 +1,21 @@
-#' UI for applying layout to selected elements
-#'
-#' @param wrapper_id character. Wrapper ID for the UI.
-#' @param layout_FUN function. Function to create the UI for the layout.
-#' @param label_selected character. Label for the selectInput.
-#' @param choices_selected character. Choices for the selectInput.
-#' @param width character. Width of the selectInput.
-#' @param ... further arguments passed to the layout_FUN.
-#'
-#' @rdname applyLayoutServer
-#'
-#' @export
-applyLayoutUI <- function(wrapper_id,
-                          layout_FUN,
+# UI for applying layout to selected elements
+#
+# @param layout_UI_FUN function. Function to create the UI for the layout.
+# @param label_selected character. Label for the selectInput.
+# @param choices_selected character. Choices for the selectInput.
+# @param width character. Width of the selectInput.
+# @param ... further arguments passed to the layout_UI_FUN.
+#
+# @rdname applyLayoutServer
+applyLayoutUI <- function(id,
+                          layout_UI_FUN,
                           label_selected = "Select point(s)",
                           choices_selected = c("Add a point ..." = ""),
                           width = "100%",
                           ...) {
-  ns <- NS(wrapper_id)
+  ns <- NS(id)
 
   tagList(
-    # selectInput(
-    #   ns("selected_elements"),
-    #   label = label_selected,
-    #   choices = choices_selected,
-    #   multiple = TRUE,
-    #   width = width
-    # ),
     pickerInput(
       inputId = ns("selected_elements"),  # Namespaced ID
       label = label_selected,             # Label for the input
@@ -37,29 +27,27 @@ applyLayoutUI <- function(wrapper_id,
       ),
       width = width                      # Set custom width
     ),
-    layout_FUN(...),
+    layout_UI_FUN(id = ns("layout"), ...),
     tags$br(),
     actionButton(ns("apply"), "Apply")
   )
 }
 
-#' Server logic for applying layout to selected elements
-#'
-#' @param id character. Module ID.
-#' @param default_style list. Default style settings.
-#' @param layoutServerFUN function. Function to create the server logic for the layout.
-#' @param element_list reactiveVal. List of elements to apply the layout to.
-#' @param style_prefix character. Prefix for the style settings.
-#' @param plot_type character. Type of plot. Default is "ggplot".
-#' @param layout_group reactive. Group of elements to apply the layout to.
-#' @param group_entries character. Specify entries for 'layout_group' to apply the layout to.
-#'   If empty, all entries are updated for 'layout_group'.
-#' @param ... further arguments passed to the layoutServerFUN.
-#'
-#' @export
+# Server logic for applying layout to selected elements
+#
+# @param id character. Module ID.
+# @param default_style list. Default style settings.
+# @param layout_server_FUN function. Function to create the server logic for the layout.
+# @param element_list reactiveVal. List of elements to apply the layout to.
+# @param style_prefix character. Prefix for the style settings.
+# @param plot_type character. Type of plot. Default is "ggplot".
+# @param layout_group reactive. Group of elements to apply the layout to.
+# @param group_entries character. Specify entries for 'layout_group' to apply the layout to.
+#   If empty, all entries are updated for 'layout_group'.
+# @param ... further arguments passed to the layout_server_FUN.
 applyLayoutServer <- function(id,
                               default_style,
-                              layoutServerFUN,
+                              layout_server_FUN,
                               element_list = reactiveVal(),
                               style_prefix = "",
                               plot_type = c("ggplot", "base", "none"),
@@ -130,7 +118,7 @@ applyLayoutServer <- function(id,
     })
 
     # current layout settings
-    new_format <- layoutServerFUN(id = "layout",
+    new_format <- layout_server_FUN(id = "layout",
                                   init_layout = init_style,
                                   element_id = element_id,
                                   ...)

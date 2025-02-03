@@ -27,11 +27,10 @@ customPointsUI <- function(id,
       tabPanel(
         "Point",
         applyLayoutUI(
-          wrapper_id = ns("style_point"),
-          layout_FUN = plotPointsUI,
+          id = ns("style_point"),
+          layout_UI_FUN = plotPointsUI,
           label_selected = "Select point(s)",
           choices_selected = c("Add a point ..." = ""),
-          id = ns("style_point-format"),
           title = NULL,
           type = plot_type,
           initStyle = config()$defaultPointStyle
@@ -41,22 +40,20 @@ customPointsUI <- function(id,
       tabPanel(
         "Error",
         applyLayoutUI(
-          wrapper_id = ns("style_error"),
-          layout_FUN = formatLineUI,
+          id = ns("style_error"),
+          layout_UI_FUN = formatLineUI,
           label_selected = "Select point(s)",
           choices_selected = c("Add a point ..." = ""),
-          id = ns("style_error-format"),
           initStyle = config()$defaultLineStyle
         )
       ),
       tabPanel(
         "Label",
         applyLayoutUI(
-          wrapper_id = ns("style_label"),
-          layout_FUN = formatTextUI,
+          id = ns("style_label"),
+          layout_UI_FUN = formatTextUI,
           label_selected = "Select point(s)",
           choices_selected = c("Add a point ..." = ""),
-          id = ns("style_label-format"),
           type = plot_type,
           initStyle = config()$defaultGGLabel
         )
@@ -90,7 +87,7 @@ customPointsServer <- function(id,
     applyLayoutServer(
       "style_error",
       default_style = defaultLineFormat(),
-      layoutServerFUN = formatLineServer,
+      layout_server_FUN = formatLineServer,
       element_list = custom_points,
       style_prefix = "error_",
       plot_type = plot_type

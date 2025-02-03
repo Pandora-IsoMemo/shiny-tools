@@ -47,11 +47,10 @@ plotLegendUI <- function(id, title = NULL, titleTag = "h4", type = c("ggplot", "
     ),
     tags$br(),
     applyLayoutUI(
-      wrapper_id = ns("legend_layout"),
-      layout_FUN = formatTextUI,
+      id = ns("legend_layout"),
+      layout_UI_FUN = formatTextUI,
       label_selected = "Select legend item(s)",
       choices_selected = c("Add data ..." = ""),
-      id = ns("legend_layout-format"),
       type = type,
       label_info_text = "The legend title and each legend label can be set individually.",
       layout_info_text = "The legend layout can only be set for the legend title or for all legend labels simultaneously."
@@ -146,7 +145,7 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
     applyLayoutServer(
       id = "legend_layout",
       default_style = default_layout,
-      layoutServerFUN = formatTextServer,
+      layout_server_FUN = formatTextServer,
       element_list = legend_elements, # list that contains the layout for 'title' and the labels
       style_prefix = "",
       plot_type = plot_type,

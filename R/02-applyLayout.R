@@ -8,6 +8,8 @@
 #' @param ... further arguments passed to the layout_FUN.
 #'
 #' @rdname applyLayoutServer
+#'
+#' @export
 applyLayoutUI <- function(wrapper_id,
                           layout_FUN,
                           label_selected = "Select point(s)",
@@ -53,6 +55,8 @@ applyLayoutUI <- function(wrapper_id,
 #' @param group_entries character. Specify entries for 'layout_group' to apply the layout to.
 #'   If empty, all entries are updated for 'layout_group'.
 #' @param ... further arguments passed to the layoutServerFUN.
+#'
+#' @export
 applyLayoutServer <- function(id,
                               default_style,
                               layoutServerFUN,

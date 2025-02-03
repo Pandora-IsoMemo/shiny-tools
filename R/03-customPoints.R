@@ -26,9 +26,9 @@ customPointsUI <- function(id,
       tabPanel("Remove", removeCustomPointsUI(ns("remove"))),
       tabPanel(
         "Point",
-        applyFormatUI(
+        applyLayoutUI(
           wrapper_id = ns("style_point"),
-          format_FUN = plotPointsUI,
+          layout_FUN = plotPointsUI,
           label_selected = "Select point(s)",
           choices_selected = c("Add a point ..." = ""),
           id = ns("style_point-format"),
@@ -40,9 +40,9 @@ customPointsUI <- function(id,
       # we need ui to style errors
       tabPanel(
         "Error",
-        applyFormatUI(
+        applyLayoutUI(
           wrapper_id = ns("style_error"),
-          format_FUN = formatLineUI,
+          layout_FUN = formatLineUI,
           label_selected = "Select point(s)",
           choices_selected = c("Add a point ..." = ""),
           id = ns("style_error-format"),
@@ -51,9 +51,9 @@ customPointsUI <- function(id,
       ),
       tabPanel(
         "Label",
-        applyFormatUI(
+        applyLayoutUI(
           wrapper_id = ns("style_label"),
-          format_FUN = formatTextUI,
+          layout_FUN = formatTextUI,
           label_selected = "Select point(s)",
           choices_selected = c("Add a point ..." = ""),
           id = ns("style_label-format"),
@@ -87,10 +87,10 @@ customPointsServer <- function(id,
 
     addCustomPointServer("add", custom_points)
     stylePointsServer("style_point", custom_points)
-    applyFormatServer(
+    applyLayoutServer(
       "style_error",
       default_style = defaultLineFormat(),
-      formatServerFUN = formatLineServer,
+      layoutServerFUN = formatLineServer,
       element_list = custom_points,
       style_prefix = "error_",
       plot_type = plot_type
@@ -233,7 +233,7 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
       # add entries for point format if not yet set
       all_points <- custom_points() %>%
-        initFormat(default_format = default_style[["dataPoints"]], prefix = "point_")
+        initLayout(default_layout = default_style[["dataPoints"]], prefix = "point_")
       custom_points(all_points)
     })
 
@@ -326,7 +326,7 @@ stylePointLabelsServer <- function(id,
 
       # add entries for label format if not yet set
       all_points <- custom_points() %>%
-        initFormat(default_format = default_style, prefix = "label_")
+        initLayout(default_layout = default_style, prefix = "label_")
 
       # set id as default text
       for (name in custom_point_ids) {

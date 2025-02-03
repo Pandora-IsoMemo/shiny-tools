@@ -46,9 +46,9 @@ plotLegendUI <- function(id, title = NULL, titleTag = "h4", type = c("ggplot", "
       width = width
     ),
     tags$br(),
-    applyFormatUI(
+    applyLayoutUI(
       wrapper_id = ns("legend_layout"),
-      format_FUN = formatTextUI,
+      layout_FUN = formatTextUI,
       label_selected = "Select legend item(s)",
       choices_selected = c("Add data ..." = ""),
       id = ns("legend_layout-format"),
@@ -125,7 +125,7 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
 
       # initialize format for all NEW elements
       current_elements <- current_elements %>%
-        initFormat(default_format = default_layout)
+        initLayout(default_layout = default_layout)
 
       # select only elements from title and labels arguments
       new_legend_choices <- getLegendChoices(title_id, label_ids)
@@ -143,10 +143,10 @@ plotLegendServer <- function(id, legend_title = reactive(NULL), legend_labels = 
     }) %>%
       bindEvent(legend_elements())
 
-    applyFormatServer(
+    applyLayoutServer(
       id = "legend_layout",
       default_style = default_layout,
-      formatServerFUN = formatTextServer,
+      layoutServerFUN = formatTextServer,
       element_list = legend_elements, # list that contains the layout for 'title' and the labels
       style_prefix = "",
       plot_type = plot_type,

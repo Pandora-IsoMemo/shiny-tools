@@ -1,15 +1,15 @@
-#' UI for applying format to selected elements
+#' UI for applying layout to selected elements
 #'
 #' @param wrapper_id character. Wrapper ID for the UI.
-#' @param format_FUN function. Function to create the UI for the format.
+#' @param layout_FUN function. Function to create the UI for the layout.
 #' @param label_selected character. Label for the selectInput.
 #' @param choices_selected character. Choices for the selectInput.
 #' @param width character. Width of the selectInput.
-#' @param ... further arguments passed to the format_FUN.
+#' @param ... further arguments passed to the layout_FUN.
 #'
-#' @rdname applyFormatServer
-applyFormatUI <- function(wrapper_id,
-                          format_FUN,
+#' @rdname applyLayoutServer
+applyLayoutUI <- function(wrapper_id,
+                          layout_FUN,
                           label_selected = "Select point(s)",
                           choices_selected = c("Add a point ..." = ""),
                           width = "100%",
@@ -35,27 +35,27 @@ applyFormatUI <- function(wrapper_id,
       ),
       width = width                      # Set custom width
     ),
-    format_FUN(...),
+    layout_FUN(...),
     tags$br(),
     actionButton(ns("apply"), "Apply")
   )
 }
 
-#' Server logic for applying format to selected elements
+#' Server logic for applying layout to selected elements
 #'
 #' @param id character. Module ID.
 #' @param default_style list. Default style settings.
-#' @param formatServerFUN function. Function to create the server logic for the format.
-#' @param element_list reactiveVal. List of elements to apply the format to.
+#' @param layoutServerFUN function. Function to create the server logic for the layout.
+#' @param element_list reactiveVal. List of elements to apply the layout to.
 #' @param style_prefix character. Prefix for the style settings.
 #' @param plot_type character. Type of plot. Default is "ggplot".
-#' @param layout_group reactive. Group of elements to apply the format to.
-#' @param group_entries character. Specify entries for 'layout_group' to apply the format to.
+#' @param layout_group reactive. Group of elements to apply the layout to.
+#' @param group_entries character. Specify entries for 'layout_group' to apply the layout to.
 #'   If empty, all entries are updated for 'layout_group'.
-#' @param ... further arguments passed to the formatServerFUN.
-applyFormatServer <- function(id,
+#' @param ... further arguments passed to the layoutServerFUN.
+applyLayoutServer <- function(id,
                               default_style,
-                              formatServerFUN,
+                              layoutServerFUN,
                               element_list = reactiveVal(),
                               style_prefix = "",
                               plot_type = c("ggplot", "base", "none"),
@@ -81,9 +81,9 @@ applyFormatServer <- function(id,
       req(length(custom_ids) > 0)
       logDebug("%s: set label styles if empty", id)
 
-      # add entries for label format if not yet set
+      # add entries for label layout if not yet set
       all_elements <- element_list() %>%
-        initFormat(default_format = default_style, prefix = style_prefix)
+        initLayout(default_layout = default_style, prefix = style_prefix)
 
       element_list(all_elements)
     })
@@ -108,7 +108,7 @@ applyFormatServer <- function(id,
         element_id(NULL)
       } else {
         logDebug("%s: Reload init", id)
-        element_id("format")
+        element_id("layout")
       }
     }) %>%
       bindEvent(input[["selected_elements"]], ignoreNULL = FALSE)
@@ -118,26 +118,26 @@ applyFormatServer <- function(id,
           any(input[["selected_elements"]] == "")) {
         default_style
       } else {
-        # load selected format
+        # load selected layout
         first_point_style <- element_list()[input[["selected_elements"]]][[1]] %>%
           extractFormat(prefix = style_prefix)
         first_point_style
       }
     })
 
-    # current format settings
-    new_format <- formatServerFUN(id = "format",
+    # current layout settings
+    new_format <- layoutServerFUN(id = "layout",
                                   init_layout = init_style,
                                   element_id = element_id,
                                   ...)
 
     observe({
-      logDebug("%s: Apply new format", id)
+      logDebug("%s: Apply new layout", id)
 
       selected_elements <- input[["selected_elements"]]
       new_format <- new_format %>% extractReactiveValue()
 
-      # apply format to all selected elements and all entries
+      # apply layout to all selected elements and all entries
       all_elements <- element_list() %>%
         updateFormat(
           selected_ids = selected_elements,
@@ -145,9 +145,9 @@ applyFormatServer <- function(id,
           prefix = style_prefix
         )
 
-      # apply format to layout group and group_entries
+      # apply layout to layout group and group_entries
       if (any(selected_elements %in% layout_group())) {
-        logDebug("%s: Apply format to layout group", id)
+        logDebug("%s: Apply layout to layout group", id)
         selected_elements <- unique(c(selected_elements, layout_group()))
         if (length(group_entries) == 0) {
           group_entries <- names(new_format)
@@ -191,15 +191,15 @@ getPointChoices <- function(custom_ids) {
   new_choices
 }
 
-initFormat <- function(elements, default_format, prefix = "") {
+initLayout <- function(elements, default_layout, prefix = "") {
   # align names of entries
-  names(default_format) <- paste0(prefix, names(default_format))
+  names(default_layout) <- paste0(prefix, names(default_layout))
 
   ids <- names(elements)
   for (id in ids) {
-    missing_entries <- setdiff(names(default_format), names(elements[[id]]))
+    missing_entries <- setdiff(names(default_layout), names(elements[[id]]))
     for (name in missing_entries) {
-      elements[[id]][[name]] <- default_format[[name]]
+      elements[[id]][[name]] <- default_layout[[name]]
     }
   }
 

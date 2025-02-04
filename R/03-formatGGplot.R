@@ -53,25 +53,9 @@ formatTitlesOfGGplot <- function(plot, text) {
     plot <- plot + theme(plot.title = getElementText(text[["plotTitle"]]))
   }
 
-  # LEGEND ----
-  if (any(grepl("legend", names(text)))) {
-    plot <- plot %>%
-      setCustomTitle(labFun = labs,
-                     color = extractTitle(text[["legendTitle"]]),
-                     size = extractTitle(text[["legendTitle"]]),
-                     fill = extractTitle(text[["legendTitle"]]),
-                     shape = extractTitle(text[["legendTitle"]]))
-    # apply text formatting (theme)
-    plot <- plot +
-      theme(legend.title = getElementText(text[["legendTitle"]]),
-            legend.text  = getElementText(text[["legendText"]]))
-  }
-
   plot
 }
 
-# Set Custom Title (no docu for 'man' because it is a helper function)
-#
 # Set label of a ggplot object
 #
 # @param plot (ggplot)
@@ -93,16 +77,17 @@ setCustomTitle <- function(plot, labFun, ...) {
 #' Extract title from list of title definitions. If set to use an expression, convert to expression.
 #'
 #' @param titleList (list) named list with title definitions, output of \code{plotTitlesServer}
+#' @param default (character) default title if no title is set
 #'
 #' @return (character) title
 #'
 #' @export
-extractTitle <- function(titleList) {
+extractTitle <- function(titleList, default = "") {
   if (!is.null(titleList[["useExpression"]]) && isTRUE(titleList[["useExpression"]])) {
     return(convertToExpression(titleList[["expression"]]))
   } else {
-    if (is.null(titleList[["text"]])) {
-      return("")
+    if (is.null(titleList[["text"]]) || titleList[["text"]] == "") {
+      return(default)
     } else {
       return(titleList[["text"]])
     }
@@ -148,6 +133,8 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 #'
 #' @export
 formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
+  if (is.null(plot) || length(ranges) == 0) return(plot)
+
   if (isContinuousAxis(plot, axis = "x")) {
     plot <- plot + scale_x_continuous(trans = getTransform(ranges[["xAxis"]]),
                                       limits = getUserLimits(ranges[["xAxis"]]),
@@ -189,12 +176,30 @@ formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, y
 isContinuousAxis <- function(plot, axis = c("x", "y")) {
   axis <- match.arg(axis)
   axis_data <- eval_tidy(plot$mapping[[axis]], plot$data)
+
+  # if data not found in mapping, check layers
+  if (is.null(axis_data)) {
+    for (layer in seq_along(plot$layers)) {
+      axis_data <- eval_tidy(plot$layers[[layer]]$mapping[[axis]], plot$data)
+      if (!is.null(axis_data)) break
+    }
+  }
+
   is.numeric(axis_data)
 }
 
 isDiscreteAxis <- function(plot, axis = c("x", "y")) {
   axis <- match.arg(axis)
   axis_data <- eval_tidy(plot$mapping[[axis]], plot$data)
+
+  # if data not found in mapping, check layers
+  if (is.null(axis_data)) {
+    for (layer in seq_along(plot$layers)) {
+      axis_data <- eval_tidy(plot$layers[[layer]]$mapping[[axis]], plot$data)
+      if (!is.null(axis_data)) break
+    }
+  }
+
   is.factor(axis_data) || is.character(axis_data)
 }
 
@@ -497,16 +502,96 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 
 # LEGEND ----
 
-#' Legend Style Of GGplot
+# Legend Style Of GGplot
+#
+# Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
+#
+# @param plot (ggplot)
+# @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
+# @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
+# @inheritParams ggplot2::theme
+formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
+  # set the title/labels depending on whether it is an expression, empty, or text
+  legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
+  legend_labels <- sapply(names(legend$layout$labels), function(name) {
+    extractTitle(legend$layout$labels[[name]], default = name)
+  })
+  color_mapping <- extractColourMapping(plot)
+
+  # set legend labels
+  plot <- plot +
+    scaleFUN(
+      labels = legend_labels,
+      values = color_mapping
+    )
+
+  # apply text formatting (theme) and set legend titles
+  plot %>%
+    setLegendThemeOfGGplot(legend = legend, ...) %>%
+    setCustomTitle(labFun = labs,
+                   color = legend_title,
+                   size = legend_title,
+                   fill = legend_title,
+                   shape = legend_title)
+}
+
+#' Legend Theme Of GGplot
 #'
-#' Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
+#' Apply theme settings for legend to a ggplot object.
 #'
 #' @param plot (ggplot)
 #' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
-#' @inheritParams ggplot2::theme
+#' @param ... (list) arguments for \code{theme}
 #'
 #' @export
-formatLegendOfGGplot <- function(plot, legend, ...) {
+setLegendThemeOfGGplot <- function(plot, legend, ...) {
+  if (is.null(plot) || length(legend) == 0 || is.null(legend$position)) return(plot)
+
+  if (legend$position == "none") {
+    return(plot + theme(legend.position = "none"))
+  }
+
   plot +
-    theme(legend.position = legend$position, ...)
+    theme(legend.position = legend$position,
+          legend.direction = legend$direction,
+          legend.title = getElementText(legend$layout$title[[1]]),
+          legend.text = getElementText(legend$layout$labels[[1]]),
+          ...)
+}
+
+extractColourMapping <- function(plot) {
+  # Build the ggplot object
+  plot_build <- ggplot_build(plot)
+
+  # find mapping
+  ## extract base mapping
+  base_mapping <- extractMapping(plot$mapping)
+  ## check for mappings in all layers
+  if (length(plot_build$plot$layers) > 0) {
+    layer_mappings <- sapply(plot_build$plot$layers, function(layer) extractMapping(layer$mapping)) %>%
+      unlist()
+  } else {
+    layer_mappings <- extractMapping(plot_build$plot$mapping)
+  }
+
+  # combine mappings and select relevant
+  mapping <- c(base_mapping, layer_mappings)[c("x", "y", "colour")]
+
+  # Extract plot data
+  plot_data <- plot_build$data[[1]]  # Get the first layer's data
+
+  # Get unique color mapping as data.frame
+  color_mapping <- inner_join(plot_data, plot$data, by = c("x" = mapping[["x"]], "y" = mapping[["y"]])) %>%
+    select("colour", starts_with(mapping[["colour"]])) %>%
+    distinct()
+
+  # convert to named vector
+  # use last column, it comes from 'y' of inner_join
+  color_mapping <- setNames(color_mapping$colour, color_mapping[[ncol(color_mapping)]])
+
+  color_mapping
+}
+
+extractMapping <- function(mapping_list) {
+  sapply(names(mapping_list), function(name) {as_label(mapping_list[[name]])})
 }

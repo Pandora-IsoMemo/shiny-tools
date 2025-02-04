@@ -91,10 +91,9 @@ plotTitlesServer <- function(id,
                    bindEvent(input[["labelName"]])
 
                  updated_text <- formatTextServer("text",
-                                                  init_text = init_text,
-                                                  text_type = c("title", "axis"),
+                                                  init_layout = init_text,
                                                   show_parse_button = TRUE,
-                                                  label_name = reactive(input[["labelName"]]))
+                                                  element_id = reactive(input[["labelName"]]))
 
                  observe({
                    logDebug("%s: Entering update plotText", id)
@@ -157,7 +156,7 @@ removeHiddenInputs <- function(new_text, input_names) {
 #     thisTitles <- plotTitlesServer(
 #       "testMod",
 #       type = "ggplot",
-#       availableElements = c("title", "axis", "yaxis2", "legend"),
+#       availableElements = c("title", "axis", "yaxis2"),
 #       initText = list(
 #         plotTitle = list(
 #           text = "testHeader",
@@ -200,14 +199,6 @@ removeHiddenInputs <- function(new_text, input_names) {
 #           hide = FALSE,
 #           angle = 0,
 #           vjust = 0.5
-#         ),
-#         legendTitle = list(
-#           text = "",
-#           fontFamily = "sans",
-#           fontType = "plain",
-#           color = "#000000",
-#           size = 12L,
-#           hide = FALSE
 #         )
 #       )
 #     )

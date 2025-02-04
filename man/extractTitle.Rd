@@ -4,10 +4,12 @@
 \alias{extractTitle}
 \title{Extract Title}
 \usage{
-extractTitle(titleList)
+extractTitle(titleList, default = "")
 }
 \arguments{
 \item{titleList}{(list) named list with title definitions, output of \code{plotTitlesServer}}
+
+\item{default}{(character) default title if no title is set}
 }
 \value{
 (character) title

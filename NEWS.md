@@ -1,3 +1,12 @@
+# shinyTools 25.02.0
+
+## New Features
+- _plotLegend_ module:
+  - option to set orientation and individual labels for the legend (#37)
+  - new function (`setLegendThemeOfGGplot()`) to easily set the theme given the output of _plotLegendServer_
+- _plotTitles_ module: removed 'legend' from select choices, legend layout must be set with the
+  _plotLegend_ module now
+
 # shinyTools 25.01.0
 
 ## New Features

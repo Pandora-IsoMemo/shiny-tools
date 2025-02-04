@@ -16,7 +16,6 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/exportXLSX.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/extractTitle.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/fontChoicesSelect.html</loc></url>
-<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatLegendOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatPointsOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatRangesOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/formatScalesOfGGplot.html</loc></url>
@@ -34,6 +33,7 @@
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotRangesUI.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/plotTitlesServer.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/resolveValue.html</loc></url>
+<url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/setLegendThemeOfGGplot.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/setModuleTitle.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/shinyTryCatch.html</loc></url>
 <url><loc>https://pandora-isomemo.github.io/shiny-tools/reference/symbolChoicesSelect.html</loc></url>

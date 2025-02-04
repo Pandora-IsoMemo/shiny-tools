@@ -502,14 +502,16 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 
 # LEGEND ----
 
-# Legend Style Of GGplot
-#
-# Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
-#
-# @param plot (ggplot)
-# @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
-# @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
-# @inheritParams ggplot2::theme
+#' Legend Style Of GGplot
+#'
+#' Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
+#'
+#' @param plot (ggplot)
+#' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
+#' @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
+#' @inheritParams ggplot2::theme
+#'
+#' @export
 formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
   # set the title/labels depending on whether it is an expression, empty, or text
   legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))

@@ -93,7 +93,18 @@ customPointsServer <- function(id,
       style_prefix = "error_",
       plot_type = plot_type
     )
-    stylePointLabelsServer("style_label", custom_points)
+    applyLayoutServer(
+      "style_label",
+      default_style = config()$defaultGGLabel,
+      layout_server_FUN = formatTextServer,
+      element_list = custom_points,
+      style_prefix = "label_",
+      plot_type = plot_type,
+      id_as_text = TRUE,
+      text_inputs = "show",
+      position_inputs = "show",
+      show_parse_button = FALSE
+    )
 
     return(custom_points)
   })
@@ -286,101 +297,6 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
           selected_ids = input[["selected_points"]],
           new_format = style$dataPoints,
           prefix = "point_"
-        )
-
-      custom_points(all_points)
-    }) %>%
-      bindEvent(input[["apply"]])
-  })
-}
-
-# Server function for styling custom point labels
-# @param id namespace id
-# @param custom_points reactiveVal
-# @param plot_type (character) type of plot, one of "ggplot", "base", "none"
-stylePointLabelsServer <- function(id,
-                                   custom_points = reactiveVal(),
-                                   plot_type = c("ggplot", "base", "none")) {
-  plot_type <- match.arg(plot_type)
-  moduleServer(id, function(input, output, session) {
-    ns <- session$ns
-    default_style <- config()$defaultGGLabel
-
-    observe({
-      logDebug("%s: update choices of 'input$selected_points'", id)
-
-      custom_point_ids <- names(custom_points())
-      last_selected <- input[["selected_points"]]
-      updateSelectInput(
-        session,
-        "selected_points",
-        choices = getPointChoices(custom_point_ids),
-        selected = last_selected
-      )
-
-      req(length(custom_point_ids) > 0)
-      logDebug("%s: set label styles if empty", id)
-
-      # add entries for label format if not yet set
-      all_points <- custom_points() %>%
-        initLayout(default_layout = default_style, prefix = "label_")
-
-      # set id as default text
-      for (name in custom_point_ids) {
-        if (all_points[[name]]$label_text == "") {
-          all_points[[name]]$label_text <- name
-        }
-      }
-
-      custom_points(all_points)
-    })
-
-    # disable button if nothing is selected
-    observe({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
-        logDebug("%s: Disable button", id)
-        shinyjs::disable(ns("apply"), asis = TRUE)
-      } else {
-        logDebug("%s: Enable button", id)
-        shinyjs::enable(ns("apply"), asis = TRUE)
-      }
-    })
-
-    element_id <- reactiveVal("point_label")
-    init_text <- reactive({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
-        default_style
-      } else {
-        # trigger element_id to force "updateUserInputs"
-        element_id(NULL)
-        element_id("point_label")
-        # load selected format
-        first_point_style <- custom_points()[input[["selected_points"]]][[1]] %>%
-          extractFormat(prefix = "label_")
-        first_point_style
-      }
-    })
-
-    # current format settings
-    updated_text <- formatTextServer(
-      "format",
-      init_layout = init_text,
-      show_parse_button = FALSE,
-      element_id = element_id,
-      text_inputs = "show",
-      position_inputs = "show"
-    )
-
-    observe({
-      logDebug("%s: Formatting point labels", id)
-
-      all_points <- custom_points() %>%
-        updateFormat(
-          selected_ids = input[["selected_points"]],
-          new_format = updated_text(),
-          prefix = "label_"
         )
 
       custom_points(all_points)

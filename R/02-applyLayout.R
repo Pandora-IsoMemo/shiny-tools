@@ -41,9 +41,11 @@ applyLayoutUI <- function(id,
 # @param element_list reactiveVal. List of elements to apply the layout to.
 # @param style_prefix character. Prefix for the style settings.
 # @param plot_type character. Type of plot. Default is "ggplot".
-# @param layout_group reactive. Group of elements to apply the layout to.
-# @param group_entries character. Specify entries for 'layout_group' to apply the layout to.
+# @param layout_group reactive. Group of elements to always apply the same layout to.
+# @param group_entries character. Specify layout entries that should be used for 'layout_group'.
 #   If empty, all entries are updated for 'layout_group'.
+# @param id_as_text (logical) if true and default_style has an entry "text", use the id from
+#   element_list as default value
 # @param ... further arguments passed to the layout_server_FUN.
 applyLayoutServer <- function(id,
                               default_style,
@@ -53,6 +55,7 @@ applyLayoutServer <- function(id,
                               plot_type = c("ggplot", "base", "none"),
                               layout_group = reactive(c()),
                               group_entries = c(),
+                              id_as_text = FALSE,
                               ...) {
   plot_type <- match.arg(plot_type)
   moduleServer(id, function(input, output, session) {
@@ -75,7 +78,7 @@ applyLayoutServer <- function(id,
 
       # add entries for label layout if not yet set
       all_elements <- element_list() %>%
-        initLayout(default_layout = default_style, prefix = style_prefix)
+        initLayout(default_layout = default_style, prefix = style_prefix, id_as_text = id_as_text)
 
       element_list(all_elements)
     })
@@ -183,7 +186,7 @@ getPointChoices <- function(custom_ids) {
   new_choices
 }
 
-initLayout <- function(elements, default_layout, prefix = "") {
+initLayout <- function(elements, default_layout, prefix = "", id_as_text = FALSE) {
   # align names of entries
   names(default_layout) <- paste0(prefix, names(default_layout))
 
@@ -192,6 +195,10 @@ initLayout <- function(elements, default_layout, prefix = "") {
     missing_entries <- setdiff(names(default_layout), names(elements[[id]]))
     for (name in missing_entries) {
       elements[[id]][[name]] <- default_layout[[name]]
+      # set id as default text
+      if (name == paste0(prefix, "text") && id_as_text) {
+        elements[[id]][[name]] <- as.character(id)
+      }
     }
   }
 

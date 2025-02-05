@@ -225,13 +225,13 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
     # observe custom_points
     observe({
-      logDebug("%s: update choices of 'input$selected_points'", id)
+      logDebug("%s: update choices of 'input$selected_elements'", id)
 
       custom_point_ids <- names(custom_points())
-      last_selected <- input[["selected_points"]]
-      updateSelectInput(
+      last_selected <- input[["selected_elements"]]
+      updatePickerInput(
         session,
-        "selected_points",
+        "selected_elements",
         choices = getPointChoices(custom_point_ids),
         selected = last_selected
       )
@@ -247,8 +247,8 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
     # disable button if nothing is selected
     observe({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
+      if (length(input[["selected_elements"]]) == 0 ||
+          any(input[["selected_elements"]] == "")) {
         logDebug("%s: Disable button", id)
         shinyjs::disable(ns("apply"), asis = TRUE)
       } else {
@@ -259,8 +259,8 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
     reload_init <- reactiveVal(FALSE)
     observe({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
+      if (length(input[["selected_elements"]]) == 0 ||
+          any(input[["selected_elements"]] == "")) {
         logDebug("%s: No init reload", id)
         reload_init(FALSE)
       } else {
@@ -268,22 +268,22 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
         reload_init(TRUE)
       }
     }) %>%
-      bindEvent(input[["selected_points"]], ignoreNULL = FALSE)
+      bindEvent(input[["selected_elements"]], ignoreNULL = FALSE)
 
     init_style <- reactive({
-      if (length(input[["selected_points"]]) == 0 ||
-          any(input[["selected_points"]] == "")) {
+      if (length(input[["selected_elements"]]) == 0 ||
+          any(input[["selected_elements"]] == "")) {
         default_style
       } else {
         # load selected format
-        first_point_style <- custom_points()[input[["selected_points"]]][[1]] %>%
+        first_point_style <- custom_points()[input[["selected_elements"]]][[1]] %>%
           extractFormat(prefix = "point_")
         list(dataPoints = first_point_style)
       }
     })
 
     style <- plotPointsServer(
-      "format",
+      "layout",
       type = "ggplot",
       initStyle = init_style,
       reloadInit = reload_init
@@ -294,7 +294,7 @@ stylePointsServer <- function(id, custom_points = reactiveVal()) {
 
       all_points <- custom_points() %>%
         updateFormat(
-          selected_ids = input[["selected_points"]],
+          selected_ids = input[["selected_elements"]],
           new_format = style$dataPoints,
           prefix = "point_"
         )

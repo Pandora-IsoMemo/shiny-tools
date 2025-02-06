@@ -164,6 +164,102 @@ applyLayoutServer <- function(id,
   })
 }
 
+# Server function for styling custom points
+#
+# This function is analogue to applyLayoutServer, but plotPointsServer requires a different format
+# of default values, which requires a separate function
+#
+# @param id namespace id
+# @param custom_points reactiveVal
+stylePointsServer <- function(id, custom_points = reactiveVal()) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+
+    # set default style
+    default_style <- config()$defaultPointStyle["dataPoints"]
+
+    # observe custom_points
+    observe({
+      logDebug("%s: update choices of 'input$selected_elements'", id)
+
+      custom_point_ids <- names(custom_points())
+      last_selected <- input[["selected_elements"]]
+      updatePickerInput(
+        session,
+        "selected_elements",
+        choices = getPointChoices(custom_point_ids),
+        selected = last_selected
+      )
+
+      req(length(custom_point_ids) > 0)
+      logDebug("%s: set point styles if empty", id)
+
+      # add entries for point format if not yet set
+      all_points <- custom_points() %>%
+        initLayout(default_layout = default_style[["dataPoints"]], prefix = "point_")
+      custom_points(all_points)
+    })
+
+    # disable button if nothing is selected
+    observe({
+      if (length(input[["selected_elements"]]) == 0 ||
+          any(input[["selected_elements"]] == "")) {
+        logDebug("%s: Disable button", id)
+        shinyjs::disable(ns("apply"), asis = TRUE)
+      } else {
+        logDebug("%s: Enable button", id)
+        shinyjs::enable(ns("apply"), asis = TRUE)
+      }
+    })
+
+    reload_init <- reactiveVal(FALSE)
+    observe({
+      if (length(input[["selected_elements"]]) == 0 ||
+          any(input[["selected_elements"]] == "")) {
+        logDebug("%s: No init reload", id)
+        reload_init(FALSE)
+      } else {
+        logDebug("%s: Reload init", id)
+        reload_init(TRUE)
+      }
+    }) %>%
+      bindEvent(input[["selected_elements"]], ignoreNULL = FALSE)
+
+    init_style <- reactive({
+      if (length(input[["selected_elements"]]) == 0 ||
+          any(input[["selected_elements"]] == "")) {
+        default_style
+      } else {
+        # load selected format
+        first_point_style <- custom_points()[input[["selected_elements"]]][[1]] %>%
+          extractFormat(prefix = "point_")
+        list(dataPoints = first_point_style)
+      }
+    })
+
+    style <- plotPointsServer(
+      "layout",
+      type = "ggplot",
+      initStyle = init_style,
+      reloadInit = reload_init
+    )
+
+    observe({
+      logDebug("%s: Formatting points", id)
+
+      all_points <- custom_points() %>%
+        updateFormat(
+          selected_ids = input[["selected_elements"]],
+          new_format = style$dataPoints,
+          prefix = "point_"
+        )
+
+      custom_points(all_points)
+    }) %>%
+      bindEvent(input[["apply"]])
+  })
+}
+
 extractReactiveValue <- function(obj) {
   if ("reactiveVal" %in% class(obj) || "reactive" %in% class(obj)) {
     # For reactiveVal, call the object to get its value

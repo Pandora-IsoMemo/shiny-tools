@@ -36,39 +36,39 @@ initializeReactiveObject <- function(session,
     )
   }
 
-  # define reactiveValues object 'init_values' to store init_values for set 'choices'
-  init_values <- do.call(reactiveValues, default_values[choices])
-
   # overwrite with custom initial init_values if set and if present in default_values
-  if (!is.null(custom_values) &&
-      is.list(custom_values) && !is.reactivevalues(custom_values)) {
-    # complete not reactive values:
-    custom_values <- custom_values %>%
-      completeValues(choices = choices, default_values = default_values)
-
-    # make reactive values:
-    init_values <- do.call(reactiveValues, custom_values)
-  }
-
-  if (!is.null(custom_values) &&
-      is.list(custom_values) && is.reactivevalues(custom_values)) {
-    init_values <- custom_values
-
-    # check (once!) if all choices are present, if not use default
-    observe({
-      logDebug("%s: Checking if all choices are present in user init_values",
-               id)
-
-      # complete reactive init_values inside observer:
-      new_values <- init_values %>%
+  if (!is.null(custom_values) && is.list(custom_values)) {
+    if (!is.reactivevalues(custom_values)) {
+      # complete not reactive values:
+      custom_values <- custom_values %>%
         completeValues(choices = choices, default_values = default_values)
 
-      # update init_values with new_values
-      for (name in names(new_values)) {
-        init_values[[name]] <- new_values[[name]]
-      }
-    }) %>%
-      bindEvent(custom_values[[names(custom_values)[1]]], once = TRUE)
+      # make reactive values:
+      init_values <- do.call(reactiveValues, custom_values)
+
+    } else { # if (is.reactivevalues(custom_values))
+      init_values <- custom_values
+
+      # check (once!) if all choices are present, if not use default
+      observe({
+        logDebug("%s: Checking if all choices are present in user init_values",
+                 id)
+
+        # complete reactive init_values inside observer:
+        new_values <- init_values %>%
+          completeValues(choices = choices, default_values = default_values)
+
+        # update init_values with new_values
+        for (name in names(new_values)) {
+          init_values[[name]] <- new_values[[name]]
+        }
+      }) %>%
+        bindEvent(custom_values[[names(custom_values)[1]]], once = TRUE)
+    }
+
+  } else { # if (is.null(custom_values) || !is.list(custom_values))
+    # define reactiveValues object 'init_values' to store init_values for set 'choices'
+    init_values <- do.call(reactiveValues, default_values[choices])
   }
 
   return(init_values)

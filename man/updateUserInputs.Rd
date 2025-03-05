@@ -16,5 +16,6 @@ updateUserInputs(input, output, session, userInputs)
 \item{userInputs}{(list) named list of inputs to be updated}
 }
 \description{
-Update values from 'input' with all values from userInputs
+Update values from 'input' with all values from userInputs. Entries that are NULL are removed.
+Only updates entries that are present in 'input'.
 }

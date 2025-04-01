@@ -1,3 +1,8 @@
+# shinyTools 25.04.0
+
+## Bug Fixes
+- _headerUI_: icons instead of full logos for links in app headers (#39)
+
 # shinyTools 25.02.0
 
 ## New Features

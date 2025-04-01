@@ -13,25 +13,25 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
   tagList(
     tags$head(
       # add favicon for the browser tab
-      tags$link(rel = "icon", type = "image/x-icon", href = "shinyTools_files/pandora-isomemo_favicon.ico"),
+      tags$link(rel = "icon", type = "image/x-icon", href = "/shinyTools_files/pandora-isomemo_favicon.ico"),
       # add css
       if (loadShinyToolsCSS) includeShinyToolsCSS() else NULL
     ),
     div(
       id = "header-right",
       div(
-        id = "logo-pandora",
+        id = "logo-pandora-icon",
         tags$a(
           href = "https://pandoradata.earth/",
-          img(src = "shinyTools_files/pandora-logo-white.png", alt = "Pandora"),
+          img(src = "shinyTools_files/pandora-logo-white-icon.png", alt = "Pandora"),
           target = "_blank"
         )
       ),
       div(
-        id = "logo-isomemo",
+        id = "logo-isomemo-icon",
         tags$a(
           href = "https://isomemo.gea.mpg.de/",
-          img(src = "shinyTools_files/isomemo-logo-white.png", alt = "IsoMemo"),
+          img(src = "shinyTools_files/isomemo-logo-white-icon.png", alt = "IsoMemo"),
           target = "_blank"
         )
       ),

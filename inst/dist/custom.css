@@ -68,13 +68,6 @@ h5 {
     align-items: center; /* Vertically center child elements */
 }
 
-#logo-isomemo {
-    display: inline;
-    height: 50px;
-    width: 150px;
-    margin-right: 10px;
-}
-
 #logo-pandora {
     display: inline;
     height: 35px;
@@ -82,8 +75,18 @@ h5 {
     margin-right: 10px;
 }
 
-#help {
-    display:inline;
+#logo-isomemo {
+    display: inline;
+    height: 50px;
+    width: 150px;
+    margin-right: 10px;
+}
+
+#logo-pandora img {
+    height: 40px;
+    width: 170px;
+    margin-top: -5px;
+    border-radius: 2px;
 }
 
 #logo-isomemo img {
@@ -93,11 +96,36 @@ h5 {
     border-radius: 2px;
 }
 
-#logo-pandora img {
+#logo-pandora-icon {
+    display: inline;
+    height: 35px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+#logo-isomemo-icon {
+    display: inline;
+    height: 50px;
+    width: 50px;
+    margin-right: 15px;
+}
+
+#logo-pandora-icon img {
     height: 40px;
-    width: 170px;
+    width: 51px;
     margin-top: -5px;
     border-radius: 2px;
+}
+
+#logo-isomemo-icon img {
+    height: 50px;
+    width: 39px;
+    margin-top: 0px;
+    border-radius: 2px;
+}
+
+#help {
+    display:inline;
 }
 
 #further-help {

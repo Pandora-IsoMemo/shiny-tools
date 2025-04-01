@@ -1,5 +1,7 @@
+.Renviron
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 docs
+/inst/RScripts/

@@ -16,6 +16,7 @@ applyLayoutUI <- function(id,
   ns <- NS(id)
 
   tagList(
+    helpText("Modify the layout."),
     pickerInput(
       inputId = ns("selected_elements"),  # Namespaced ID
       label = label_selected,             # Label for the input

@@ -70,11 +70,13 @@ customPointsUI <- function(id,
 #' @param plot_type (character) Type of the plot to add points to, one of "ggplot", "base".
 #' @param custom_points (reactiveVal) optional custom_points from parent module, this enables to
 #'  change custom_points outside of the module
+#' @param x_choices (reactive) (named) character vector to provide choices if x is a categorical variable
 #'
 #' @export
 customPointsServer <- function(id,
                                plot_type = c("ggplot", "base", "none"),
-                               custom_points = NULL) {
+                               custom_points = NULL,
+                               x_choices = reactive(NULL)) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -82,7 +84,7 @@ customPointsServer <- function(id,
       custom_points <- reactiveVal()
     }
 
-    addCustomPointServer("add", custom_points)
+    addCustomPointServer("add", custom_points, x_choices = x_choices)
     removeCustomPointsServer("remove", custom_points)
     stylePointsServer("style_point", custom_points)
     applyLayoutServer(
@@ -106,6 +108,14 @@ customPointsServer <- function(id,
       show_parse_button = FALSE
     )
 
+    observe({
+      if (!is.null(x_choices())) {
+        shinyjs::hide(ns("style_error-layout-capheight"), asis = TRUE)
+      } else {
+        shinyjs::show(ns("style_error-layout-capheight"), asis = TRUE)
+      }
+    })
+
     return(custom_points)
   })
 }
@@ -127,14 +137,16 @@ addCustomPointUI <- function(id) {
 # @param custom_points reactiveVal
 addCustomPointServer <- function(id,
                                  custom_points = reactiveVal(),
-                                 reset_coordinates = TRUE) {
+                                 reset_coordinates = TRUE,
+                                 x_choices = reactive(NULL)) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     point_counter <- reactiveVal(1)
     new_point <- pointCoordinatesServer("coordinates",
                                         default_name = reactive(paste("Point", point_counter())),
-                                        reset_coordinates = reset_coordinates)
+                                        reset_coordinates = reset_coordinates,
+                                        x_choices = x_choices)
 
     # disable button if new_point is not complete
     observe({
@@ -154,6 +166,7 @@ addCustomPointServer <- function(id,
       all_points <- custom_points()
       # OVERWRITES existing point ----
       all_points[[new_point()$id]] <- new_point()
+
       custom_points(all_points)
 
       # inc id
@@ -169,6 +182,7 @@ removeCustomPointsUI <- function(id) {
   ns <- NS(id)
   tagList(
     tags$br(),
+    helpText("Remove a point."),
     selectInput(
       ns("pointsToRemove"),
       label = "Select point(s)",
@@ -229,10 +243,18 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
 #
 # server <- function(input, output, session) {
 #   testPlotFun <- function() {
-#     ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line()
+#     # line plot
+#     #ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line()
+#
+#     # box plot
+#     ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + ggplot2::geom_boxplot()
 #   }
 #
-#   custom_points <- customPointsServer("points")
+#   # for line plot
+#   #custom_points <- customPointsServer("points")
+#
+#   # for boxplot
+#   custom_points <- customPointsServer("points", x_choices = reactive(structure(as.character(mtcars$cyl), x = "cyl")))
 #
 #   output$custom_points <- renderPrint({
 #     custom_points() %>% lapply(FUN = as.data.frame) %>% bind_rows()

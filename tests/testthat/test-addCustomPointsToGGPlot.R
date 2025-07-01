@@ -26,7 +26,7 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
                      label_size = 5L, label_hide = FALSE, label_angle = 0L, label_hjust = 1,
                      label_vjust = 0.5),
     `Point 3` = list(id = "Point 3", x = 8L, y = 4L,
-                     xmin = as.numeric(NA), xmax = 10L, ymin = 2L, ymax = 6,
+                     xmin = 6, xmax = 10L, ymin = 2L, ymax = 6,
                      point_symbol = 19L,
                      point_color = "#000000", point_colorBg = "#000000", point_size = 1L,
                      point_alpha = 1L, point_lineWidthBg = 2L, point_hide = FALSE,

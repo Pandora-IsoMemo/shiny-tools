@@ -11,7 +11,7 @@ Backend for custom points module"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">shinyTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">25.04.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">25.06.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,8 @@ Backend for custom points module"></head><body>
 <span><span class="fu">customPointsServer</span><span class="op">(</span></span>
 <span>  <span class="va">id</span>,</span>
 <span>  plot_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ggplot"</span>, <span class="st">"base"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
-<span>  custom_points <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  custom_points <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_choices <span class="op">=</span> <span class="fu">reactive</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,6 +84,10 @@ Backend for custom points module"></head><body>
 <dd><p>(reactiveVal) optional custom_points from parent module, this enables to
 change custom_points outside of the module</p></dd>
 
+
+<dt id="arg-x-choices">x_choices<a class="anchor" aria-label="anchor" href="#arg-x-choices"></a></dt>
+<dd><p>(reactive) (named) character vector to provide choices if x is a categorical variable</p></dd>
+
 </dl></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -94,7 +99,7 @@ change custom_points outside of the module</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

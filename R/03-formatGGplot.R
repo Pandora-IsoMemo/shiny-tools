@@ -303,7 +303,11 @@ getSecAxis <- function(rescaleFactors, title) {
 #'
 #' @export
 addCustomPointsToGGplot <- function(plot, custom_points) {
-  if (length(custom_points) == 0) return(plot)
+  # skip if no custom points are defined
+  if (length(custom_points) == 0 || !is.list(custom_points)) return(plot)
+  # skip if custom points are not valid (ensure all inputs do exist)
+  if ((length(custom_points) > 1 &&
+       !all(sapply(custom_points, length) == length(custom_points[[1]])))) return(plot)
 
   point_df <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
 
@@ -377,31 +381,42 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
     style[missingElements] <- defaultStyle[missingElements]
   }
 
-  # ensure valid errors
+  # ensure valid errors (we must use & not && for element-wise comparisons)
   dat <- dat %>%
     mutate(xmin = ifelse(!is.na(.data$xmin) & .data$xmin > .data$x, .data$x, .data$xmin),
            xmax = ifelse(!is.na(.data$xmax) & .data$xmax < .data$x, .data$x, .data$xmax),
            ymin = ifelse(!is.na(.data$ymin) & .data$ymin > .data$y, .data$y, .data$ymin),
            ymax = ifelse(!is.na(.data$ymax) & .data$ymax < .data$y, .data$y, .data$ymax))
 
+  # if one error is NA but the other not, set equal errors for both, since we must remove NA
+  # for plots with categorical x axis, otherwise we have an additional factor "NA"
+  dat <- dat %>%
+    mutate(xmin = ifelse(is.na(.data$xmin) & !is.na(.data$xmax), .data$x - (.data$xmax - .data$x), .data$xmin),
+           xmax = ifelse(is.na(.data$xmax) & !is.na(.data$xmin), .data$x + (.data$x - .data$xmin), .data$xmax),
+           ymin = ifelse(is.na(.data$ymin) & !is.na(.data$ymax), .data$y - (.data$ymax - .data$y), .data$ymin),
+           ymax = ifelse(is.na(.data$ymax) & !is.na(.data$ymin), .data$y + (.data$y - .data$ymin), .data$ymax))
+
+  # keep only rows with all errors not NA
+  x_index <- !is.na(dat$xmin) & !is.na(dat$xmax)
+  y_index <- !is.na(dat$ymin) & !is.na(dat$ymax)
   plot +
     # Horizontal error bars
-    geom_errorbarh(data = dat,
+    geom_errorbarh(data = dat[x_index, ],
                    aes(x = .data$x, y = .data$y, xmin = .data$xmin, xmax = .data$xmax),
-                   size = style[["size"]], # thickness
-                   height = style[["capheight"]],
-                   colour = style[["color"]],
-                   linetype = style[["linetype"]],
-                   alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),
+                   size = style[["size"]][x_index], # thickness
+                   height = style[["capheight"]][x_index],
+                   colour = style[["color"]][x_index],
+                   linetype = style[["linetype"]][x_index],
+                   alpha = ifelse(style[["hide"]][x_index], 0, style[["alpha"]][x_index]),
                    ...) +
     # Vertical error bars
-    geom_errorbar(data = dat,
+    geom_errorbar(data = dat[y_index, ],
                   aes(x = .data$x, y = .data$y, ymin = .data$ymin, ymax = .data$ymax),
-                  size = style[["size"]], # thickness
-                  width = style[["capwidth"]],
-                  colour = style[["color"]],
-                  linetype = style[["linetype"]],
-                  alpha = ifelse(style[["hide"]], 0, style[["alpha"]]),
+                  size = style[["size"]][y_index], # thickness
+                  width = style[["capwidth"]][y_index],
+                  colour = style[["color"]][y_index],
+                  linetype = style[["linetype"]][y_index],
+                  alpha = ifelse(style[["hide"]][y_index], 0, style[["alpha"]][y_index]),
                   ...)
 }
 
@@ -467,7 +482,12 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
   }
 
   # combine data and format for point specific labels
-  data_combined <- bind_cols(data[, c("id", "x", "y")], as.data.frame(labelStyle))
+  data_combined <- data
+  labelStyle_df <- as.data.frame(labelStyle)
+  for (name in colnames(labelStyle_df)) {
+    # add or overwrite columns in data_combined
+    data_combined[[name]] <- labelStyle_df[[name]]
+  }
 
   # remove hidden labels
   data_combined <- data_combined[!data_combined$hide, ]

@@ -15,7 +15,8 @@ customPointsUI(
 customPointsServer(
   id,
   plot_type = c("ggplot", "base", "none"),
-  custom_points = NULL
+  custom_points = NULL,
+  x_choices = reactive(NULL)
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ customPointsServer(
 
 \item{custom_points}{(reactiveVal) optional custom_points from parent module, this enables to
 change custom_points outside of the module}
+
+\item{x_choices}{(reactive) (named) character vector to provide choices if x is a categorical variable}
 }
 \description{
 This module provides the UI that allows to add, style and remove custom points, and returns the

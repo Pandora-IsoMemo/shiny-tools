@@ -13,25 +13,105 @@ pointCoordinatesUI <- function(id) {
       value = "Point 1",
       width = "100%"
     ),
-    pointDimensionUI(
-      ns("x"),
-      label_value = "X Axis Value",
-      label_min = "Min. X Error (optional)",
-      label_max = "Max. X Error (optional)"
-    ),
-    pointDimensionUI(
+    uiOutput(ns("x_coordinate")),
+    numericCoordinateUI(
       ns("y"),
       label_value = "Y Axis Value",
-      label_min = "Min. Y Error (optional)",
-      label_max = "Max. Y Error (optional)"
+      label_min = "Min. Y (Optional Error)",
+      label_max = "Max. Y (Optional Error)"
     )
   )
 }
 
-pointDimensionUI <- function(id,
-                             label_value = "Value",
-                             label_min = "Min. Error (optional)",
-                             label_max = "Max. Error (optional)") {
+pointCoordinatesServer <- function(id,
+                                   default_name = reactive(NULL),
+                                   reset_coordinates = TRUE,
+                                   x_choices = reactive(NULL)) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+
+    observe({
+      req(default_name())
+      logDebug("%s: Update 'label'", id)
+      updateTextInput(session, "label", value = default_name())
+
+      if (reset_coordinates) {
+        # clear inputs of pointDimensions
+        if (is.null(x_choices())) {
+          updateNumericInput(session, "x-value", value = numeric(0))
+          updateNumericInput(session, "x-min", value = numeric(0))
+          updateNumericInput(session, "x-max", value = numeric(0))
+        } else {
+          updateSelectInput(session, "x-value", selected = character(0))
+        }
+        updateNumericInput(session, "y-value", value = numeric(0))
+        updateNumericInput(session, "y-min", value = numeric(0))
+        updateNumericInput(session, "y-max", value = numeric(0))
+      }
+    }) %>%
+      bindEvent(default_name())
+
+    output$x_coordinate <- renderUI({
+      logDebug("%s: Render 'x_coordinate' input", id)
+      if (is.null(x_choices())) {
+        numericCoordinateUI(
+          ns("x"),
+          label_value = "X Axis Value",
+          label_min = "Min. X Error (optional)",
+          label_max = "Max. X Error (optional)"
+        )
+      } else {
+        categoricalCoordinateUI(
+          ns("x"),
+          choices = x_choices(),
+          label_value = "X Group",
+          selected = character(0)
+        )
+      }
+    })
+
+    new_point <- reactiveVal()
+
+    observe({
+      logDebug("%s: Update 'new_point'", id)
+      if (length(names(input)) <= 1 ||
+          any(is.na(sapply(c("x-value", "y-value"), function(name)
+            input[[name]]))) ||
+          input[["label"]] == "") {
+        # if inputs are not yet initialized or missing
+        new_point(NULL)
+      } else {
+        npnt <- list(
+          id = input[["label"]],
+          y = input[["y-value"]] %>% as.numeric(),
+          ymin = input[["y-min"]] %>% as.numeric(),
+          ymax = input[["y-max"]] %>% as.numeric()
+        )
+
+        if (is.null(x_choices())) {
+          npnt$x <- input[["x-value"]] %>% as.numeric()
+          npnt$xmin <- input[["x-min"]] %>% as.numeric()
+          npnt$xmax <- input[["x-max"]] %>% as.numeric()
+        } else {
+          # we need both columns in the point object "x" and "attr(x_choices, "x")"
+          npnt[[attr(x_choices(), "x")]] <- input[["x-value"]] %>% as.character()
+          npnt$x <- input[["x-value"]] %>% as.character()
+          npnt$xmin <- NA
+          npnt$xmax <- NA
+        }
+
+        new_point(npnt)
+      }
+    })
+
+    new_point
+  })
+}
+
+numericCoordinateUI <- function(id,
+                                label_value = "Value",
+                                label_min = "Min. Error (optional)",
+                                label_max = "Max. Error (optional)") {
   ns <- NS(id)
   tagList(
     numericInput(
@@ -55,56 +135,20 @@ pointDimensionUI <- function(id,
   )
 }
 
-pointCoordinatesServer <- function(id,
-                                   default_name = reactive(NULL),
-                                   reset_coordinates = TRUE) {
-  moduleServer(id, function(input, output, session) {
-    ns <- session$ns
-
-    observe({
-      req(default_name())
-      logDebug("%s: Update 'label'", id)
-      updateTextInput(session, "label", value = default_name())
-
-      if (reset_coordinates) {
-        # clear inputs of pointDimensions
-        updateNumericInput(session, "x-value", value = numeric(0))
-        updateNumericInput(session, "x-min", value = numeric(0))
-        updateNumericInput(session, "x-max", value = numeric(0))
-        updateNumericInput(session, "y-value", value = numeric(0))
-        updateNumericInput(session, "y-min", value = numeric(0))
-        updateNumericInput(session, "y-max", value = numeric(0))
-      }
-    }) %>%
-      bindEvent(default_name())
-
-    new_point <- reactiveVal()
-
-    observe({
-      logDebug("%s: Update 'new_point'", id)
-      if (length(names(input)) <= 1 ||
-          any(is.na(sapply(c("x-value", "y-value"), function(name)
-            input[[name]]))) ||
-          input[["label"]] == "") {
-        # if inputs are not yet initialized or missing
-        new_point(NULL)
-      } else {
-        new_point(
-          list(
-            id = input[["label"]],
-            x = input[["x-value"]] %>% as.numeric(),
-            y = input[["y-value"]] %>% as.numeric(),
-            xmin = input[["x-min"]] %>% as.numeric(),
-            xmax = input[["x-max"]] %>% as.numeric(),
-            ymin = input[["y-min"]] %>% as.numeric(),
-            ymax = input[["y-max"]] %>% as.numeric()
-          )
-        )
-      }
-    })
-
-    new_point
-  })
+categoricalCoordinateUI <- function(id,
+                                    choices,
+                                    label_value = "Group",
+                                    selected = character(0)) {
+  ns <- NS(id)
+  tagList(
+    selectInput(
+      ns("value"),
+      label = label_value,
+      choices = choices,
+      selected = selected,
+      width = "100%"
+    )
+  )
 }
 
 # TEST MODULE -------------------------------------------------------------

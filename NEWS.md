@@ -1,5 +1,11 @@
 # shinyTools 25.07.0
 
+## Bug Fixes
+- _customPoints module: fixed an issue with missing group variable in a layer for density or 
+  histogram plots
+
+# shinyTools 25.06.0
+
 ## New Features
 - _customPoints_ module: option to add custom points to ggplots with a discrete x-scale (boxplot, ...)
 

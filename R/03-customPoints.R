@@ -253,7 +253,8 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
 #     #ggplot(mtcars, aes(x = cyl)) + ggplot2::geom_density()
 #
 #     # histogram
-#     ggplot(mtcars, aes(x = cyl)) + ggplot2::geom_histogram()
+#     ggplot(mtcars, aes(x = cyl, fill = factor(.data$am))) +
+#       ggplot2::geom_histogram(alpha = 0.5, binwidth = NULL, position = "identity")
 #   }
 #
 #   # for line plot & histogram & density

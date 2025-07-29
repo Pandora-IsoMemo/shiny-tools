@@ -403,6 +403,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
     # Horizontal error bars
     geom_errorbarh(data = dat[x_index, ],
                    aes(x = .data$x, y = .data$y, xmin = .data$xmin, xmax = .data$xmax),
+                   inherit.aes = FALSE,
                    size = style[["size"]][x_index], # thickness
                    height = style[["capheight"]][x_index],
                    colour = style[["color"]][x_index],
@@ -412,6 +413,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
     # Vertical error bars
     geom_errorbar(data = dat[y_index, ],
                   aes(x = .data$x, y = .data$y, ymin = .data$ymin, ymax = .data$ymax),
+                  inherit.aes = FALSE,
                   size = style[["size"]][y_index], # thickness
                   width = style[["capwidth"]][y_index],
                   colour = style[["color"]][y_index],
@@ -452,6 +454,7 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle()
 
   plot +
     geom_point(data = data,
+               inherit.aes = FALSE,
                shape = pointStyle[["symbol"]],
                size = pointStyle[["size"]],
                colour = pointStyle[["color"]],
@@ -500,6 +503,7 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
   plot <- plot +
     geom_text(data = data_text,
               aes(x = .data$x, y = .data$y, label = .data$text),
+              inherit.aes = FALSE,
               family = data_text$fontFamily, fontface = data_text$fontType,
               color = data_text$color, size = data_text$size,
               angle = data_text$angle, hjust = data_text$hjust, vjust = data_text$vjust,
@@ -510,6 +514,7 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
   plot <- plot +
     geom_text(data = data_expression,
               aes(x = .data$x, y = .data$y, label = .data$expression),
+              inherit.aes = FALSE,
               family = data_expression$fontFamily, fontface = data_expression$fontType,
               color = data_expression$color, size = data_expression$size,
               angle = data_expression$angle, hjust = data_expression$hjust, vjust = data_expression$vjust,

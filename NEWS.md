@@ -1,4 +1,4 @@
-# shinyTools 25.06.0
+# shinyTools 25.07.0
 
 ## New Features
 - _customPoints_ module: option to add custom points to ggplots with a discrete x-scale (boxplot, ...)

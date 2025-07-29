@@ -247,14 +247,20 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
 #     #ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line()
 #
 #     # box plot
-#     ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + ggplot2::geom_boxplot()
+#     #ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + ggplot2::geom_boxplot()
+#
+#     # density plot
+#     #ggplot(mtcars, aes(x = cyl)) + ggplot2::geom_density()
+#
+#     # histogram
+#     ggplot(mtcars, aes(x = cyl)) + ggplot2::geom_histogram()
 #   }
 #
-#   # for line plot
-#   #custom_points <- customPointsServer("points")
+#   # for line plot & histogram & density
+#   custom_points <- customPointsServer("points")
 #
 #   # for boxplot
-#   custom_points <- customPointsServer("points", x_choices = reactive(structure(as.character(mtcars$cyl), x = "cyl")))
+#   #custom_points <- customPointsServer("points", x_choices = reactive(structure(as.character(mtcars$cyl), x = "cyl")))
 #
 #   output$custom_points <- renderPrint({
 #     custom_points() %>% lapply(FUN = as.data.frame) %>% bind_rows()

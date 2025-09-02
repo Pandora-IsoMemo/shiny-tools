@@ -1,7 +1,8 @@
 #' @rawNamespace import(shiny)
 
 #' @importFrom colourpicker colourInput
-#' @importFrom dplyr as_label bind_cols bind_rows distinct inner_join mutate select starts_with
+#' @importFrom dplyr all_of as_label bind_cols bind_rows distinct inner_join mutate rename
+#'  select starts_with
 #' @importFrom futile.logger flog.debug flog.info flog.warn
 #' @importFrom ggplot2 aes element_blank element_text geom_errorbar geom_errorbarh geom_line
 #'  geom_point geom_text ggplot ggplot_build ggtitle labs
@@ -13,7 +14,7 @@
 #' @importFrom openxlsx addWorksheet createWorkbook saveWorkbook writeData write.xlsx
 #' @importFrom plotly renderPlotly plotlyOutput save_image
 #' @importFrom rjson toJSON
-#' @importFrom rlang eval_tidy .data
+#' @importFrom rlang eval_tidy .data sym
 #' @importFrom scales pseudo_log_trans sqrt_trans
 #' @importFrom shinyalert shinyalert
 #' @importFrom shinyjs alert disable enable hide

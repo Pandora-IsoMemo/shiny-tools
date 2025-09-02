@@ -2,18 +2,19 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{formatScalesOfGGplot}
 \alias{formatScalesOfGGplot}
-\title{Specify Scales of a GGplot}
+\title{Specify Scales of a GGplot (legacy wrapper)}
 \usage{
 formatScalesOfGGplot(
   plot,
   ranges,
   xLabels = NULL,
   yLabels = NULL,
-  ySecAxisTitle = NULL
+  ySecAxisTitle = NULL,
+  ...
 )
 }
 \arguments{
-\item{plot}{(ggplot)}
+\item{plot}{A ggplot object.}
 
 \item{ranges}{(list) named list with range definitions, output of \code{plotRangesServer}}
 
@@ -22,7 +23,20 @@ formatScalesOfGGplot(
 \item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 
 \item{ySecAxisTitle}{(character) title of secondary y axis}
+
+\item{...}{Passed on to [formatScales.PlotGG()].}
+}
+\value{
+A ggplot object with scales formatted.
 }
 \description{
-Specify Scales of a GGplot
+This function is kept for backward compatibility.
+Please migrate to the new class-based API:
+}
+\details{
+```
+pg <- new_PlotGG(plot)
+pg <- formatScales(pg, text)
+plot <- as.ggplot(pg)
+```
 }

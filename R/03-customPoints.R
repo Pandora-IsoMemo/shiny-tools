@@ -241,27 +241,21 @@ removeCustomPointsServer <- function(id, custom_points = reactiveVal()) {
 #   verbatimTextOutput("custom_points")
 # )
 #
-# server <- function(input, output, session) {
+# server <- function(input, output, session, plot_type = "histogram") {  # "line", "box", "density", "histogram"
 #   testPlotFun <- function() {
-#     # line plot
-#     #ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line()
-#
-#     # box plot
-#     #ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + ggplot2::geom_boxplot()
-#
-#     # density plot
-#     #ggplot(mtcars, aes(x = cyl)) + ggplot2::geom_density()
-#
-#     # histogram
-#     ggplot(mtcars, aes(x = cyl, fill = factor(.data$am))) +
-#       ggplot2::geom_histogram(alpha = 0.5, binwidth = NULL, position = "identity")
+#     switch(plot_type,
+#       "line" = ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line(),
+#       "box" = ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + ggplot2::geom_boxplot(),
+#       "density" = ggplot(mtcars, aes(x = cyl)) + ggplot2::geom_density(),
+#       "histogram" = ggplot(mtcars, aes(x = cyl, fill = factor(am))) +
+#         ggplot2::geom_histogram(alpha = 0.5, binwidth = NULL, position = "identity")
+#     )
 #   }
 #
-#   # for line plot & histogram & density
-#   custom_points <- customPointsServer("points")
-#
-#   # for boxplot
-#   #custom_points <- customPointsServer("points", x_choices = reactive(structure(as.character(mtcars$cyl), x = "cyl")))
+#   custom_points <- switch(plot_type,
+#     "box" = customPointsServer("points", x_choices = reactive(structure(as.character(mtcars$cyl), x = "cyl"))),
+#     customPointsServer("points") # for line plot & histogram & density
+#   )
 #
 #   output$custom_points <- renderPrint({
 #     custom_points() %>% lapply(FUN = as.data.frame) %>% bind_rows()

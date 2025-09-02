@@ -1,3 +1,16 @@
+# shinyTools 25.09.0
+
+## Updates
+- Added new class `new_PlotGG` with methods:
+  - `formatTitles`
+  - `formatScales`
+  - `formatLegend`
+  - `addCustomPoints`
+- Deprecated the previous standalone formatting functions in favor of the new class methods.
+
+## Bug Fixes
+- `formatLegend.PlotGG`: fixed an issue with incorrect color mapping in legends.
+
 # shinyTools 25.07.0
 
 ## Bug Fixes

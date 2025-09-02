@@ -7,11 +7,11 @@
 \method{addCustomPoints}{PlotGG}(plot_obj, custom_points, ...)
 }
 \arguments{
-\item{plot_obj}{A plot-like object.}
+\item{plot_obj}{(ggplot)}
 
-\item{custom_points}{A list/data for points.}
+\item{custom_points}{A list/data describing points.}
 
-\item{...}{Passed on to methods.}
+\item{...}{Passed on to [addCustomPoints.PlotGG()].}
 }
 \value{
 A `PlotGG` object (modified).

@@ -54,6 +54,7 @@ as.ggplot <- function(obj) UseMethod("as.ggplot")
 #' Format titles for PlotGG
 #' @param plot_obj (ggplot)
 #' @param text (list) named list with title definitions, output of \code{plotTitlesServer}
+#' @param ... Additional arguments (not used).
 #' @return A `PlotGG` object (modified).
 #' @method formatTitles PlotGG
 #' @export
@@ -71,10 +72,13 @@ formatTitles.PlotGG <- function(plot_obj, text, ...) {
 }
 
 #' Format scales for PlotGG
-#' @param xLabels Optional breaks/labels for x.
-#' @param yLabels Optional breaks/labels for y.
-#' @param ySecAxisTitle Optional title for secondary y.
-#' @inheritParams formatScales
+#'
+#' @param plot_obj (ggplot)
+#' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
+#' @param xLabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
+#' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
+#' @param ySecAxisTitle (character) title of secondary y axis
+#' @param ... Passed on to [formatScales.PlotGG()].
 #' @return A `PlotGG` object (modified).
 #' @method formatScales PlotGG
 #' @export
@@ -92,7 +96,9 @@ formatScales.PlotGG <- function(plot_obj, ranges, xLabels = NULL, yLabels = NULL
 }
 
 #' Add custom points for PlotGG
-#' @inheritParams addCustomPoints
+#' @param plot_obj (ggplot)
+#' @param custom_points A list/data describing points.
+#' @param ... Passed on to [addCustomPoints.PlotGG()].
 #' @return A `PlotGG` object (modified).
 #' @method addCustomPoints PlotGG
 #' @export
@@ -103,8 +109,10 @@ addCustomPoints.PlotGG <- function(plot_obj, custom_points, ...) {
 }
 
 #' Format legend for PlotGG
-#' @param scaleFUN A ggplot2 scale function (e.g., `ggplot2::scale_color_manual`).
-#' @inheritParams formatLegend
+#' @param plot_obj (ggplot)
+#' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
+#' @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
+#' @inheritParams ggplot2::theme
 #' @return A `PlotGG` object (modified).
 #' @method formatLegend PlotGG
 #' @export

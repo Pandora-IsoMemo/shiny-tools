@@ -10,6 +10,8 @@
 \item{plot_obj}{(ggplot)}
 
 \item{text}{(list) named list with title definitions, output of \code{plotTitlesServer}}
+
+\item{...}{Additional arguments (not used).}
 }
 \value{
 A `PlotGG` object (modified).

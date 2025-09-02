@@ -7,13 +7,14 @@
 \method{formatLegend}{PlotGG}(plot_obj, legend, scaleFUN = ggplot2::scale_color_manual, ...)
 }
 \arguments{
-\item{plot_obj}{A plot-like object.}
+\item{plot_obj}{(ggplot)}
 
-\item{legend}{A legend configuration list.}
+\item{legend}{(list) named list with style definitions, or output of \code{plotLegendServer}}
 
-\item{scaleFUN}{A ggplot2 scale function (e.g., `ggplot2::scale_color_manual`).}
+\item{scaleFUN}{(function) function to set scale, e.g. \code{ggplot2::scale_color_manual}}
 
-\item{...}{Passed on to methods.}
+\item{...}{additional element specifications not part of base ggplot2. In general,
+these should also be defined in the \verb{element tree} argument. \link[rlang:splice]{Splicing} a list is also supported.}
 }
 \value{
 A `PlotGG` object (modified).

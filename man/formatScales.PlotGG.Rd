@@ -14,17 +14,17 @@
 )
 }
 \arguments{
-\item{plot_obj}{A plot-like object.}
+\item{plot_obj}{(ggplot)}
 
-\item{ranges}{A named list with axis ranges/transforms.}
+\item{ranges}{(list) named list with range definitions, output of \code{plotRangesServer}}
 
-\item{xLabels}{Optional breaks/labels for x.}
+\item{xLabels}{(list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 
-\item{yLabels}{Optional breaks/labels for y.}
+\item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 
-\item{ySecAxisTitle}{Optional title for secondary y.}
+\item{ySecAxisTitle}{(character) title of secondary y axis}
 
-\item{...}{Passed on to methods.}
+\item{...}{Passed on to [formatScales.PlotGG()].}
 }
 \value{
 A `PlotGG` object (modified).

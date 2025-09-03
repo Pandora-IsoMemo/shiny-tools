@@ -2,28 +2,18 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{addCustomPointsToGGplot}
 \alias{addCustomPointsToGGplot}
-\title{Add custom points to a ggplot (legacy wrapper)}
+\title{Add custom points to a ggplot.}
 \usage{
-addCustomPointsToGGplot(plot, custom_points, ...)
+addCustomPointsToGGplot(plot, custom_points)
 }
 \arguments{
-\item{plot}{A ggplot object.}
+\item{plot}{(ggplot) A ggplot object.}
 
-\item{custom_points}{A list/data describing points.}
-
-\item{...}{Passed on to [addCustomPoints.PlotGG()].}
+\item{custom_points}{(list) named list with point definitions, output of \code{customPointsServer}}
 }
 \value{
 A ggplot object with custom points added.
 }
 \description{
-This function is kept for backward compatibility.
-Please migrate to the new class-based API:
-}
-\details{
-```
-pg <- new_PlotGG(plot)
-pg <- addCustomPoints(pg, custom_points)
-plot <- as.ggplot(pg)
-```
+Add custom points to a ggplot.
 }

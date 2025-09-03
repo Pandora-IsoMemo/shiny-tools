@@ -2,12 +2,12 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{formatLegendOfGGplot}
 \alias{formatLegendOfGGplot}
-\title{Legend Style Of GGplot (legacy wrapper)}
+\title{Legend Style Of GGplot}
 \usage{
 formatLegendOfGGplot(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...)
 }
 \arguments{
-\item{plot}{A ggplot object.}
+\item{plot}{(ggplot) A ggplot object.}
 
 \item{legend}{(list) named list with style definitions, or output of \code{plotLegendServer}}
 
@@ -20,13 +20,5 @@ these should also be defined in the \verb{element tree} argument. \link[rlang:sp
 A ggplot object with updated legend.
 }
 \description{
-This function is kept for backward compatibility.
-Please migrate to the new class-based API:
-}
-\details{
-```
-pg <- new_PlotGG(plot)
-pg <- formatLegend(pg, text)
-plot <- as.ggplot(pg)
-```
+Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
 }

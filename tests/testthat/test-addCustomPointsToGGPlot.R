@@ -111,12 +111,12 @@ custom_points_hist <- list(
 
 # Tests per plot type ----------------------------------
 
-testthat::test_that("addCustomPointsToGGplot_internal: line plot builds and adds layers", {
+testthat::test_that("addCustomPointsToGGplot: line plot builds and adds layers", {
   base <- testPlotFun("line")
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base %>% addCustomPointsToGGplot_internal(custom_points_line)
+  p <- base %>% addCustomPointsToGGplot(custom_points_line)
   testthat::expect_s3_class(p, "ggplot")
 
   # should build without error
@@ -126,34 +126,34 @@ testthat::test_that("addCustomPointsToGGplot_internal: line plot builds and adds
   testthat::expect_gt(length(p$layers), base_layers)
 })
 
-testthat::test_that("addCustomPointsToGGplot_internal: boxplot builds (factor x) and adds layers", {
+testthat::test_that("addCustomPointsToGGplot: boxplot builds (factor x) and adds layers", {
   base <- testPlotFun("box")
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base %>% addCustomPointsToGGplot_internal(custom_points_box)
+  p <- base %>% addCustomPointsToGGplot(custom_points_box)
   testthat::expect_s3_class(p, "ggplot")
   testthat::expect_error(ggplot2::ggplot_build(p), NA)
   testthat::expect_gt(length(p$layers), base_layers)
 })
 
-testthat::test_that("addCustomPointsToGGplot_internal: density plot builds and adds layers", {
+testthat::test_that("addCustomPointsToGGplot: density plot builds and adds layers", {
   base <- testPlotFun("density")
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base %>% addCustomPointsToGGplot_internal(custom_points_density)
+  p <- base %>% addCustomPointsToGGplot(custom_points_density)
   testthat::expect_s3_class(p, "ggplot")
   testthat::expect_error(ggplot2::ggplot_build(p), NA)
   testthat::expect_gt(length(p$layers), base_layers)
 })
 
-testthat::test_that("addCustomPointsToGGplot_internal: histogram builds (no inherited fill issues) and adds layers", {
+testthat::test_that("addCustomPointsToGGplot: histogram builds (no inherited fill issues) and adds layers", {
   base <- testPlotFun("histogram")
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base %>% addCustomPointsToGGplot_internal(custom_points_hist)
+  p <- base %>% addCustomPointsToGGplot(custom_points_hist)
   testthat::expect_s3_class(p, "ggplot")
 
   # Build should not error (previously failed due to inherited fill = factor(am))
@@ -165,9 +165,9 @@ testthat::test_that("addCustomPointsToGGplot_internal: histogram builds (no inhe
   testthat::expect_true(any(grepl("GeomErrorbar", geoms)) || any(grepl("GeomErrorbarh", geoms)))
 })
 
-# Additional tests for addCustomPointsToGGplot_internal ---------------
+# Additional tests for addCustomPointsToGGplot ---------------
 
-test_that("addCustomPointsToGGplot_internal adds points to a ggplot", {
+test_that("addCustomPointsToGGplot adds points to a ggplot", {
   # Create a base ggplot object
   base_plot <- ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line()
 
@@ -208,7 +208,7 @@ test_that("addCustomPointsToGGplot_internal adds points to a ggplot", {
     )
 
   # Call the function to add points
-  updated_plot <- base_plot %>% addCustomPointsToGGplot_internal(custom_points = test_custom_points)
+  updated_plot <- base_plot %>% addCustomPointsToGGplot(custom_points = test_custom_points)
 
   # Test if the updated plot has the expected layers
   expect_equal(length(updated_plot$layers), 6)

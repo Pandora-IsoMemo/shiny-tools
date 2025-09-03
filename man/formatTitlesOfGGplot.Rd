@@ -2,28 +2,18 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{formatTitlesOfGGplot}
 \alias{formatTitlesOfGGplot}
-\title{Format Titles Of GGplot (legacy wrapper)}
+\title{Format Titles Of GGplot}
 \usage{
-formatTitlesOfGGplot(plot, text, ...)
+formatTitlesOfGGplot(plot, text)
 }
 \arguments{
-\item{plot}{A ggplot object.}
+\item{plot}{(ggplot) A ggplot object.}
 
 \item{text}{(list) named list with title definitions, output of \code{plotTitlesServer}}
-
-\item{...}{Passed on to [formatTitles.PlotGG()].}
 }
 \value{
 A ggplot object with titles formatted.
 }
 \description{
-This function is kept for backward compatibility.
-Please migrate to the new class-based API:
-}
-\details{
-```
-pg <- new_PlotGG(plot)
-pg <- formatTitles(pg, text)
-plot <- as.ggplot(pg)
-```
+Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
 }

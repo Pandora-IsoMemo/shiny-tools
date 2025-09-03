@@ -1,38 +1,14 @@
 # TITLES ----
 
-#' Format Titles Of GGplot (legacy wrapper)
+#' Format Titles Of GGplot
 #'
-#' This function is kept for backward compatibility.
-#' Please migrate to the new class-based API:
+#' Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
 #'
-#' ```
-#' pg <- new_PlotGG(plot)
-#' pg <- formatTitles(pg, text)
-#' plot <- as.ggplot(pg)
-#' ```
-#'
-#' @param plot A ggplot object.
-#' @param text  (list) named list with title definitions, output of \code{plotTitlesServer}
-#' @param ... Passed on to [formatTitles.PlotGG()].
+#' @param plot (ggplot) A ggplot object.
+#' @param text (list) named list with title definitions, output of \code{plotTitlesServer}
 #' @return A ggplot object with titles formatted.
 #' @export
-formatTitlesOfGGplot <- function(plot, text, ...) {
-  .Deprecated("formatTitlesOfGGplot(new_PlotGG(plot), text, ...)",
-              package = "shinyTools",
-              msg = "Use the PlotGG class instead: pg <- new_PlotGG(plot); pg <- formatTitles(pg, text); as.ggplot(pg)")
-
-  pg <- new_PlotGG(plot)
-  pg <- formatTitles(pg, text, ...)
-  as.ggplot(pg)
-}
-
-# Format Titles Of GGplot
-#
-# Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
-#
-# @param plot (ggplot)
-# @param text (list) named list with title definitions, output of \code{plotTitlesServer}
-formatTitlesOfGGplot_internal <- function(plot, text) {
+formatTitlesOfGGplot <- function(plot, text) {
   # check if all elements are present
   if (!all(
     names(text) %in% c(
@@ -47,7 +23,7 @@ formatTitlesOfGGplot_internal <- function(plot, text) {
       "yAxisText2"
     )
   ))
-    stop("New element found, please add the new case to 'formatTitlesOfGGplot_internal()' first!")
+    stop("New element found, please add the new case to 'formatTitlesOfGGplot()' first!")
 
   # AXES ----
   if (any(grepl("Axis", names(text)))) {
@@ -147,44 +123,16 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 
 # SCALES / RANGES ----
 
-#' Specify Scales of a GGplot (legacy wrapper)
+#' Specify Scales of a GGplot
 #'
-#' This function is kept for backward compatibility.
-#' Please migrate to the new class-based API:
-#'
-#' ```
-#' pg <- new_PlotGG(plot)
-#' pg <- formatScales(pg, text)
-#' plot <- as.ggplot(pg)
-#' ```
-#'
-#' @param plot A ggplot object.
+#' @param plot (ggplot) A ggplot object.
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
 #' @param xLabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param ySecAxisTitle (character) title of secondary y axis
-#' @param ... Passed on to [formatScales.PlotGG()].
 #' @return A ggplot object with scales formatted.
 #' @export
-formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL, ...) {
-  .Deprecated("formatScalesOfGGplot(new_PlotGG(plot), ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL, ...)",
-              package = "shinyTools",
-              msg = "Use the PlotGG class instead: pg <- new_PlotGG(plot); pg <- formatScales(pg, text, ...); as.ggplot(pg)")
-
-  pg <- new_PlotGG(plot)
-  pg <- formatScales(pg, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL, ...)
-  as.ggplot(pg)
-}
-
-
-# Specify Scales of a GGplot
-#
-# @param plot (ggplot)
-# @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
-# @param xLabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
-# @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
-# @param ySecAxisTitle (character) title of secondary y axis
-formatScalesOfGGplot_internal <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
+formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
   if (is.null(plot) || length(ranges) == 0) return(plot)
 
   if (isContinuousAxis(plot, axis = "x")) {
@@ -346,37 +294,13 @@ getSecAxis <- function(rescaleFactors, title) {
 
 # POINTS ----
 
-#' Add custom points to a ggplot (legacy wrapper)
+#' Add custom points to a ggplot.
 #'
-#' This function is kept for backward compatibility.
-#' Please migrate to the new class-based API:
-#'
-#' ```
-#' pg <- new_PlotGG(plot)
-#' pg <- addCustomPoints(pg, custom_points)
-#' plot <- as.ggplot(pg)
-#' ```
-#'
-#' @param plot A ggplot object.
-#' @param custom_points A list/data describing points.
-#' @param ... Passed on to [addCustomPoints.PlotGG()].
+#' @param plot (ggplot) A ggplot object.
+#' @param custom_points (list) named list with point definitions, output of \code{customPointsServer}
 #' @return A ggplot object with custom points added.
 #' @export
-addCustomPointsToGGplot <- function(plot, custom_points, ...) {
-  .Deprecated("addCustomPoints(new_PlotGG(plot), custom_points, ...)",
-              package = "shinyTools",
-              msg = "Use the PlotGG class instead: pg <- new_PlotGG(plot); pg <- addCustomPoints(pg, custom_points); as.ggplot(pg)")
-
-  pg <- new_PlotGG(plot)
-  pg <- addCustomPoints(pg, custom_points, ...)
-  as.ggplot(pg)
-}
-
-# Add custom points to a ggplot.
-#
-# @param plot (ggplot)
-# @param custom_points (list) named list with point definitions, output of \code{customPointsServer}
-addCustomPointsToGGplot_internal <- function(plot, custom_points) {
+addCustomPointsToGGplot <- function(plot, custom_points) {
   # skip if no custom points are defined
   if (length(custom_points) == 0 || !is.list(custom_points)) return(plot)
   # skip if custom points are not valid (ensure all inputs do exist)
@@ -619,42 +543,17 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 
 # LEGEND ----
 
-#' Legend Style Of GGplot (legacy wrapper)
+#' Legend Style Of GGplot
 #'
-#' This function is kept for backward compatibility.
-#' Please migrate to the new class-based API:
+#' Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
 #'
-#' ```
-#' pg <- new_PlotGG(plot)
-#' pg <- formatLegend(pg, text)
-#' plot <- as.ggplot(pg)
-#' ```
-#'
-#' @param plot A ggplot object.
+#' @param plot (ggplot) A ggplot object.
 #' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
 #' @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
 #' @inheritParams ggplot2::theme
 #' @return A ggplot object with updated legend.
 #' @export
 formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
-  .Deprecated("formatLegendOfGGplot(new_PlotGG(plot), legend, scaleFUN = ggplot2::scale_color_manual, ...)",
-              package = "shinyTools",
-              msg = "Use the PlotGG class instead: pg <- new_PlotGG(plot); pg <- formatLegend(pg, text); as.ggplot(pg)")
-
-  pg <- new_PlotGG(plot)
-  pg <- formatLegend(pg, legend, scaleFUN = ggplot2::scale_color_manual, ...)
-  as.ggplot(pg)
-}
-
-# Legend Style Of GGplot
-#
-# Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
-#
-# @param plot (ggplot)
-# @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
-# @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
-# @inheritParams ggplot2::theme
-formatLegendOfGGplot_internal <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
   # set the title/labels depending on whether it is an expression, empty, or text
   legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
   legend_labels <- sapply(names(legend$layout$labels), function(name) {

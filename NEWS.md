@@ -1,7 +1,7 @@
 # shinyTools 25.09.0
 
 ## Bug Fixes
-- `formatLegend.PlotGG`: fixed an issue with incorrect color mapping when joining data for legend.
+- fixed an issue with incorrect color mapping when joining data for legend.
 
 # shinyTools 25.07.0
 

@@ -4,11 +4,14 @@
 #'
 #' Format plot and axis titles and texts of axis labels (and legends) of a ggplot.
 #'
-#' @param plot (ggplot)
+#' @param plot (ggplot) A ggplot object.
 #' @param text (list) named list with title definitions, output of \code{plotTitlesServer}
-#'
+#' @return A ggplot object with titles formatted.
 #' @export
 formatTitlesOfGGplot <- function(plot, text) {
+  # skip if no plot is given, or no text is defined
+  if (is.null(plot) || length(text) == 0) return(plot)
+
   # check if all elements are present
   if (!all(
     names(text) %in% c(
@@ -107,7 +110,7 @@ getElementText <- function(textDef = list(fontFamily = "sans",
                                           hjust = 0.5,
                                           vjust = 0.5
                                           )) {
-  if (is.null(textDef) || textDef[["hide"]]) {
+  if (is.null(textDef) || isTRUE(textDef[["hide"]])) {
     element_blank()
   } else {
     element_text(family = textDef[["fontFamily"]],
@@ -125,12 +128,12 @@ getElementText <- function(textDef = list(fontFamily = "sans",
 
 #' Specify Scales of a GGplot
 #'
-#' @param plot (ggplot)
+#' @param plot (ggplot) A ggplot object.
 #' @param ranges (list) named list with range definitions, output of \code{plotRangesServer}
 #' @param xLabels (list) named list with x axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param yLabels (list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}
 #' @param ySecAxisTitle (character) title of secondary y axis
-#'
+#' @return A ggplot object with scales formatted.
 #' @export
 formatScalesOfGGplot <- function(plot, ranges, xLabels = NULL, yLabels = NULL, ySecAxisTitle = NULL) {
   if (is.null(plot) || length(ranges) == 0) return(plot)
@@ -294,17 +297,15 @@ getSecAxis <- function(rescaleFactors, title) {
 
 # POINTS ----
 
-#' Add Custom Points To GGplot
-#'
 #' Add custom points to a ggplot.
 #'
-#' @param plot (ggplot)
+#' @param plot (ggplot) A ggplot object.
 #' @param custom_points (list) named list with point definitions, output of \code{customPointsServer}
-#'
+#' @return A ggplot object with custom points added.
 #' @export
 addCustomPointsToGGplot <- function(plot, custom_points) {
-  # skip if no custom points are defined
-  if (length(custom_points) == 0 || !is.list(custom_points)) return(plot)
+  # skip if no plot is given, or no custom points are defined
+  if (is.null(plot) || length(custom_points) == 0 || !is.list(custom_points)) return(plot)
   # skip if custom points are not valid (ensure all inputs do exist)
   if ((length(custom_points) > 1 &&
        !all(sapply(custom_points, length) == length(custom_points[[1]])))) return(plot)
@@ -381,6 +382,13 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
     style[missingElements] <- defaultStyle[missingElements]
   }
 
+  # helper: expand scalar style to match n rows selected by idx
+  style_vec <- function(x, idx) {
+    n <- sum(idx)
+    if (length(x) <= 1) rep(x, n) else x[idx]
+  }
+
+  # sanitize / symmetrize errors
   # ensure valid errors (we must use & not && for element-wise comparisons)
   dat <- dat %>%
     mutate(xmin = ifelse(!is.na(.data$xmin) & .data$xmin > .data$x, .data$x, .data$xmin),
@@ -399,27 +407,38 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
   # keep only rows with all errors not NA
   x_index <- !is.na(dat$xmin) & !is.na(dat$xmax)
   y_index <- !is.na(dat$ymin) & !is.na(dat$ymax)
-  plot +
-    # Horizontal error bars
-    geom_errorbarh(data = dat[x_index, ],
-                   aes(x = .data$x, y = .data$y, xmin = .data$xmin, xmax = .data$xmax),
-                   inherit.aes = FALSE,
-                   size = style[["size"]][x_index], # thickness
-                   height = style[["capheight"]][x_index],
-                   colour = style[["color"]][x_index],
-                   linetype = style[["linetype"]][x_index],
-                   alpha = ifelse(style[["hide"]][x_index], 0, style[["alpha"]][x_index]),
-                   ...) +
-    # Vertical error bars
-    geom_errorbar(data = dat[y_index, ],
-                  aes(x = .data$x, y = .data$y, ymin = .data$ymin, ymax = .data$ymax),
-                  inherit.aes = FALSE,
-                  size = style[["size"]][y_index], # thickness
-                  width = style[["capwidth"]][y_index],
-                  colour = style[["color"]][y_index],
-                  linetype = style[["linetype"]][y_index],
-                  alpha = ifelse(style[["hide"]][y_index], 0, style[["alpha"]][y_index]),
-                  ...)
+
+  if (any(x_index)) {
+    plot <- plot +
+      # Horizontal error bars
+      geom_errorbarh(data = dat[x_index, ],
+                     aes(y = .data$y, x = .data$x,
+                         xmin = .data$xmin, xmax = .data$xmax),
+                     inherit.aes = FALSE,
+                     size = style_vec(style[["size"]], x_index), # thickness
+                     height = style_vec(style[["capheight"]], x_index),
+                     colour = style_vec(style[["color"]], x_index),
+                     linetype = style_vec(style[["linetype"]], x_index),
+                     alpha = ifelse(style_vec(style[["hide"]], x_index), 0, style_vec(style[["alpha"]], x_index)),
+                     ...)
+  }
+
+  if (any(y_index)) {
+    plot <- plot +
+      # Vertical error bars
+      geom_errorbar(data = dat[y_index, ],
+                    aes(x = .data$x, y = .data$y,
+                        ymin = .data$ymin, ymax = .data$ymax),
+                    inherit.aes = FALSE,
+                    size = style_vec(style[["size"]], y_index), # thickness
+                    width = style_vec(style[["capwidth"]], y_index),
+                    colour = style_vec(style[["color"]], y_index),
+                    linetype = style_vec(style[["linetype"]], y_index),
+                    alpha = ifelse(style_vec(style[["hide"]], y_index), 0, style_vec(style[["alpha"]], y_index)),
+                    ...)
+  }
+
+  plot
 }
 
 #' Point Style Of GGplot
@@ -531,13 +550,16 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 #'
 #' Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}
 #'
-#' @param plot (ggplot)
+#' @param plot (ggplot) A ggplot object.
 #' @param legend (list) named list with style definitions, or output of \code{plotLegendServer}
 #' @param scaleFUN (function) function to set scale, e.g. \code{ggplot2::scale_color_manual}
 #' @inheritParams ggplot2::theme
-#'
+#' @return A ggplot object with updated legend.
 #' @export
 formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
+  # skip if no plot is given
+  if (is.null(plot)) return(NULL)
+
   # set the title/labels depending on whether it is an expression, empty, or text
   legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
   legend_labels <- sapply(names(legend$layout$labels), function(name) {
@@ -604,21 +626,52 @@ extractColourMapping <- function(plot) {
   # combine mappings and select relevant
   mapping <- c(base_mapping, layer_mappings)[c("x", "y", "colour")]
 
+  # returns the first data variable referenced in an aes expression string
+  extract_var_name <- function(expr_chr) {
+    if (is.null(expr_chr) || is.na(expr_chr) || !nzchar(expr_chr)) return(NA_character_)
+    vars <- tryCatch(all.vars(str2lang(expr_chr)), error = function(e) character(0))
+    # drop pronouns / helpers: .data, .env, ..stat..
+    vars <- vars[!vars %in% c(".data", ".env")]
+    vars <- vars[!grepl("^\\.\\.[^.]+\\.\\.$", vars)]  # e.g. ..density.., ..count..
+    if (length(vars)) vars[[1]] else NA_character_
+  }
+
+  x_var <- extract_var_name(mapping[["x"]])
+  y_var <- extract_var_name(mapping[["y"]])
+  c_var <- extract_var_name(mapping[["colour"]])
+
+  # nothing sensible to join on
+  if (any(is.na(c(x_var, y_var)))) return(setNames(character(0), character(0)))
+
   # Extract plot data
   plot_data <- plot_build$data[[1]]  # Get the first layer's data
 
-  # Get unique color mapping as data.frame
-  color_mapping <- inner_join(plot_data, plot$data, by = c("x" = mapping[["x"]], "y" = mapping[["y"]])) %>%
-    select("colour", starts_with(mapping[["colour"]])) %>%
-    distinct()
+  # --- left: data from the built plot (already has 'x','y','colour') ---
+  left <- plot_data[, c("x", "y", "colour")] |>
+    unique()   # drop duplicate rows
 
-  # convert to named vector
-  # use last column, it comes from 'y' of inner_join
-  color_mapping <- setNames(color_mapping$colour, color_mapping[[ncol(color_mapping)]])
+  # right: original data with source vars; rename to x/y; dedupe too
+  right_cols <- c(x_var, y_var, c_var)
+  right_cols <- right_cols[!is.na(right_cols)]
+  right <- plot$data |>
+    dplyr::select(dplyr::all_of(right_cols)) |>
+    dplyr::rename(x = !!rlang::sym(x_var), y = !!rlang::sym(y_var)) |>
+    dplyr::distinct()
 
-  color_mapping
+  # one-to-one/one-to-many join on unique keys -> no warning
+  joined <- dplyr::inner_join(left, right, by = c("x", "y"))
+
+  # labels come from the original colour variable if present, else fallback
+  if (!is.na(c_var) && c_var %in% names(joined)) {
+    labels_vec <- joined[[c_var]]
+  } else {
+    labels_vec <- joined[["colour"]]
+  }
+
+  out <- stats::setNames(joined$colour, labels_vec)
+  out[!duplicated(names(out))]
 }
 
 extractMapping <- function(mapping_list) {
-  sapply(names(mapping_list), function(name) {as_label(mapping_list[[name]])})
+  sapply(names(mapping_list), function(name) as_label(mapping_list[[name]]))
 }

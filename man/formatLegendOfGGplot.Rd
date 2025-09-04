@@ -7,7 +7,7 @@
 formatLegendOfGGplot(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...)
 }
 \arguments{
-\item{plot}{(ggplot)}
+\item{plot}{(ggplot) A ggplot object.}
 
 \item{legend}{(list) named list with style definitions, or output of \code{plotLegendServer}}
 
@@ -15,6 +15,9 @@ formatLegendOfGGplot(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...)
 
 \item{...}{additional element specifications not part of base ggplot2. In general,
 these should also be defined in the \verb{element tree} argument. \link[rlang:splice]{Splicing} a list is also supported.}
+}
+\value{
+A ggplot object with updated legend.
 }
 \description{
 Style of legend is defined with argument \code{legend}. Overwrites previous definitions of \code{theme(legend)}

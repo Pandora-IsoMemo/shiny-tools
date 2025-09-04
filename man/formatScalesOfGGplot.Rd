@@ -13,7 +13,7 @@ formatScalesOfGGplot(
 )
 }
 \arguments{
-\item{plot}{(ggplot)}
+\item{plot}{(ggplot) A ggplot object.}
 
 \item{ranges}{(list) named list with range definitions, output of \code{plotRangesServer}}
 
@@ -22,6 +22,9 @@ formatScalesOfGGplot(
 \item{yLabels}{(list) named list with y axis labels, e.g. \code{list(breaks = c(1, 2, 3), labels = c("A", "B", "C"))}}
 
 \item{ySecAxisTitle}{(character) title of secondary y axis}
+}
+\value{
+A ggplot object with scales formatted.
 }
 \description{
 Specify Scales of a GGplot

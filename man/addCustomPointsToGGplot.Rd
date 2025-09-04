@@ -2,14 +2,17 @@
 % Please edit documentation in R/03-formatGGplot.R
 \name{addCustomPointsToGGplot}
 \alias{addCustomPointsToGGplot}
-\title{Add Custom Points To GGplot}
+\title{Add custom points to a ggplot.}
 \usage{
 addCustomPointsToGGplot(plot, custom_points)
 }
 \arguments{
-\item{plot}{(ggplot)}
+\item{plot}{(ggplot) A ggplot object.}
 
 \item{custom_points}{(list) named list with point definitions, output of \code{customPointsServer}}
+}
+\value{
+A ggplot object with custom points added.
 }
 \description{
 Add custom points to a ggplot.

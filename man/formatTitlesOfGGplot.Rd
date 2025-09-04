@@ -7,9 +7,12 @@
 formatTitlesOfGGplot(plot, text)
 }
 \arguments{
-\item{plot}{(ggplot)}
+\item{plot}{(ggplot) A ggplot object.}
 
 \item{text}{(list) named list with title definitions, output of \code{plotTitlesServer}}
+}
+\value{
+A ggplot object with titles formatted.
 }
 \description{
 Format plot and axis titles and texts of axis labels (and legends) of a ggplot.

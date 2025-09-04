@@ -57,8 +57,8 @@ pointCoordinatesServer <- function(id,
         numericCoordinateUI(
           ns("x"),
           label_value = "X Axis Value",
-          label_min = "Min. X Error (optional)",
-          label_max = "Max. X Error (optional)"
+          label_min = "Min. X (Optional Error)",
+          label_max = "Max. X (Optional Error)"
         )
       } else {
         categoricalCoordinateUI(

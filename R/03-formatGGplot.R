@@ -9,6 +9,9 @@
 #' @return A ggplot object with titles formatted.
 #' @export
 formatTitlesOfGGplot <- function(plot, text) {
+  # skip if no plot is given, or no text is defined
+  if (is.null(plot) || length(text) == 0) return(plot)
+
   # check if all elements are present
   if (!all(
     names(text) %in% c(
@@ -301,8 +304,8 @@ getSecAxis <- function(rescaleFactors, title) {
 #' @return A ggplot object with custom points added.
 #' @export
 addCustomPointsToGGplot <- function(plot, custom_points) {
-  # skip if no custom points are defined
-  if (length(custom_points) == 0 || !is.list(custom_points)) return(plot)
+  # skip if no plot is given, or no custom points are defined
+  if (is.null(plot) || length(custom_points) == 0 || !is.list(custom_points)) return(plot)
   # skip if custom points are not valid (ensure all inputs do exist)
   if ((length(custom_points) > 1 &&
        !all(sapply(custom_points, length) == length(custom_points[[1]])))) return(plot)
@@ -554,6 +557,9 @@ formatPointLabelsOfGGPlot <- function(plot, data, labelStyle = getLabelStyle("gg
 #' @return A ggplot object with updated legend.
 #' @export
 formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_manual, ...) {
+  # skip if no plot is given
+  if (is.null(plot)) return(NULL)
+
   # set the title/labels depending on whether it is an expression, empty, or text
   legend_title <- extractTitle(legend$layout$title[[1]], default = names(legend$layout$title))
   legend_labels <- sapply(names(legend$layout$labels), function(name) {

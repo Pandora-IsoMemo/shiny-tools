@@ -478,10 +478,10 @@ formatPointsOfGGplot <- function(
   }
 
   if (is.null(mapping)) {
-    if (!is.null(plot$mapping$x) && !is.null(plot$mapping$y)) {
-      mapping <- plot$mapping
-    } else if (!is.null(data) && all(c("x", "y") %in% names(data))) {
+    if (!is.null(data) && all(c("x", "y") %in% names(data))) {
       mapping <- ggplot2::aes(x = .data$x, y = .data$y)
+    } else if (!is.null(plot$mapping$x) && !is.null(plot$mapping$y)) {
+      mapping <- plot$mapping
     }
   }
 

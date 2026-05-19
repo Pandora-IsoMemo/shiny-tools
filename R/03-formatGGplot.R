@@ -30,9 +30,9 @@ formatTitlesOfGGplot <- function(plot, text) {
 
   # AXES ----
   if (any(grepl("Axis", names(text)))) {
-    plot <- plot |>
+    plot <- plot %>%
       setCustomTitle(labFun = xlab, label = extractTitle(text[["xAxisTitle"]]))
-    plot <- plot |>
+    plot <- plot %>%
       setCustomTitle(labFun = ylab, label = extractTitle(text[["yAxisTitle"]]))
 
     # apply text formatting (theme)
@@ -49,7 +49,7 @@ formatTitlesOfGGplot <- function(plot, text) {
 
   # PLOT TITLE ----
   if (any(grepl("plot", names(text)))) {
-    plot <- plot |>
+    plot <- plot %>%
       setCustomTitle(labFun = ggtitle, label = extractTitle(text[["plotTitle"]]))
 
     # apply text formatting (theme)
@@ -310,35 +310,35 @@ addCustomPointsToGGplot <- function(plot, custom_points) {
   if ((length(custom_points) > 1 &&
        !all(sapply(custom_points, length) == length(custom_points[[1]])))) return(plot)
 
-  point_df <- custom_points |> lapply(FUN = as.data.frame) |> bind_rows()
+  point_df <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
 
   ## add errors
-  plot <- plot |>
+  plot <- plot %>%
     formatPointErrorsOfGGplot(dat = point_df,
-                              style = point_df |> extractStyleList(prefix = "error_")) |>
+                              style = point_df %>% extractStyleList(prefix = "error_")) %>%
     suppressWarnings()
 
   # add points
-  plot <- plot |>
+  plot <- plot %>%
     formatPointsOfGGplot(data = point_df,
-                         pointStyle = point_df |> extractStyleList(prefix = "point_"),
+                         pointStyle = point_df %>% extractStyleList(prefix = "point_"),
                          aes(x = .data$x, y = .data$y))
 
   # add labels
-  label_style <- point_df |>
-    dplyr::select(dplyr::starts_with("label_")) |>
+  label_style <- point_df %>%
+    dplyr::select(dplyr::starts_with("label_")) %>%
     as.list()
   names(label_style) <- gsub("label_", "", names(label_style))
 
-  plot <- plot |>
+  plot <- plot %>%
     formatPointLabelsOfGGPlot(data = point_df, labelStyle = label_style)
 
   plot
 }
 
 extractStyleList <- function(df, prefix) {
-  style <- df |>
-    dplyr::select(dplyr::starts_with(prefix)) |>
+  style <- df %>%
+    dplyr::select(dplyr::starts_with(prefix)) %>%
     as.list()
   names(style) <- gsub(prefix, "", names(style))
   style
@@ -390,7 +390,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
 
   # sanitize / symmetrize errors
   # ensure valid errors (we must use & not && for element-wise comparisons)
-  dat <- dat |>
+  dat <- dat %>%
     mutate(xmin = ifelse(!is.na(.data$xmin) & .data$xmin > .data$x, .data$x, .data$xmin),
            xmax = ifelse(!is.na(.data$xmax) & .data$xmax < .data$x, .data$x, .data$xmax),
            ymin = ifelse(!is.na(.data$ymin) & .data$ymin > .data$y, .data$y, .data$ymin),
@@ -398,7 +398,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
 
   # if one error is NA but the other not, set equal errors for both, since we must remove NA
   # for plots with categorical x axis, otherwise we have an additional factor "NA"
-  dat <- dat |>
+  dat <- dat %>%
     mutate(xmin = ifelse(is.na(.data$xmin) & !is.na(.data$xmax), .data$x - (.data$xmax - .data$x), .data$xmin),
            xmax = ifelse(is.na(.data$xmax) & !is.na(.data$xmin), .data$x + (.data$x - .data$xmin), .data$xmax),
            ymin = ifelse(is.na(.data$ymin) & !is.na(.data$ymax), .data$y - (.data$ymax - .data$y), .data$ymin),
@@ -592,8 +592,8 @@ formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_m
     )
 
   # apply text formatting (theme) and set legend titles
-  plot |>
-    setLegendThemeOfGGplot(legend = legend, ...) |>
+  plot %>%
+    setLegendThemeOfGGplot(legend = legend, ...) %>%
     setCustomTitle(labFun = labs,
                    color = legend_title,
                    size = legend_title,
@@ -634,7 +634,7 @@ extractColourMapping <- function(plot) {
   base_mapping <- extractMapping(plot$mapping)
   ## check for mappings in all layers
   if (length(plot_build$plot$layers) > 0) {
-    layer_mappings <- sapply(plot_build$plot$layers, function(layer) extractMapping(layer$mapping)) |>
+    layer_mappings <- sapply(plot_build$plot$layers, function(layer) extractMapping(layer$mapping)) %>%
       unlist()
   } else {
     layer_mappings <- extractMapping(plot_build$plot$mapping)
@@ -664,15 +664,15 @@ extractColourMapping <- function(plot) {
   plot_data <- plot_build$data[[1]]  # Get the first layer's data
 
   # --- left: data from the built plot (already has 'x','y','colour') ---
-  left <- plot_data[, c("x", "y", "colour")] |>
+  left <- plot_data[, c("x", "y", "colour")] %>%
     unique()   # drop duplicate rows
 
   # right: original data with source vars; rename to x/y; dedupe too
   right_cols <- c(x_var, y_var, c_var)
   right_cols <- right_cols[!is.na(right_cols)]
-  right <- plot$data |>
-    dplyr::select(dplyr::all_of(right_cols)) |>
-    dplyr::rename(x = !!rlang::sym(x_var), y = !!rlang::sym(y_var)) |>
+  right <- plot$data %>%
+    dplyr::select(dplyr::all_of(right_cols)) %>%
+    dplyr::rename(x = !!rlang::sym(x_var), y = !!rlang::sym(y_var)) %>%
     dplyr::distinct()
 
   # one-to-one/one-to-many join on unique keys -> no warning

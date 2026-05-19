@@ -116,7 +116,7 @@ testthat::test_that("addCustomPointsToGGplot: line plot builds and adds layers",
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base |> addCustomPointsToGGplot(custom_points_line)
+  p <- base %>% addCustomPointsToGGplot(custom_points_line)
   testthat::expect_s3_class(p, "ggplot")
 
   # should build without error
@@ -131,7 +131,7 @@ testthat::test_that("addCustomPointsToGGplot: boxplot builds (factor x) and adds
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base |> addCustomPointsToGGplot(custom_points_box)
+  p <- base %>% addCustomPointsToGGplot(custom_points_box)
   testthat::expect_s3_class(p, "ggplot")
   testthat::expect_error(ggplot2::ggplot_build(p), NA)
   testthat::expect_gt(length(p$layers), base_layers)
@@ -142,7 +142,7 @@ testthat::test_that("addCustomPointsToGGplot: density plot builds and adds layer
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base |> addCustomPointsToGGplot(custom_points_density)
+  p <- base %>% addCustomPointsToGGplot(custom_points_density)
   testthat::expect_s3_class(p, "ggplot")
   testthat::expect_error(ggplot2::ggplot_build(p), NA)
   testthat::expect_gt(length(p$layers), base_layers)
@@ -153,7 +153,7 @@ testthat::test_that("addCustomPointsToGGplot: histogram builds (no inherited fil
   testthat::expect_s3_class(base, "ggplot")
   base_layers <- length(base$layers)
 
-  p <- base |> addCustomPointsToGGplot(custom_points_hist)
+  p <- base %>% addCustomPointsToGGplot(custom_points_hist)
   testthat::expect_s3_class(p, "ggplot")
 
   # Build should not error (previously failed due to inherited fill = factor(am))
@@ -209,7 +209,7 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
     )
 
   # Call the function to add points
-  updated_plot <- base_plot |> addCustomPointsToGGplot(custom_points = test_custom_points)
+  updated_plot <- base_plot %>% addCustomPointsToGGplot(custom_points = test_custom_points)
 
   # Plot should still build
   expect_error(ggplot2::ggplot_build(updated_plot), NA)
@@ -229,7 +229,7 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
   expect_false(is.na(point_idx))
   expect_equal(
     updated_plot$layers[[point_idx]]$data,
-    test_custom_points |> lapply(FUN = as.data.frame) |> bind_rows()
+    test_custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
   )
 
   # Test if the updated plot has the expected layers
@@ -237,5 +237,5 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
 
   # Test if the data in the points layer matches the input data
   expect_equal(updated_plot$layers[[point_idx]]$data,
-               test_custom_points |> lapply(FUN = as.data.frame) |> bind_rows())
+               test_custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows())
 })

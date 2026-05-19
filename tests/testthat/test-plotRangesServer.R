@@ -27,7 +27,7 @@ test_that("Test module plotRangesServer", {
       fromData = FALSE
     )
 
-    expect_equal(session$returned |> reactiveValuesToList(),
+    expect_equal(session$returned %>% reactiveValuesToList(),
                  list(
                    xAxis = list(
                      min = 10,
@@ -52,7 +52,7 @@ test_that("Test module plotRangesServer", {
     )
 
     expect_true(is.reactivevalues(session$returned))
-    expect_equal(session$returned |> reactiveValuesToList(),
+    expect_equal(session$returned %>% reactiveValuesToList(),
                  list(
                    xAxis = list(
                      min = 10,
@@ -77,7 +77,7 @@ test_that("Test module formatScalesOfGGplot", {
 
   # Create a scatter plot using ggplot2
   plot <- (ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) +
-             ggplot2::geom_point()) |>
+             ggplot2::geom_point()) %>%
     formatScalesOfGGplot(ranges = list(
       xAxis = list(
         min = -1,

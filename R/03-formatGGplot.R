@@ -30,9 +30,9 @@ formatTitlesOfGGplot <- function(plot, text) {
 
   # AXES ----
   if (any(grepl("Axis", names(text)))) {
-    plot <- plot %>%
+    plot <- plot |>
       setCustomTitle(labFun = xlab, label = extractTitle(text[["xAxisTitle"]]))
-    plot <- plot %>%
+    plot <- plot |>
       setCustomTitle(labFun = ylab, label = extractTitle(text[["yAxisTitle"]]))
 
     # apply text formatting (theme)
@@ -49,7 +49,7 @@ formatTitlesOfGGplot <- function(plot, text) {
 
   # PLOT TITLE ----
   if (any(grepl("plot", names(text)))) {
-    plot <- plot %>%
+    plot <- plot |>
       setCustomTitle(labFun = ggtitle, label = extractTitle(text[["plotTitle"]]))
 
     # apply text formatting (theme)
@@ -310,35 +310,35 @@ addCustomPointsToGGplot <- function(plot, custom_points) {
   if ((length(custom_points) > 1 &&
        !all(sapply(custom_points, length) == length(custom_points[[1]])))) return(plot)
 
-  point_df <- custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
+  point_df <- custom_points |> lapply(FUN = as.data.frame) |> bind_rows()
 
   ## add errors
-  plot <- plot %>%
+  plot <- plot |>
     formatPointErrorsOfGGplot(dat = point_df,
-                              style = point_df %>% extractStyleList(prefix = "error_")) %>%
+                              style = point_df |> extractStyleList(prefix = "error_")) |>
     suppressWarnings()
 
   # add points
-  plot <- plot %>%
+  plot <- plot |>
     formatPointsOfGGplot(data = point_df,
-                         pointStyle = point_df %>% extractStyleList(prefix = "point_"),
+                         pointStyle = point_df |> extractStyleList(prefix = "point_"),
                          aes(x = .data$x, y = .data$y))
 
   # add labels
-  label_style <- point_df %>%
-    dplyr::select(dplyr::starts_with("label_")) %>%
+  label_style <- point_df |>
+    dplyr::select(dplyr::starts_with("label_")) |>
     as.list()
   names(label_style) <- gsub("label_", "", names(label_style))
 
-  plot <- plot %>%
+  plot <- plot |>
     formatPointLabelsOfGGPlot(data = point_df, labelStyle = label_style)
 
   plot
 }
 
 extractStyleList <- function(df, prefix) {
-  style <- df %>%
-    dplyr::select(dplyr::starts_with(prefix)) %>%
+  style <- df |>
+    dplyr::select(dplyr::starts_with(prefix)) |>
     as.list()
   names(style) <- gsub(prefix, "", names(style))
   style
@@ -390,7 +390,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
 
   # sanitize / symmetrize errors
   # ensure valid errors (we must use & not && for element-wise comparisons)
-  dat <- dat %>%
+  dat <- dat |>
     mutate(xmin = ifelse(!is.na(.data$xmin) & .data$xmin > .data$x, .data$x, .data$xmin),
            xmax = ifelse(!is.na(.data$xmax) & .data$xmax < .data$x, .data$x, .data$xmax),
            ymin = ifelse(!is.na(.data$ymin) & .data$ymin > .data$y, .data$y, .data$ymin),
@@ -398,7 +398,7 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
 
   # if one error is NA but the other not, set equal errors for both, since we must remove NA
   # for plots with categorical x axis, otherwise we have an additional factor "NA"
-  dat <- dat %>%
+  dat <- dat |>
     mutate(xmin = ifelse(is.na(.data$xmin) & !is.na(.data$xmax), .data$x - (.data$xmax - .data$x), .data$xmin),
            xmax = ifelse(is.na(.data$xmax) & !is.na(.data$xmin), .data$x + (.data$x - .data$xmin), .data$xmax),
            ymin = ifelse(is.na(.data$ymin) & !is.na(.data$ymax), .data$y - (.data$ymax - .data$y), .data$ymin),
@@ -451,7 +451,13 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
 #' @inheritParams ggplot2::geom_point
 #'
 #' @export
-formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle(), ...) {
+formatPointsOfGGplot <- function(
+  plot,
+  data = NULL,
+  pointStyle = getPointStyle(),
+  mapping = NULL,
+  ...
+) {
   defaultStyle <- getPointStyle()
   requiredElements <- c("symbol", "size", "color", "colorBg", "alpha", "hide")
 
@@ -471,15 +477,26 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle()
     pointStyle[missingElements] <- defaultStyle[missingElements]
   }
 
+  if (is.null(mapping)) {
+    if (!is.null(plot$mapping$x) && !is.null(plot$mapping$y)) {
+      mapping <- plot$mapping
+    } else if (!is.null(data) && all(c("x", "y") %in% names(data))) {
+      mapping <- ggplot2::aes(x = .data$x, y = .data$y)
+    }
+  }
+
   plot +
-    geom_point(data = data,
-               inherit.aes = FALSE,
-               shape = pointStyle[["symbol"]],
-               size = pointStyle[["size"]],
-               colour = pointStyle[["color"]],
-               fill = pointStyle[["colorBg"]],
-               alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
-               ...)
+    ggplot2::geom_point(
+      data = data,
+      mapping = mapping,
+      inherit.aes = FALSE,
+      shape = pointStyle[["symbol"]],
+      size = pointStyle[["size"]],
+      colour = pointStyle[["color"]],
+      fill = pointStyle[["colorBg"]],
+      alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
+      ...
+    )
 }
 
 # Format Point Labels Of GGplot
@@ -575,8 +592,8 @@ formatLegendOfGGplot <- function(plot, legend, scaleFUN = ggplot2::scale_color_m
     )
 
   # apply text formatting (theme) and set legend titles
-  plot %>%
-    setLegendThemeOfGGplot(legend = legend, ...) %>%
+  plot |>
+    setLegendThemeOfGGplot(legend = legend, ...) |>
     setCustomTitle(labFun = labs,
                    color = legend_title,
                    size = legend_title,
@@ -617,7 +634,7 @@ extractColourMapping <- function(plot) {
   base_mapping <- extractMapping(plot$mapping)
   ## check for mappings in all layers
   if (length(plot_build$plot$layers) > 0) {
-    layer_mappings <- sapply(plot_build$plot$layers, function(layer) extractMapping(layer$mapping)) %>%
+    layer_mappings <- sapply(plot_build$plot$layers, function(layer) extractMapping(layer$mapping)) |>
       unlist()
   } else {
     layer_mappings <- extractMapping(plot_build$plot$mapping)

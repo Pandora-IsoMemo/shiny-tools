@@ -1,3 +1,8 @@
+# shinyTools 26.05.0
+
+## Updates
+- Robustified test for more recent ggplot versions
+
 # shinyTools 25.09.0
 
 ## Bug Fixes

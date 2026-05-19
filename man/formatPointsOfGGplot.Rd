@@ -4,7 +4,13 @@
 \alias{formatPointsOfGGplot}
 \title{Point Style Of GGplot}
 \usage{
-formatPointsOfGGplot(plot, data = NULL, pointStyle = getPointStyle(), ...)
+formatPointsOfGGplot(
+  plot,
+  data = NULL,
+  pointStyle = getPointStyle(),
+  mapping = NULL,
+  ...
+)
 }
 \arguments{
 \item{plot}{(ggplot)}
@@ -25,6 +31,11 @@ will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
 \item{pointStyle}{(list) named list with style definitions, or output of \code{plotPointsServer}}
+
+\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{aes()}}. If specified, it is
+used only for this layer. This wrapper does \emph{not} inherit aesthetic mappings
+from the top level of the plot, so \code{mapping} is not combined with the plot's
+default mapping. Supply all aesthetics needed for this layer in \code{mapping}.}
 
 \item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}'s \code{params} argument. These
 arguments broadly fall into one of 4 categories below. Notably, further

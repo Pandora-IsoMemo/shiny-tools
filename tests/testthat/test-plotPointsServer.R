@@ -43,6 +43,6 @@ test_that("Test module formatPointsOfGGplot", {
     )
 
   # test labels and titles
-  expect_equal(ggplot2::get_labs(plot)$x, "x")
-  expect_equal(ggplot2::get_labs(plot)$y, "y")
+  expect_equal(rlang::as_label(plot$mapping$x), "x")
+  expect_equal(rlang::as_label(plot$mapping$y), "y")
 })

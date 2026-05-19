@@ -6,7 +6,13 @@ definitions of `geom_point` for the same data.
 ## Usage
 
 ``` r
-formatPointsOfGGplot(plot, data = NULL, pointStyle = getPointStyle(), ...)
+formatPointsOfGGplot(
+  plot,
+  data = NULL,
+  pointStyle = getPointStyle(),
+  mapping = NULL,
+  ...
+)
 ```
 
 ## Arguments
@@ -37,6 +43,15 @@ formatPointsOfGGplot(plot, data = NULL, pointStyle = getPointStyle(), ...)
 
   (list) named list with style definitions, or output of
   `plotPointsServer`
+
+- mapping:
+
+  Set of aesthetic mappings created by
+  [`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). If
+  specified, it is used only for this layer. This wrapper does *not*
+  inherit aesthetic mappings from the top level of the plot, so
+  `mapping` is not combined with the plot's default mapping. Supply all
+  aesthetics needed for this layer in `mapping`.
 
 - ...:
 

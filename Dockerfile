@@ -1,5 +1,5 @@
-FROM ghcr.io/pandora-isomemo/base-image:latest
+FROM inwt/r-shiny:4.4.3
 
-ADD . .
+COPY . .
 
 RUN installPackage

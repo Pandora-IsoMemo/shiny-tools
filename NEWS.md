@@ -1,3 +1,16 @@
+# shinyTools 26.09.0
+
+## Updates
+- Updated base image version.
+- Expanded and organized .Rbuildignore and .gitignore entries to reduce accidental inclusion of local/CI/build artifacts.
+- Added URL and BugReports fields to DESCRIPTION.
+- Updated the README file.
+
+# shinyTools 26.05.0
+
+## Updates
+- Robustified test for more recent ggplot versions
+
 # shinyTools 25.09.0
 
 ## Bug Fixes

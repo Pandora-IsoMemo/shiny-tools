@@ -29,10 +29,20 @@ test_that("Test module formatPointsOfGGplot", {
 
   # Create a scatter plot using ggplot2
   plot <- ggplot2::ggplot(data, ggplot2::aes(x = x, y = y)) %>%
-    formatPointsOfGGplot(pointStyle = list(dataPoints =
-                                             list(symbol = 24, color = "#FF00EA", colorBg = "#00FF22",
-                                                  size = 5, hide = FALSE, alpha = 0.2)))
+    formatPointsOfGGplot(
+      pointStyle = list(
+        dataPoints = list(
+          symbol = 24,
+          color = "#FF00EA",
+          colorBg = "#00FF22",
+          size = 5,
+          hide = FALSE,
+          alpha = 0.2
+        )
+      )
+    )
 
   # test labels and titles
-  expect_equal(plot$labels, list(x = "x", y = "y"))
+  expect_equal(rlang::as_label(plot$mapping$x), "x")
+  expect_equal(rlang::as_label(plot$mapping$y), "y")
 })

@@ -451,7 +451,13 @@ formatPointErrorsOfGGplot <- function(plot, dat = NULL, style = defaultLineForma
 #' @inheritParams ggplot2::geom_point
 #'
 #' @export
-formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle(), ...) {
+formatPointsOfGGplot <- function(
+  plot,
+  data = NULL,
+  pointStyle = getPointStyle(),
+  mapping = NULL,
+  ...
+) {
   defaultStyle <- getPointStyle()
   requiredElements <- c("symbol", "size", "color", "colorBg", "alpha", "hide")
 
@@ -471,15 +477,26 @@ formatPointsOfGGplot <- function(plot, data = NULL, pointStyle = getPointStyle()
     pointStyle[missingElements] <- defaultStyle[missingElements]
   }
 
+  if (is.null(mapping)) {
+    if (!is.null(data) && all(c("x", "y") %in% names(data))) {
+      mapping <- ggplot2::aes(x = .data$x, y = .data$y)
+    } else if (!is.null(plot$mapping$x) && !is.null(plot$mapping$y)) {
+      mapping <- plot$mapping
+    }
+  }
+
   plot +
-    geom_point(data = data,
-               inherit.aes = FALSE,
-               shape = pointStyle[["symbol"]],
-               size = pointStyle[["size"]],
-               colour = pointStyle[["color"]],
-               fill = pointStyle[["colorBg"]],
-               alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
-               ...)
+    ggplot2::geom_point(
+      data = data,
+      mapping = mapping,
+      inherit.aes = FALSE,
+      shape = pointStyle[["symbol"]],
+      size = pointStyle[["size"]],
+      colour = pointStyle[["color"]],
+      fill = pointStyle[["colorBg"]],
+      alpha = ifelse(pointStyle[["hide"]], 0, pointStyle[["alpha"]]),
+      ...
+    )
 }
 
 # Format Point Labels Of GGplot
@@ -647,15 +664,15 @@ extractColourMapping <- function(plot) {
   plot_data <- plot_build$data[[1]]  # Get the first layer's data
 
   # --- left: data from the built plot (already has 'x','y','colour') ---
-  left <- plot_data[, c("x", "y", "colour")] |>
+  left <- plot_data[, c("x", "y", "colour")] %>%
     unique()   # drop duplicate rows
 
   # right: original data with source vars; rename to x/y; dedupe too
   right_cols <- c(x_var, y_var, c_var)
   right_cols <- right_cols[!is.na(right_cols)]
-  right <- plot$data |>
-    dplyr::select(dplyr::all_of(right_cols)) |>
-    dplyr::rename(x = !!rlang::sym(x_var), y = !!rlang::sym(y_var)) |>
+  right <- plot$data %>%
+    dplyr::select(dplyr::all_of(right_cols)) %>%
+    dplyr::rename(x = !!rlang::sym(x_var), y = !!rlang::sym(y_var)) %>%
     dplyr::distinct()
 
   # one-to-one/one-to-many join on unique keys -> no warning

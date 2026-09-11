@@ -2,12 +2,12 @@
 
 #' @importFrom colourpicker colourInput
 #' @importFrom dplyr all_of as_label bind_cols bind_rows distinct inner_join mutate rename
-#'  select starts_with
+#' @importFrom dplyr select starts_with
 #' @importFrom futile.logger flog.debug flog.info flog.warn
 #' @importFrom ggplot2 aes element_blank element_text geom_errorbar geom_errorbarh geom_line
-#'  geom_point geom_text ggplot ggplot_build ggtitle labs
-#'  scale_x_continuous scale_x_discrete scale_y_continuous scale_y_discrete
-#'  sec_axis theme waiver xlab ylab
+#' @importFrom ggplot2 geom_point geom_text ggplot ggplot_build ggtitle labs scale_x_continuous
+#' @importFrom ggplot2 scale_x_discrete scale_y_continuous scale_y_discrete sec_axis theme waiver
+#' @importFrom ggplot2 xlab ylab
 #' @importFrom grDevices dev.off pdf png recordPlot svg tiff
 #' @importFrom lifecycle deprecate_warn deprecated is_present
 #' @importFrom magrittr %>%

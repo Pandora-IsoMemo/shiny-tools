@@ -170,6 +170,7 @@ testthat::test_that("addCustomPointsToGGplot: histogram builds (no inherited fil
 test_that("addCustomPointsToGGplot adds points to a ggplot", {
   # Create a base ggplot object
   base_plot <- ggplot(mtcars, aes(x = wt, y = mpg)) + geom_line()
+  base_layers <- length(base_plot$layers)
 
   test_custom_points <- list(
     `Point 1` = list(id = "Point 1", x = 4L, y = 6L,
@@ -210,16 +211,31 @@ test_that("addCustomPointsToGGplot adds points to a ggplot", {
   # Call the function to add points
   updated_plot <- base_plot %>% addCustomPointsToGGplot(custom_points = test_custom_points)
 
+  # Plot should still build
+  expect_error(ggplot2::ggplot_build(updated_plot), NA)
+
+  # Should add layers beyond the base
+  expect_gt(length(updated_plot$layers), base_layers)
+
+  # Check geom presence without relying on exact layer order/count
+  geoms <- vapply(updated_plot$layers, function(L) class(L$geom)[1], character(1))
+  expect_true("GeomLine" %in% geoms)
+  expect_true("GeomPoint" %in% geoms)
+  expect_true(any(grepl("GeomText", geoms)))
+  expect_true(any(grepl("GeomErrorbar", geoms)) || any(grepl("GeomErrorbarh", geoms)))
+
+  # Find point layer dynamically and compare data
+  point_idx <- which(geoms == "GeomPoint")[1]
+  expect_false(is.na(point_idx))
+  expect_equal(
+    updated_plot$layers[[point_idx]]$data,
+    test_custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows()
+  )
+
   # Test if the updated plot has the expected layers
   expect_equal(length(updated_plot$layers), 6)
 
-  # Test if the points layer is added correctly
-  expect_true(all(
-    c("GeomPoint", "GeomLine", "GeomText", "GeomErrorbar", "GeomErrorbarh") %in%
-      unlist(sapply(1:6, function(layer) class(updated_plot$layers[[layer]]$geom)))
-    ))
-
   # Test if the data in the points layer matches the input data
-  expect_equal(updated_plot$layers[[2]]$data,
+  expect_equal(updated_plot$layers[[point_idx]]$data,
                test_custom_points %>% lapply(FUN = as.data.frame) %>% bind_rows())
 })

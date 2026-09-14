@@ -4,6 +4,7 @@
 .RData
 .Ruserdata
 .Rproj.user/
+.Rprofile
 
 # Local environment/config
 .Renviron

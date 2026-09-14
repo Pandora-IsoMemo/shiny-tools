@@ -9,8 +9,8 @@ on:
 
 name: R-CMD-check
 
-env: 
-  CURRENTRVERSION: '4.3.2'
+# env: 
+#   CURRENTRVERSION: '4.3.2'
 
 jobs:
   R-CMD-check:
@@ -53,6 +53,12 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
           extra-repositories: https://Pandora-IsoMemo.github.io/drat/
+
+      - name: Show R version
+        run: |
+          echo "Matrix R selector: ${{ matrix.config.r }}"
+          Rscript -e 'cat("Resolved R version:", R.version.string, "\n")'
+          Rscript -e 'cat("Repositories:\n"); print(getOption("repos"))'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:

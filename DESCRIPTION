@@ -1,7 +1,7 @@
 Package: shinyTools
 Type: Package
 Title: Tools for Shiny Apps
-Version: 26.05.0
+Version: 26.09.0
 Authors@R: c(
             person("Lukas", "Fuchs", email = "lukas.fuchs@inwt-statistics.de", role = c("cre", "aut")),
             person("Antonia", "Runge", email = "antonia.runge@inwt-statistics.de", role = c("aut"))
@@ -9,6 +9,8 @@ Authors@R: c(
 Maintainer: Lukas Fuchs <lukas.fuchs@inwt-statistics.de>
 Description: Helpful functions and modules that can be applied across the Isomemo Apps.
 License: GPL (>= 3)
+URL: https://pandora-isomemo.github.io/shiny-tools/, https://github.com/Pandora-IsoMemo/shiny-tools
+BugReports: https://github.com/Pandora-IsoMemo/shiny-tools/issues
 Encoding: UTF-8
 LazyData: true
 Imports:
@@ -31,8 +33,7 @@ Imports:
     stats,
     utils,
     yaml
-RoxygenNote: 7.3.3
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: https://pandora-isomemo.github.io/shiny-tools/
+Config/roxygen2/version: 8.0.0

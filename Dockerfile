@@ -1,5 +1,7 @@
-FROM ghcr.io/pandora-isomemo/base-image:latest
+FROM inwt/r-shiny:4.4.1
 
-ADD . .
+RUN echo "options(repos = c(getOption('repos'), PANDORA = 'https://Pandora-IsoMemo.github.io/drat/'))" >> /usr/local/lib/R/etc/Rprofile.site
+
+COPY . .
 
 RUN installPackage

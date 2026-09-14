@@ -9,6 +9,9 @@ on:
 
 name: R-CMD-check
 
+# env: 
+#   CURRENTRVERSION: '4.3.2'
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -19,18 +22,21 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-latest,   r: 'release'}
+          - {os: macos-latest,    r: 'release'}
+          # - {os: macos-latest,    r: ${{ env.CURRENTRVERSION }} }
           - {os: windows-latest, r: 'release'}
+          # - {os: windows-latest, r: ${{ env.CURRENTRVERSION }} }
+          - {os: ubuntu-latest,    r: 'release'}
+          # - {os: ubuntu-latest,    r: ${{ env.CURRENTRVERSION }} }
           # Use 3.6 to trigger usage of RTools35
-          #- {os: windows-latest, r: '3.6'}
+          # - {os: windows-latest, r: '3.6'}
           # use 4.1 to check with rtools40's older compiler
-          #- {os: windows-latest, r: '4.1'}
+          # - {os: windows-latest, r: '4.1'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          # - {os: ubuntu-latest,   r: 'oldrel-1'} # rjson requires R >= 4.4.0
-          # - {os: ubuntu-latest,   r: 'oldrel-2'} # rjson requires R >= 4.4.0
-          # - {os: ubuntu-latest,   r: 'oldrel-3'}
-          #- {os: ubuntu-latest,   r: 'oldrel-4'}
+          - {os: ubuntu-latest,   r: 'oldrel-1'} # rjson requires R >= 4.4.0
+          - {os: ubuntu-latest,   r: 'oldrel-2'} # rjson requires R >= 4.4.0
+          - {os: ubuntu-latest,   r: 'oldrel-3'}
+          - {os: ubuntu-latest,   r: 'oldrel-4'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -47,6 +53,12 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
           extra-repositories: https://Pandora-IsoMemo.github.io/drat/
+
+      - name: Show R version
+        run: |
+          echo "Matrix R selector: ${{ matrix.config.r }}"
+          Rscript -e 'cat("Resolved R version:", R.version.string, "\n")'
+          Rscript -e 'cat("Repositories:\n"); print(getOption("repos"))'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:

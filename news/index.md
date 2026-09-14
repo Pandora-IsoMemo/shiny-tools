@@ -1,5 +1,15 @@
 # Changelog
 
+## shinyTools 26.09.0
+
+### Updates
+
+- Updated base image version.
+- Expanded and organized .Rbuildignore and .gitignore entries to reduce
+  accidental inclusion of local/CI/build artifacts.
+- Added URL and BugReports fields to DESCRIPTION.
+- Updated the README file.
+
 ## shinyTools 26.05.0
 
 ### Updates
@@ -31,14 +41,16 @@
 
 ### Bug Fixes
 
-- *headerUI*: icons instead of full logos for links in app headers (#39)
+- *headerUI*: icons instead of full logos for links in app headers
+  ([\#39](https://github.com/Pandora-IsoMemo/shiny-tools/issues/39))
 
 ## shinyTools 25.02.0
 
 ### New Features
 
 - *plotLegend* module:
-  - option to set orientation and individual labels for the legend (#37)
+  - option to set orientation and individual labels for the legend
+    ([\#37](https://github.com/Pandora-IsoMemo/shiny-tools/issues/37))
   - new function
     ([`setLegendThemeOfGGplot()`](https://pandora-isomemo.github.io/shiny-tools/reference/setLegendThemeOfGGplot.md))
     to easily set the theme given the output of *plotLegendServer*
@@ -50,18 +62,21 @@
 ### New Features
 
 - new module (`customPoints`) that allows a user to add points to a plot
-  and format them (#35)
+  and format them
+  ([\#35](https://github.com/Pandora-IsoMemo/shiny-tools/issues/35))
 
 ### Updates
 
 - *headerUI*: keep only logos for *Pandora* and *Isomemo*, add button to
-  *Data Search* app (#1)
+  *Data Search* app
+  ([\#1](https://github.com/Pandora-IsoMemo/shiny-tools/issues/1))
 
 ## shinyTools 24.12.0
 
 ### Updates
 
-- *headerUI*: integration of new links and logos (#1)
+- *headerUI*: integration of new links and logos
+  ([\#1](https://github.com/Pandora-IsoMemo/shiny-tools/issues/1))
 
 ### Bug Fixes
 
@@ -111,7 +126,8 @@
 
 ### New Features
 
-- *plotTitles* module (#28):
+- *plotTitles* module
+  ([\#28](https://github.com/Pandora-IsoMemo/shiny-tools/issues/28)):
   - option to format a second y-axis
   - option to use transformations for the x or y axis in order to handle
     extreme values
@@ -132,7 +148,8 @@
 ### New Features
 
 - *plotTitles* module: optionally, use notation for sub- and
-  superscripts in titles of a plots, axis or the legend (#27)
+  superscripts in titles of a plots, axis or the legend
+  ([\#27](https://github.com/Pandora-IsoMemo/shiny-tools/issues/27))
 
 ## shinyTools 24.08.0
 
@@ -162,7 +179,8 @@
 
 ### New Features
 
-- catch *multiple errors and warnings* (#20):
+- catch *multiple errors and warnings*
+  ([\#20](https://github.com/Pandora-IsoMemo/shiny-tools/issues/20)):
   - shifted the function `DataTools::tryCatchWithWarningsAndErrors()` to
     this package
   - renamed function to
@@ -215,7 +233,8 @@
 
 ### New Features
 
-- module for plotExport (#6)
+- module for plotExport
+  ([\#6](https://github.com/Pandora-IsoMemo/shiny-tools/issues/6))
   - option to add and format titles of a plot before export if the plot
     is a ggplot
   - option to set ranges of a plot before export if the plot is a ggplot
@@ -224,7 +243,8 @@
 
 ### New Features
 
-- module for plotExport (#6)
+- module for plotExport
+  ([\#6](https://github.com/Pandora-IsoMemo/shiny-tools/issues/6))
   - export a plot as “png”, “jpeg”, “svg”, “pdf”, or “tiff” file
   - the module was extracted from PlotR, resources
   - it can be applied in all new apps
@@ -233,7 +253,8 @@
 
 ### New Features
 
-- module for dataExport (#4)
+- module for dataExport
+  ([\#4](https://github.com/Pandora-IsoMemo/shiny-tools/issues/4))
   - export a data.frame as xlsx, csv, or json file
   - the module was extracted from MapR, iso-app
   - it can be applied in all new apps

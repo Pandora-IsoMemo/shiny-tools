@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shinyTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">26.05.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">26.09.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/Pandora-IsoMemo/shiny-tools/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -28,7 +29,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Server function for plot export</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/Pandora-IsoMemo/shiny-tools/blob/main/R/02-plotExport.R" class="external-link"><code>R/02-plotExport.R</code></a></small>
       <div class="d-none name"><code>plotExportServer.Rd</code></div>
     </div>
 
@@ -44,8 +45,8 @@
 <span>  plotType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"ggplot"</span>, <span class="st">"ggplot_only_titles"</span><span class="op">)</span>,</span>
 <span>  filename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s_plot"</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"-"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  plotly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  plotWidth <span class="op">=</span> <span class="fu">reactive</span><span class="op">(</span><span class="fl">1280</span><span class="op">)</span>,</span>
-<span>  plotHeight <span class="op">=</span> <span class="fu">reactive</span><span class="op">(</span><span class="fl">800</span><span class="op">)</span>,</span>
+<span>  plotWidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="fl">1280</span><span class="op">)</span>,</span>
+<span>  plotHeight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="fl">800</span><span class="op">)</span>,</span>
 <span>  initText <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  initRanges <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -104,7 +105,7 @@ formatting of axis ranges might be overwritten by <code><a href="formatScalesOfG
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

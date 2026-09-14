@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">shinyTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">26.05.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">26.09.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/Pandora-IsoMemo/shiny-tools/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -46,10 +47,94 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="shinytools">ShinyTools<a class="anchor" aria-label="anchor" href="#shinytools"></a>
+<div class="page-header"><h1 id="shinytools">shinyTools<a class="anchor" aria-label="anchor" href="#shinytools"></a>
 </h1></div>
+<!-- badges: start -->
+
+<p><code>shinyTools</code> is an R package containing reusable components for building Shiny applications. It was developed for the Isomemo apps, but the modules and helpers are designed to be shared across applications.</p>
+<div class="section level2">
+<h2 id="what-is-included">What is included?<a class="anchor" aria-label="anchor" href="#what-is-included"></a>
+</h2>
+<div class="section level3">
+<h3 id="shiny-modules">Shiny modules<a class="anchor" aria-label="anchor" href="#shiny-modules"></a>
+</h3>
+<ul>
+<li>
+<strong>Plot controls:</strong> configure titles, axis ranges, legends, and point styles for <code>ggplot2</code> and base R plots.</li>
+<li>
+<strong>Plot export:</strong> preview and download plots as PNG, JPEG, SVG, PDF, or TIFF; <code>ggplot2</code> exports can include the title and axis settings chosen by the user.</li>
+<li>
+<strong>Data export:</strong> download reactive data as CSV, XLSX, or JSON. XLSX exports can contain either one data frame or a workbook with multiple sheets.</li>
+<li>
+<strong>Custom points:</strong> add and manage user-defined points in plot-based Shiny workflows.</li>
+<li>
+<strong>Vector input:</strong> display a numeric vector and update selected elements from a Shiny input module.</li>
+<li>
+<strong>Shared UI helpers:</strong> add package styling, module titles, headers, font selectors, symbol selectors, and other common controls.</li>
+</ul>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+<div class="section level3">
+<h3 id="plot-and-application-helpers">Plot and application helpers<a class="anchor" aria-label="anchor" href="#plot-and-application-helpers"></a>
+</h3>
+<p>The package also provides functions for formatting <code>ggplot2</code> objects, including scales, ranges, titles, legends, and point appearance. Additional helpers cover reactive value resolution, updating user inputs, error handling in Shiny, and plot/data export workflows.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Install the development version from GitHub with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Pandora-IsoMemo/shiny-tools"</span><span class="op">)</span></span></code></pre></div>
+<p>The package depends on Shiny, ggplot2, plotly, shinyWidgets, openxlsx, and other packages listed in <code>DESCRIPTION</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h2>
+<p>Shiny modules are connected with a shared <code>id</code> between their UI and server functions. For example, a data export button can be added to an application as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pandora-isomemo.github.io/shiny-tools/">shinyTools</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="reference/dataExportButton.html">dataExportButton</a></span><span class="op">(</span><span class="st">"data_export"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="reference/dataExportServer.html">dataExportServer</a></span><span class="op">(</span></span>
+<span>        <span class="st">"data_export"</span>,</span>
+<span>        dataFun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="va">mtcars</span><span class="op">)</span>,</span>
+<span>        filename <span class="op">=</span> <span class="st">"mtcars"</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+<p>See the <a href="https://pandora-isomemo.github.io/shiny-tools/">package documentation</a> for complete function references and module parameters.</p>
+</div>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
+<ul>
+<li><a href="https://pandora-isomemo.github.io/shiny-tools/" class="uri">https://pandora-isomemo.github.io/shiny-tools/</a></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="release-notes">Release notes<a class="anchor" aria-label="anchor" href="#release-notes"></a>
+</h2>
+<ul>
+<li>see <code>NEWS.md</code>
+</li>
+</ul>
+</div>
+</div>
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/Pandora-IsoMemo/shiny-tools/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/Pandora-IsoMemo/shiny-tools/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
@@ -73,7 +158,14 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/Pandora-IsoMemo/shiny-tools/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/Pandora-IsoMemo/shiny-tools/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/Pandora-IsoMemo/shiny-tools/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/Pandora-IsoMemo/shiny-tools/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
+<li><a href="https://github.com/Pandora-IsoMemo/shiny-tools/actions/workflows/docker-publish.yml" class="external-link"><img src="https://github.com/Pandora-IsoMemo/shiny-tools/actions/workflows/docker-publish.yml/badge.svg" alt="docker-publish"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
@@ -84,7 +176,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

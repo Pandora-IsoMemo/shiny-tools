@@ -48,10 +48,9 @@ formatPointsOfGGplot(
 
   Set of aesthetic mappings created by
   [`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). If
-  specified, it is used only for this layer. This wrapper does *not*
-  inherit aesthetic mappings from the top level of the plot, so
-  `mapping` is not combined with the plot's default mapping. Supply all
-  aesthetics needed for this layer in `mapping`.
+  specified and `inherit.aes = TRUE` (the default), it is combined with
+  the default mapping at the top level of the plot. You must supply
+  `mapping` if there is no plot mapping.
 
 - ...:
 

@@ -112,7 +112,7 @@ headerTitle <- function(pkg_name, url_docu = NULL) {
     version_label
   }
 
-  tagList(pkg_name, " (", version_tag, ")")
+  tagList(pkg_name, " ", version_tag)
 }
 
 

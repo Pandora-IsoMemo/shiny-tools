@@ -9,7 +9,7 @@ headerTitle(pkg_name, url_docu)
 \arguments{
 \item{pkg_name}{name of the package}
 
-\item{docu_url}{url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/"}
+\item{url_docu}{url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/"}
 }
 \description{
 Get header title

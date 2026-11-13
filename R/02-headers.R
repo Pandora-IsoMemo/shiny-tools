@@ -77,7 +77,7 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
 #' Get header title
 #'
 #' @param pkg_name name of the package
-#' @param docu_url url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/"
+#' @param url_docu url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/"
 #'
 #' @export
 headerTitle <- function(pkg_name, url_docu) {

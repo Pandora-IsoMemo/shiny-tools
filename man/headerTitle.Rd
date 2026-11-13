@@ -13,7 +13,7 @@ headerTitle(pkg_name, title = "", url_docu = NULL)
 
 \item{url_docu}{HTTP(S) base URL to package documentation, e.g.
 "https://pandora-isomemo.github.io/data-tools/". Must contain a hostname,
-with an optional port and path, but no query or fragment.
+with an optional port (0-65535) and path, but no query or fragment.
 If missing or invalid, the version is shown without a link.}
 }
 \value{

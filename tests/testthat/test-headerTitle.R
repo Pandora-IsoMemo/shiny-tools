@@ -31,6 +31,24 @@ test_that("headerTitle supports an HTTP documentation URL with a port", {
   expect_match(html, 'href="http://localhost:8080/news/index.html"', fixed = TRUE)
 })
 
+test_that("headerTitle validates the port range without confusing it with the path", {
+  for (port in c("0", "1", "65535", "00065535")) {
+    url <- paste0("https://example.org:", port, "/docu")
+    html <- as.character(headerTitle("shiny", url_docu = url))
+    expect_match(html, paste0('href="', url, '/news/index.html"'), fixed = TRUE)
+  }
+
+  for (port in c("65536", "99999", "4294967296", strrep("9", 400))) {
+    html <- as.character(headerTitle(
+      "shiny", url_docu = paste0("https://example.org:", port, "/docu")
+    ))
+    expect_equal(html, as.character(headerTitle("shiny")))
+  }
+
+  html <- as.character(headerTitle("shiny", url_docu = "https://example.org/docu:65536"))
+  expect_match(html, 'href="https://example.org/docu:65536/news/index.html"', fixed = TRUE)
+})
+
 test_that("headerTitle uses and trims the supplied title", {
   html <- as.character(headerTitle("shiny", "  My app  "))
   expect_equal(html, as.character(headerTitle("shiny", "My app")))

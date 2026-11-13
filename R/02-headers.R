@@ -80,7 +80,7 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
 #' @param title title to display. If empty, the package name is used.
 #' @param url_docu HTTP(S) base URL to package documentation, e.g.
 #'   "https://pandora-isomemo.github.io/data-tools/". Must contain a hostname,
-#'   with an optional port and path, but no query or fragment.
+#'   with an optional port (0-65535) and path, but no query or fragment.
 #'   If missing or invalid, the version is shown without a link.
 #'
 #' @return A [shiny::tagList()]. If the package is not installed, only the package name is shown.
@@ -121,6 +121,14 @@ headerTitle <- function(pkg_name, title = "", url_docu = NULL) {
       trimws(url_docu),
       ignore.case = TRUE
     )
+
+  if (has_url) {
+    authority <- sub("^https?://([^/]+).*$", "\\1", trimws(url_docu), ignore.case = TRUE)
+    if (grepl(":", authority, fixed = TRUE)) {
+      port <- as.numeric(sub(".*:", "", authority))
+      has_url <- port <= 65535
+    }
+  }
 
   version_tag <- if (has_url) {
     tags$a(

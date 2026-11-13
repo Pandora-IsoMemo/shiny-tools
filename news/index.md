@@ -1,5 +1,16 @@
 # Changelog
 
+## shinyTools 26.11.0
+
+### New Features
+
+- Added
+  [`headerTitle()`](https://pandora-isomemo.github.io/shiny-tools/reference/headerTitle.md)
+  to create a header title with the package name and a version link to
+  the package’s news page. It is robust against invalid `pkg_name`,
+  uninstalled packages, and missing or malformed `url_docu` (version is
+  then shown without a link).
+
 ## shinyTools 26.09.0
 
 ### Updates

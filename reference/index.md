@@ -41,6 +41,8 @@
   : Get Default Point Style
 - [`headerButtonsUI()`](https://pandora-isomemo.github.io/shiny-tools/reference/headerButtonsUI.md)
   : Add header buttons
+- [`headerTitle()`](https://pandora-isomemo.github.io/shiny-tools/reference/headerTitle.md)
+  : Get header title
 - [`includeShinyToolsCSS()`](https://pandora-isomemo.github.io/shiny-tools/reference/includeShinyToolsCSS.md)
   : Include CSS from shinyTools package
 - [`plotExportButton()`](https://pandora-isomemo.github.io/shiny-tools/reference/plotExportButton.md)

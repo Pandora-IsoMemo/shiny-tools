@@ -74,6 +74,28 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
   )
 }
 
+#' Get header title
+#'
+#' @param pkg_name name of the package
+#' @param docu_url url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/"
+#'
+#' @export
+headerTitle <- function(pkg_name, url_docu) {
+  version <- packageVersion(pkg_name)
+  url <- sprintf("%snews/index.html", url_docu)
+
+  tagList(
+    pkg_name, " (",
+    tags$a(
+      sprintf("v%s", version),
+      href = url,
+      target = "_blank",
+      rel = "noopener noreferrer"
+    ),
+    ")"
+  )
+}
+
 
 # TEST MODULE -------------------------------------------------------------
 # To test the module run devtools::load_all() first

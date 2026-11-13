@@ -4,10 +4,12 @@
 \alias{headerTitle}
 \title{Get header title}
 \usage{
-headerTitle(pkg_name, url_docu = NULL)
+headerTitle(pkg_name, title = "", url_docu = NULL)
 }
 \arguments{
 \item{pkg_name}{name of the package}
+
+\item{title}{title to display. If empty, the package name is used.}
 
 \item{url_docu}{url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/".
 If `NULL` or empty, the version is shown without a link.}

@@ -77,14 +77,25 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
 #' Get header title
 #'
 #' @param pkg_name name of the package
+#' @param title title to display. If empty, the package name is used.
 #' @param url_docu url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/".
 #'   If `NULL` or empty, the version is shown without a link.
 #'
 #' @return A [shiny::tagList()]. If the package is not installed, only the package name is shown.
 #' @export
-headerTitle <- function(pkg_name, url_docu = NULL) {
+headerTitle <- function(pkg_name, title = "", url_docu = NULL) {
   if (!is.character(pkg_name) || length(pkg_name) != 1 || is.na(pkg_name) || !nzchar(pkg_name)) {
     stop("`pkg_name` must be a single non-empty string.", call. = FALSE)
+  }
+
+  if (!is.character(title) || length(title) != 1 || is.na(title)) {
+    stop("`title` must be a single string.", call. = FALSE)
+  } else {
+    title <- trimws(title)
+  }
+
+  if (!nzchar(title)) {
+    title <- pkg_name
   }
 
   version <- tryCatch(
@@ -93,7 +104,7 @@ headerTitle <- function(pkg_name, url_docu = NULL) {
   )
 
   if (is.null(version)) {
-    return(tagList(pkg_name))
+    return(tagList(title))
   }
 
   version_label <- sprintf("v%s", version)
@@ -112,7 +123,7 @@ headerTitle <- function(pkg_name, url_docu = NULL) {
     version_label
   }
 
-  tagList(pkg_name, " ", version_tag)
+  tagList(title, " ", version_tag)
 }
 
 

@@ -3,7 +3,8 @@
 ## New Features
 - Added `headerTitle()` to create a header title with the package name and a version link to the
   package's news page. It is robust against invalid `pkg_name`, uninstalled packages, and
-  missing or malformed `url_docu` (version is then shown without a link).
+  missing or malformed `url_docu` (version is then shown without a link). Documentation
+  links require an HTTP(S) base URL with a hostname and no query or fragment.
 
 # shinyTools 26.09.0
 

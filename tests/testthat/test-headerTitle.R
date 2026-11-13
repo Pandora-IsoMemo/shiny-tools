@@ -10,7 +10,12 @@ test_that("headerTitle links to the news page with or without trailing slash", {
 })
 
 test_that("headerTitle shows version without link if url is missing or invalid", {
-  for (u in list(NULL, NA, "", "  ", 1, c("a", "b"))) {
+  for (u in list(
+    NULL, NA, "", "  ", 1, c("a", "b"),
+    "not a URL", "example.org/docu", "ftp://example.org/docu",
+    "https://", "https:///docu", "https://example .org/docu",
+    "https://example.org/docu?lang=en", "https://example.org/docu#section"
+  )) {
     html <- as.character(headerTitle("shiny", url_docu = u))
     expect_false(grepl("<a", html, fixed = TRUE))
     expect_match(
@@ -19,6 +24,11 @@ test_that("headerTitle shows version without link if url is missing or invalid",
     )
   }
   expect_false(grepl("<a", as.character(headerTitle("shiny")), fixed = TRUE))
+})
+
+test_that("headerTitle supports an HTTP documentation URL with a port", {
+  html <- as.character(headerTitle("shiny", url_docu = "http://localhost:8080"))
+  expect_match(html, 'href="http://localhost:8080/news/index.html"', fixed = TRUE)
 })
 
 test_that("headerTitle uses and trims the supplied title", {

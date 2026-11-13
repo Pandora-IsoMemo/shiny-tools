@@ -78,8 +78,10 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
 #'
 #' @param pkg_name name of the package
 #' @param title title to display. If empty, the package name is used.
-#' @param url_docu url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/".
-#'   If `NULL` or empty, the version is shown without a link.
+#' @param url_docu HTTP(S) base URL to package documentation, e.g.
+#'   "https://pandora-isomemo.github.io/data-tools/". Must contain a hostname,
+#'   with an optional port and path, but no query or fragment.
+#'   If missing or invalid, the version is shown without a link.
 #'
 #' @return A [shiny::tagList()]. If the package is not installed, only the package name is shown.
 #' @export
@@ -110,7 +112,15 @@ headerTitle <- function(pkg_name, title = "", url_docu = NULL) {
   version_label <- sprintf("v%s", version)
 
   has_url <- is.character(url_docu) && length(url_docu) == 1 &&
-    !is.na(url_docu) && nzchar(trimws(url_docu))
+    !is.na(url_docu) && grepl(
+      paste0(
+        "^https?://[[:alnum:]]([[:alnum:]-]*[[:alnum:]])?",
+        "(\\.[[:alnum:]]([[:alnum:]-]*[[:alnum:]])?)*",
+        "(:[0-9]+)?(/[^[:space:]?#]*)?$"
+      ),
+      trimws(url_docu),
+      ignore.case = TRUE
+    )
 
   version_tag <- if (has_url) {
     tags$a(

@@ -74,6 +74,76 @@ headerButtonsUI <- function(id, help_link, further_help_link = NULL, loadShinyTo
   )
 }
 
+#' Get header title
+#'
+#' @param pkg_name name of the package
+#' @param title title to display. If empty, the package name is used.
+#' @param url_docu HTTP(S) base URL to package documentation, e.g.
+#'   "https://pandora-isomemo.github.io/data-tools/". Must contain a hostname,
+#'   with an optional port (0-65535) and path, but no query or fragment.
+#'   If missing or invalid, the version is shown without a link.
+#'
+#' @return A [shiny::tagList()]. If the package is not installed, only the package name is shown.
+#' @export
+headerTitle <- function(pkg_name, title = "", url_docu = NULL) {
+  if (!is.character(pkg_name) || length(pkg_name) != 1 || is.na(pkg_name) || !nzchar(pkg_name)) {
+    stop("`pkg_name` must be a single non-empty string.", call. = FALSE)
+  }
+
+  if (!is.character(title) || length(title) != 1 || is.na(title)) {
+    stop("`title` must be a single string.", call. = FALSE)
+  } else {
+    title <- trimws(title)
+  }
+
+  if (!nzchar(title)) {
+    title <- pkg_name
+  }
+
+  version <- tryCatch(
+    as.character(packageVersion(pkg_name)),
+    error = function(e) NULL
+  )
+
+  if (is.null(version)) {
+    return(tagList(title))
+  }
+
+  version_label <- sprintf("v%s", version)
+
+  has_url <- is.character(url_docu) && length(url_docu) == 1 &&
+    !is.na(url_docu) && grepl(
+      paste0(
+        "^https?://[[:alnum:]]([[:alnum:]-]*[[:alnum:]])?",
+        "(\\.[[:alnum:]]([[:alnum:]-]*[[:alnum:]])?)*",
+        "(:[0-9]+)?(/[^[:space:]?#]*)?$"
+      ),
+      trimws(url_docu),
+      ignore.case = TRUE
+    )
+
+  if (has_url) {
+    authority <- sub("^https?://([^/]+).*$", "\\1", trimws(url_docu), ignore.case = TRUE)
+    if (grepl(":", authority, fixed = TRUE)) {
+      port <- as.numeric(sub(".*:", "", authority))
+      has_url <- port <= 65535
+    }
+  }
+
+  version_tag <- if (has_url) {
+    tags$a(
+      version_label,
+      href = paste0(sub("/+$", "", trimws(url_docu)), "/news/index.html"),
+      target = "_blank",
+      rel = "noopener noreferrer"
+    )
+  } else {
+    version_label
+  }
+
+  tagList(title, " ", version_tag)
+}
+
 
 # TEST MODULE -------------------------------------------------------------
 # To test the module run devtools::load_all() first

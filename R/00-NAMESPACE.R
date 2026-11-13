@@ -20,7 +20,7 @@
 #' @importFrom shinyjs alert disable enable hide
 #' @importFrom shinyWidgets pickerInput pickerOptions updatePickerInput
 #' @importFrom stats lm setNames
-#' @importFrom utils capture.output write.table
+#' @importFrom utils capture.output packageVersion write.table
 #' @importFrom yaml yaml.load_file
 
 NULL

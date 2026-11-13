@@ -4,12 +4,16 @@
 \alias{headerTitle}
 \title{Get header title}
 \usage{
-headerTitle(pkg_name, url_docu)
+headerTitle(pkg_name, url_docu = NULL)
 }
 \arguments{
 \item{pkg_name}{name of the package}
 
-\item{url_docu}{url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/"}
+\item{url_docu}{url to package docu, e.g. "https://pandora-isomemo.github.io/data-tools/".
+If `NULL` or empty, the version is shown without a link.}
+}
+\value{
+A [shiny::tagList()]. If the package is not installed, only the package name is shown.
 }
 \description{
 Get header title
